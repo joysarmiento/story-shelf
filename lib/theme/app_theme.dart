@@ -39,7 +39,7 @@ class AppTheme {
 
       textTheme: TextTheme(
         headlineSmall: GoogleFonts.montserrat(
-          fontSize: 20,
+          fontSize: 26,
           fontWeight: FontWeight.w700, // bold
           color: primary,
         ),

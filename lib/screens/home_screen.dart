@@ -29,8 +29,6 @@ class HomeScreen extends StatelessWidget {
         ? sampleMemories.first
         : null;
 
-    final theme = Theme.of(context);
-
     return Scaffold(
       backgroundColor: AppTheme.surface,
       body: Stack(
