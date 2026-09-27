@@ -68,9 +68,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   child: Text(
                     'Reset Password',
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: AppTheme.primary,
-                    ),
+                    style: theme.textTheme.headlineSmall,
                   ),
                 ),
                 const SizedBox(height: AppTheme.spaceSm),

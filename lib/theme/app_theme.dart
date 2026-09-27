@@ -43,11 +43,6 @@ class AppTheme {
           fontWeight: FontWeight.w700, // bold
           color: primary,
         ),
-        titleLarge: GoogleFonts.montserrat(
-          fontSize: 20,
-          fontWeight: FontWeight.w700,
-          color: onPrimary,
-        ),
         titleMedium: GoogleFonts.montserrat(
           fontSize: 17,
           fontWeight: FontWeight.w600,

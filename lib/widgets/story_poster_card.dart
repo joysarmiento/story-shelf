@@ -27,6 +27,7 @@ class StoryPosterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: onTap,
       child: AspectRatio(
@@ -82,9 +83,8 @@ class StoryPosterCard extends StatelessWidget {
                   ),
                   child: Text(
                     story.medium.label,
-                    style: const TextStyle(
+                    style: theme.textTheme.bodySmall?.copyWith(
                       color: AppTheme.onPrimary,
-                      fontSize: 12,
                     ),
                   ),
                 ),
@@ -97,9 +97,8 @@ class StoryPosterCard extends StatelessWidget {
                   story.title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: theme.textTheme.bodySmall?.copyWith(
                     color: AppTheme.onPrimary,
-                    fontSize: 12,
                   ),
                 ),
               ),
