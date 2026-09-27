@@ -16,6 +16,7 @@ class FilterChipPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -27,10 +28,8 @@ class FilterChipPill extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: const TextStyle(
+          style: theme.textTheme.bodyMedium?.copyWith(
             color: AppTheme.onPrimary,
-            fontWeight: FontWeight.w600,
-            fontSize: 15,
           ),
         ),
       ),

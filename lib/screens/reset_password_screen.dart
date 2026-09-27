@@ -68,7 +68,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   child: Text(
                     'Reset Password',
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.headlineSmall?.copyWith(
+                    style: theme.textTheme.titleLarge?.copyWith(
                       color: AppTheme.primary,
                     ),
                   ),
@@ -78,9 +78,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   child: Text(
                     'Enter your email so we can send you the password reset link',
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: AppTheme.onSurface,
-                    ),
+                    style: theme.textTheme.bodySmall,
                   ),
                 ),
                 const SizedBox(height: AppTheme.spaceSectionGap),
@@ -118,9 +116,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     onTap: () => Navigator.of(context).pop(),
                     child: RichText(
                       text: TextSpan(
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontSize: 15,
-                        ),
+                        style: theme.textTheme.bodyMedium,
                         children: const [
                           TextSpan(text: 'Already Registered? '),
                           TextSpan(

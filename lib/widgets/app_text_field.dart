@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/app_theme.dart';
 
@@ -25,6 +24,7 @@ class AppTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Semantics(
       label: label,
       child: TextFormField(
@@ -32,17 +32,11 @@ class AppTextField extends StatelessWidget {
         obscureText: obscureText,
         keyboardType: keyboardType,
         validator: validator,
-        style: GoogleFonts.montserrat(
-          color: AppTheme.onSurface,
-          fontSize: 15,
-          fontWeight: FontWeight.w600, // semibold
-        ),
+        style: theme.textTheme.bodyMedium,
         decoration: InputDecoration(
           hintText: hint ?? label,
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: theme.textTheme.bodyMedium?.copyWith(
             color: AppTheme.onSurface.withValues(alpha: 0.75),
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
           ),
           filled: true,
           fillColor: AppTheme.surfaceVariant,

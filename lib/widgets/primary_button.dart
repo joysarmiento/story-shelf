@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/app_theme.dart';
 
@@ -17,6 +16,7 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return SizedBox(
       width: double.infinity,
       height: 56,
@@ -39,13 +39,7 @@ class PrimaryButton extends StatelessWidget {
                   color: AppTheme.onPrimary,
                 ),
               )
-            : Text(
-                label,
-                style: GoogleFonts.montserrat(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600, // semibold
-                ),
-              ),
+            : Text(label, style: theme.textTheme.titleMedium),
       ),
     );
   }

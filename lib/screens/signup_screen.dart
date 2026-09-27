@@ -77,9 +77,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(height: AppTheme.spaceXs),
                 Text(
                   'Create Your Story Shelf',
-                  style: theme.textTheme.displayMedium?.copyWith(
-                    color: AppTheme.primary,
-                  ),
+                  style: theme.textTheme.headlineSmall,
                 ),
                 const SizedBox(height: AppTheme.spaceXs),
                 Text(
@@ -149,9 +147,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     onTap: () => Navigator.of(context).pop(),
                     child: RichText(
                       text: TextSpan(
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontSize: 15,
-                        ),
+                        style: theme.textTheme.bodyMedium,
                         children: const [
                           TextSpan(text: 'Already Registered? '),
                           TextSpan(

@@ -208,7 +208,7 @@ class _MemoryOfTheDayBanner extends StatelessWidget {
                 const SizedBox(height: 34),
                 Text(
                   memory.storyTitle ?? memory.title,
-                  style: theme.textTheme.headlineSmall?.copyWith(
+                  style: theme.textTheme.titleLarge?.copyWith(
                     color: AppTheme.onPrimary,
                   ),
                 ),

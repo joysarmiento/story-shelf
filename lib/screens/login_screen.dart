@@ -71,12 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 140,
                 ),
                 const SizedBox(height: AppTheme.spaceXs),
-                Text(
-                  'Welcome Back ♡',
-                  style: theme.textTheme.displayMedium?.copyWith(
-                    color: AppTheme.primary,
-                  ),
-                ),
+                Text('Welcome Back ♡', style: theme.textTheme.headlineSmall),
                 const SizedBox(height: AppTheme.spaceXs),
                 Text(
                   'Your stories are waiting for you.',
@@ -154,6 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         MaterialPageRoute(builder: (_) => const HomeScreen()),
                       );
                     },
+                    // added for easier viewing of changes during development, will remove this in production
                     child: const Text(
                       'Skip login (dev)',
                       style: TextStyle(
@@ -174,9 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: RichText(
                       text: TextSpan(
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontSize: 15,
-                        ),
+                        style: theme.textTheme.bodyMedium,
                         children: const [
                           TextSpan(text: "New to Story Shelf? "),
                           TextSpan(

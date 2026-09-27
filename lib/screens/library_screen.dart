@@ -119,7 +119,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
                           'All Stories',
                           style: theme.textTheme.headlineSmall?.copyWith(
                             color: AppTheme.error,
-                            fontSize: 26,
                           ),
                         ),
                       ),

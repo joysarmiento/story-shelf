@@ -19,9 +19,9 @@ class AppTheme {
   static const double spaceXs = 4;
   static const double spaceSm = 8;
   static const double spaceMd = 16;
-  static const double spaceLg = 24; // screen edge padding
-  static const double spaceListGap = 12; // between list items / cards
-  static const double spaceSectionGap = 32; // between sections
+  static const double spaceLg = 24;
+  static const double spaceListGap = 12;
+  static const double spaceSectionGap = 32;
 
   static ThemeData get themeData {
     return ThemeData(
@@ -38,15 +38,20 @@ class AppTheme {
       ),
 
       textTheme: TextTheme(
-        displayMedium: GoogleFonts.montserrat(
-          fontSize: 26,
-          fontWeight: FontWeight.w700, // bold
-          color: primary,
-        ),
         headlineSmall: GoogleFonts.montserrat(
           fontSize: 20,
           fontWeight: FontWeight.w700, // bold
           color: primary,
+        ),
+        titleLarge: GoogleFonts.montserrat(
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+          color: onPrimary,
+        ),
+        titleMedium: GoogleFonts.montserrat(
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+          color: onPrimary,
         ),
         bodyMedium: GoogleFonts.montserrat(
           fontSize: 15,
@@ -54,13 +59,8 @@ class AppTheme {
           color: onSurface,
         ),
         bodySmall: GoogleFonts.montserrat(
-          fontSize: 13,
-          fontWeight: FontWeight.w500, // medium
-          color: onSurface,
-        ),
-        labelSmall: GoogleFonts.montserrat(
-          fontSize: 10,
-          fontWeight: FontWeight.w500, // medium
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
           color: onSurface,
         ),
       ),

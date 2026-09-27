@@ -64,7 +64,6 @@ class MemoryCard extends StatelessWidget {
                     metaLabel,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: AppTheme.onPrimary,
-                      fontSize: 11,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -76,7 +75,6 @@ class MemoryCard extends StatelessWidget {
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: AppTheme.onPrimary,
                         fontStyle: FontStyle.italic,
-                        fontSize: 11,
                       ),
                     ),
                 ],

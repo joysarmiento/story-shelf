@@ -23,6 +23,7 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 22),
       child: ClipRRect(
@@ -58,9 +59,7 @@ class BottomNavBar extends StatelessWidget {
                             const SizedBox(height: 2),
                             Text(
                               _items[i].label,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
+                              style: theme.textTheme.bodySmall?.copyWith(
                                 color: i == currentIndex
                                     ? AppTheme.error
                                     : AppTheme.onPrimary,
