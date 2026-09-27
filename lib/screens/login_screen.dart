@@ -130,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       style: GoogleFonts.montserrat(
                         color: AppTheme.onSurface,
                         decoration: TextDecoration.underline,
-                        fontWeight: FontWeight.w600, // semibold
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),

@@ -11,7 +11,13 @@ extension MediumLabel on Medium {
     Medium.tvSeries => 'TV Series',
   };
 
-  /// Round-trips with the `medium` column in Supabase (stored as text).
+  String get progressUnitLabel => switch (this) {
+    Medium.book => 'Page',
+    Medium.manhwa || Medium.manga => 'Chapter',
+    Medium.movie => 'Part',
+    Medium.drama || Medium.tvSeries || Medium.anime => 'Episode',
+  };
+
   String get dbValue => name;
 
   static Medium fromDb(String value) => Medium.values.firstWhere(
@@ -20,7 +26,6 @@ extension MediumLabel on Medium {
   );
 }
 
-/// Library's status filter: Not Started / Started / Completed.
 enum StoryStatus { notStarted, inProgress, completed }
 
 extension StoryStatusLabel on StoryStatus {
@@ -38,11 +43,6 @@ extension StoryStatusLabel on StoryStatus {
   );
 }
 
-/// Mirrors the `stories` table (proposal Section F/I).
-///
-/// Column names below use the proposal's snake_case (story_id,
-/// creator_author, ...) so fromJson/toJson can talk to Supabase directly
-/// once that table exists.
 class Story {
   Story({
     required this.id,
@@ -68,25 +68,51 @@ class Story {
   final int? releaseYear;
   final Medium medium;
 
-  /// A network/storage URL for the cover image. Null until Add Story's
-  /// image picker (or a pasted URL) is wired up — StoryPosterCard falls
-  /// back to a colored placeholder when this is null.
   final String? coverPath;
 
   final StoryStatus status;
   final double currentProgress;
   final double? totalProgress;
 
-  /// 0-5. Null if the user hasn't rated it yet.
   final double? rating;
   final bool isFavorite;
   final String? overview;
   final DateTime dateAdded;
 
-  /// 0.0-1.0, safe to feed straight into a progress bar.
   double get progressFraction {
     if (totalProgress == null || totalProgress == 0) return 0;
     return (currentProgress / totalProgress!).clamp(0, 1);
+  }
+
+  Story copyWith({
+    String? title,
+    String? creator,
+    int? releaseYear,
+    Medium? medium,
+    String? coverPath,
+    StoryStatus? status,
+    double? currentProgress,
+    double? totalProgress,
+    double? rating,
+    bool? isFavorite,
+    String? overview,
+  }) {
+    return Story(
+      id: id,
+      userId: userId,
+      title: title ?? this.title,
+      creator: creator ?? this.creator,
+      releaseYear: releaseYear ?? this.releaseYear,
+      medium: medium ?? this.medium,
+      coverPath: coverPath ?? this.coverPath,
+      status: status ?? this.status,
+      currentProgress: currentProgress ?? this.currentProgress,
+      totalProgress: totalProgress ?? this.totalProgress,
+      rating: rating ?? this.rating,
+      isFavorite: isFavorite ?? this.isFavorite,
+      overview: overview ?? this.overview,
+      dateAdded: dateAdded,
+    );
   }
 
   factory Story.fromJson(Map<String, dynamic> json) {

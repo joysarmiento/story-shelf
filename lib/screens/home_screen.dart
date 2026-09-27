@@ -10,9 +10,7 @@ import '../widgets/section_header.dart';
 import '../widgets/story_poster_card.dart';
 import '../utils/date_format.dart';
 import 'library_screen.dart';
-
-// import 'story_details_screen.dart'; // uncomment once that screen exists
-// import 'memory_details_screen.dart'; // uncomment once that screen exists
+import 'story_details_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -48,7 +46,7 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     Image.asset(
                       'docs/assets/images/your-shelf-wordmark.png',
-                      height: 75, // matches the old displayMedium fontSize
+                      height: 75,
                     ),
                     Container(
                       width: 50,
@@ -104,9 +102,12 @@ class HomeScreen extends StatelessWidget {
                                 overlayColor: AppTheme.storyTintBeige
                                     .withValues(alpha: 0.15),
                                 onTap: () {
-                                  // Navigator.of(context).push(MaterialPageRoute(
-                                  //   builder: (_) => StoryDetailsScreen(storyId: story.id),
-                                  // ));
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          StoryDetailsScreen(storyId: story.id),
+                                    ),
+                                  );
                                 },
                               ),
                             ),
@@ -171,8 +172,6 @@ class _MemoryOfTheDayBanner extends StatelessWidget {
       borderRadius: BorderRadius.circular(24),
       child: Stack(
         children: [
-          // Background: the memory's story cover, or a plain fallback if
-          // there's no cover yet.
           Positioned.fill(
             child: memory.storyCoverPath != null
                 ? Image.network(
@@ -183,7 +182,6 @@ class _MemoryOfTheDayBanner extends StatelessWidget {
                   )
                 : Container(color: AppTheme.secondary),
           ),
-          // Light blue transparent overlay on top of the image.
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
