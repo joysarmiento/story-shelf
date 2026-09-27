@@ -3,9 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/app_theme.dart';
 
-/// The app's single back-navigation control: a chevron + "Back" label,
-/// left-aligned, no padding. Defaults to popping the current route, but
-/// [onPressed] can be overridden if a screen needs custom back behavior.
 class AppBackButton extends StatelessWidget {
   const AppBackButton({super.key, this.onPressed, this.label = 'Back'});
 

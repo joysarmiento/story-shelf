@@ -12,6 +12,7 @@ class AppTheme {
   static const Color surfaceVariant = Color(0xFFD8E4E4); // cards, fields
   static const Color onSurface = Color(0xFF66769A); // body text
   static const Color error = Color(0xFFB02D35); // headings, tags, destructive
+  static const Color storyTintBeige = Color(0xFFD9BFA0);
 
   // Spacing rules
   static const double spaceXxs = 2;
@@ -54,7 +55,7 @@ class AppTheme {
         ),
         bodySmall: GoogleFonts.montserrat(
           fontSize: 13,
-          fontWeight: FontWeight.w600, // medium
+          fontWeight: FontWeight.w500, // medium
           color: onSurface,
         ),
         labelSmall: GoogleFonts.montserrat(

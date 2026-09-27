@@ -5,6 +5,7 @@ import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_text_field.dart';
 import '../widgets/primary_button.dart';
+import 'home_screen.dart';
 import 'reset_password_screen.dart';
 import 'signup_screen.dart';
 
@@ -34,13 +35,13 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
     try {
       await SupabaseService.instance.signIn(
-        emailOrUsername: _emailController.text.trim(),
+        email: _emailController.text.trim(),
         password: _passwordController.text,
       );
       if (!mounted) return;
-      // Navigator.of(context).pushReplacement(
-      //   MaterialPageRoute(builder: (_) => const HomeScreen()),
-      // );
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -144,6 +145,23 @@ class _LoginScreenState extends State<LoginScreen> {
                   label: 'Open My Shelf',
                   isLoading: _isLoading,
                   onPressed: _handleLogin,
+                ),
+                const SizedBox(height: AppTheme.spaceLg),
+                Center(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (_) => const HomeScreen()),
+                      );
+                    },
+                    child: const Text(
+                      'Skip login (dev)',
+                      style: TextStyle(
+                        color: AppTheme.error,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: AppTheme.spaceLg),
                 Padding(

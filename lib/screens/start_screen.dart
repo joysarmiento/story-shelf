@@ -28,8 +28,7 @@ class StartScreen extends StatelessWidget {
                 fit: BoxFit.scaleDown,
                 child: Image.asset(
                   'docs/assets/images/story-shelf-wordmark.png',
-                  width:
-                      250, // matches the old displayMedium font size// script font used in the mockup logo
+                  width: 250,
                 ),
               ),
               const SizedBox(height: AppTheme.spaceXxs),

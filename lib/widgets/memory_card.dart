@@ -1,0 +1,90 @@
+import 'package:flutter/material.dart';
+
+import '../models/memory.dart';
+import '../theme/app_theme.dart';
+import '../utils/date_format.dart';
+
+class MemoryCard extends StatelessWidget {
+  const MemoryCard({super.key, required this.memory, required this.onTap});
+
+  final Memory memory;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final dateLabel = formatLongDate(memory.dateCreated);
+    final metaLabel = memory.progressReference != null
+        ? '${memory.progressReference} · $dateLabel'
+        : dateLabel;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppTheme.secondary,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: SizedBox(
+                width: 56,
+                height: 72,
+                child: memory.storyCoverPath != null
+                    ? Image.network(
+                        memory.storyCoverPath!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          color: AppTheme.primary.withValues(alpha: 0.6),
+                        ),
+                      )
+                    : Container(color: AppTheme.primary.withValues(alpha: 0.6)),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    memory.storyTitle ?? memory.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: AppTheme.error,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 1),
+                  Text(
+                    metaLabel,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: AppTheme.onPrimary,
+                      fontSize: 11,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  if (memory.quote != null)
+                    Text(
+                      '"${memory.quote}"',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppTheme.onPrimary,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 11,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
