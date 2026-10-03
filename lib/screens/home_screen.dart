@@ -4,6 +4,7 @@ import '../data/sample_data.dart';
 import '../models/memory.dart';
 import '../models/story.dart';
 import '../theme/app_theme.dart';
+import '../utils/app_navigation.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/memory_card.dart';
 import '../widgets/section_header.dart';
@@ -139,19 +140,8 @@ class HomeScreen extends StatelessWidget {
             bottom: 0,
             child: BottomNavBar(
               currentIndex: 0,
-              onTap: (index) {
-                if (index == 0) return;
-                if (index == 1) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const LibraryScreen()),
-                  );
-                  return;
-                }
-                // Search and Profile screens don't exist yet.
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('Coming soon')));
-              },
+              onTap: (index) =>
+                  navigateToTab(context, index, currentIndex: AppTab.home),
             ),
           ),
         ],

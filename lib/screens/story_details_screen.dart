@@ -4,11 +4,10 @@ import '../data/sample_data.dart';
 import '../models/memory.dart';
 import '../models/story.dart';
 import '../theme/app_theme.dart';
+import '../utils/app_navigation.dart';
 import '../utils/date_format.dart';
 import '../widgets/bottom_nav_bar.dart';
 import 'edit_story_screen.dart';
-import 'home_screen.dart';
-import 'library_screen.dart';
 
 class StoryDetailsScreen extends StatefulWidget {
   const StoryDetailsScreen({super.key, required this.storyId});
@@ -283,21 +282,9 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
             bottom: 0,
             child: BottomNavBar(
               currentIndex: 1,
-              onTap: (index) {
-                if (index == 0) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const HomeScreen()),
-                  );
-                } else if (index == 1) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const LibraryScreen()),
-                  );
-                } else {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(const SnackBar(content: Text('Coming soon')));
-                }
-              },
+              // -1: this screen sits under Library, so tapping Library should
+              // still navigate back to it.
+              onTap: (index) => navigateToTab(context, index, currentIndex: -1),
             ),
           ),
         ],

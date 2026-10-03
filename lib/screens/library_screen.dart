@@ -4,6 +4,8 @@ import 'package:flutter/gestures.dart';
 import '../data/sample_data.dart';
 import '../models/story.dart';
 import '../theme/app_theme.dart';
+import '../utils/app_navigation.dart';
+import '../widgets/app_search_bar.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/filter_chip_pill.dart';
 import '../widgets/story_poster_card.dart';
@@ -22,6 +24,14 @@ class _LibraryScreenState extends State<LibraryScreen> {
   Medium? _selectedMedium;
   StoryStatus? _selectedStatus;
   bool _favoritesOnly = false;
+  final _searchController = TextEditingController();
+  String _query = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   static const _mediumFilters = [
     null,
@@ -37,13 +47,18 @@ class _LibraryScreenState extends State<LibraryScreen> {
   List<Story> get _filteredStories {
     // TODO: replace sampleStories with SupabaseService.instance
     // .getStoriesForUser() once the stories table and CRUD exist.
+    final query = _query.trim().toLowerCase();
     return sampleStories.where((story) {
+      final matchesQuery =
+          query.isEmpty ||
+          story.title.toLowerCase().contains(query) ||
+          (story.creator?.toLowerCase().contains(query) ?? false);
       final matchesMedium =
           _selectedMedium == null || story.medium == _selectedMedium;
       final matchesFavorite = !_favoritesOnly || story.isFavorite;
       final matchesStatus =
           _selectedStatus == null || story.status == _selectedStatus;
-      return matchesMedium && matchesFavorite && matchesStatus;
+      return matchesQuery && matchesMedium && matchesFavorite && matchesStatus;
     }).toList();
   }
 
@@ -178,6 +193,17 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppTheme.spaceMd,
                   ),
+                  child: AppSearchBar(
+                    controller: _searchController,
+                    hint: 'Search your library',
+                    onChanged: (value) => setState(() => _query = value),
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spaceMd),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spaceMd,
+                  ),
                   child: Row(
                     children: [
                       Expanded(
@@ -235,7 +261,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                     ),
                                     const SizedBox(height: AppTheme.spaceMd),
                                     Text(
-                                      _favoritesOnly
+                                      _query.trim().isNotEmpty
+                                          ? 'No results for "${_query.trim()}"'
+                                          : _favoritesOnly
                                           ? 'No favorites yet'
                                           : _selectedMedium != null
                                           ? 'No ${_selectedMedium!.label.toLowerCase()} stories yet'
@@ -248,7 +276,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                     ),
                                     const SizedBox(height: AppTheme.spaceXs),
                                     Text(
-                                      'Tap + to add your story.',
+                                      _query.trim().isNotEmpty
+                                          ? 'Try a different title or creator.'
+                                          : 'Tap + to add your story.',
                                       textAlign: TextAlign.center,
                                       style: theme.textTheme.bodySmall,
                                     ),
@@ -324,18 +354,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
             bottom: 0,
             child: BottomNavBar(
               currentIndex: 1,
-              onTap: (index) {
-                if (index == 1) return;
-                if (index == 0) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const HomeScreen()),
-                  );
-                  return;
-                }
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('Coming soon')));
-              },
+              onTap: (index) =>
+                  navigateToTab(context, index, currentIndex: AppTab.library),
             ),
           ),
         ],

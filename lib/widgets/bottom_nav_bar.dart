@@ -17,7 +17,7 @@ class BottomNavBar extends StatelessWidget {
   static const _items = [
     (icon: Icons.home, label: 'Home'),
     (icon: Icons.menu_book, label: 'Library'),
-    (icon: Icons.search, label: 'Search'),
+    (icon: Icons.bookmark, label: 'Memories'),
     (icon: Icons.person, label: 'Profile'),
   ];
 
