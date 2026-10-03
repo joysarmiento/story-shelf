@@ -25,7 +25,7 @@ class Memory {
     required this.entryType,
     this.progressReference,
     this.rating,
-    required this.title,
+    this.title,
     required this.content,
     this.quote,
     required this.dateCreated,
@@ -40,7 +40,7 @@ class Memory {
   final EntryType entryType;
   final String? progressReference;
   final double? rating;
-  final String title;
+  final String? title;
   final String content;
   final String? quote;
   final DateTime dateCreated;
@@ -51,6 +51,12 @@ class Memory {
   final String? storyCreator;
   final Medium? storyMedium;
 
+  /// The memory's own title, or null when the user left it blank.
+  String? get cleanTitle {
+    final t = title?.trim();
+    return (t == null || t.isEmpty) ? null : t;
+  }
+
   factory Memory.fromJson(Map<String, dynamic> json) {
     return Memory(
       id: json['memory_id'] as String,
@@ -58,7 +64,7 @@ class Memory {
       entryType: EntryTypeLabel.fromDb(json['entry_type'] as String),
       progressReference: json['progress_reference'] as String?,
       rating: (json['rating'] as num?)?.toDouble(),
-      title: json['title'] as String,
+      title: json['title'] as String?,
       content: json['content'] as String,
       quote: json['quote'] as String?,
       dateCreated: DateTime.parse(json['date_created'] as String),

@@ -51,7 +51,7 @@ class MemoryCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    memory.storyTitle ?? memory.title,
+                    memory.storyTitle ?? memory.cleanTitle ?? 'Untitled memory',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodyMedium?.copyWith(
@@ -67,6 +67,17 @@ class MemoryCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
+                  if (memory.cleanTitle != null &&
+                      memory.cleanTitle != memory.storyTitle)
+                    Text(
+                      memory.cleanTitle!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppTheme.onPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   if (memory.quote != null)
                     Text(
                       '"${memory.quote}"',
@@ -75,6 +86,17 @@ class MemoryCard extends StatelessWidget {
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: AppTheme.onPrimary,
                         fontStyle: FontStyle.italic,
+                      ),
+                    )
+                  else
+                    // No quote: show a snippet of the note so the card is
+                    // never empty.
+                    Text(
+                      memory.content,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppTheme.onPrimary,
                       ),
                     ),
                 ],

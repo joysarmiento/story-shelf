@@ -11,6 +11,7 @@ import '../widgets/section_header.dart';
 import '../widgets/story_poster_card.dart';
 import '../utils/date_format.dart';
 import 'library_screen.dart';
+import 'memories_screen.dart';
 import 'story_details_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -118,7 +119,15 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: AppTheme.spaceSectionGap),
-                const SectionHeader(title: 'Recent memories'),
+                SectionHeader(
+                  title: 'Recent memories',
+                  actionLabel: 'see all',
+                  onAction: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const MemoriesScreen()),
+                    );
+                  },
+                ),
                 const SizedBox(height: AppTheme.spaceMd),
                 for (final memory in recentMemories) ...[
                   MemoryCard(
@@ -193,7 +202,7 @@ class _MemoryOfTheDayBanner extends StatelessWidget {
                 ),
                 const SizedBox(height: 34),
                 Text(
-                  memory.storyTitle ?? memory.title,
+                  memory.storyTitle ?? memory.cleanTitle ?? 'Untitled memory',
                   style: theme.textTheme.headlineSmall?.copyWith(
                     color: AppTheme.onPrimary,
                   ),

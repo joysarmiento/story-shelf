@@ -504,13 +504,14 @@ class _StoryMemoryTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            memory.title,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppTheme.error,
-              fontWeight: FontWeight.bold,
+          if (memory.cleanTitle != null)
+            Text(
+              memory.cleanTitle!,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: AppTheme.error,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
           Text(
             metaLabel,
             style: theme.textTheme.bodySmall?.copyWith(
