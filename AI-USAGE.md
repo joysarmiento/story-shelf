@@ -19,6 +19,15 @@ At least six entries. One per real use. Every entry needs a commit link.
 - **What I kept, what I changed, and why:**
 - **Commit:** https://github.com/YOUR-USERNAME/YOUR-REPO/commit/SHA
 
+
+### 2026-09-23 - Planning and building the authentication screens
+
+- **Tool:** Claude
+- **What I asked for:** Help planning and implementing the authentication screens for Story Shelf: Start, Log In, Sign Up, and Reset Password.
+- **What it gave back:** Flutter widget structures, navigation between the screens, reusable text fields and buttons, and Supabase authentication logic.
+- **What I kept, what I changed, and why:** I kept some of the suggested structure and the Supabase authentication approach. I changed the wording, styling, spacing, and colors, and reworked parts of the UI so it matches my Story Shelf design. I also adjusted the code where it didn't fit my existing project structure.
+- **Commit:** https://github.com/joysarmiento/story-shelf/commit/fe1109360f0a9b980be32491a41daffc23956925
+
 ## 2. Where the AI got it wrong
 
 Three cases. Be specific. If you write that the AI was never wrong, this section
