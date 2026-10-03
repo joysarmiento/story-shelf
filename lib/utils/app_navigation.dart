@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../screens/home_screen.dart';
 import '../screens/library_screen.dart';
+import '../screens/memories_screen.dart';
 
 class AppTab {
   AppTab._();
@@ -22,6 +23,8 @@ void navigateToTab(
   final Widget? screen = switch (index) {
     AppTab.home => const HomeScreen(),
     AppTab.library => const LibraryScreen(),
+    AppTab.memories => const MemoriesScreen(),
+
     _ => null,
   };
 
