@@ -4,16 +4,10 @@ import '../models/story.dart';
 import '../theme/app_theme.dart';
 
 class StoryPosterCard extends StatelessWidget {
-  const StoryPosterCard({
-    super.key,
-    required this.story,
-    required this.onTap,
-    this.overlayColor,
-  });
+  const StoryPosterCard({super.key, required this.story, required this.onTap});
 
   final Story story;
   final VoidCallback onTap;
-  final Color? overlayColor;
 
   Color _fallbackColor() {
     const palette = [
@@ -31,7 +25,7 @@ class StoryPosterCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AspectRatio(
-        aspectRatio: 2 / 3,
+        aspectRatio: AppTheme.storyCardAspectRatio,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
           child: Stack(
@@ -57,8 +51,11 @@ class StoryPosterCard extends StatelessWidget {
                     ),
                   ),
                 ),
-              if (overlayColor != null)
-                DecoratedBox(decoration: BoxDecoration(color: overlayColor)),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: AppTheme.storyTintBeige.withValues(alpha: 0.15),
+                ),
+              ),
               const DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(

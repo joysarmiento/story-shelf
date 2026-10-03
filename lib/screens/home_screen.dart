@@ -81,43 +81,35 @@ class HomeScreen extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: AppTheme.spaceMd),
-                SizedBox(
-                  height: 160,
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final visibleStories = continueStories.take(3).toList();
-                      final count = visibleStories.length;
-                      if (count == 0) {
-                        return const SizedBox.shrink();
-                      }
-                      final totalGap = AppTheme.spaceSm * (count - 1);
-                      final cardWidth =
-                          (constraints.maxWidth - totalGap) / count;
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          for (final story in visibleStories)
-                            SizedBox(
-                              width: cardWidth,
-                              child: StoryPosterCard(
-                                story: story,
-                                overlayColor: AppTheme.storyTintBeige
-                                    .withValues(alpha: 0.15),
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          StoryDetailsScreen(storyId: story.id),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                        ],
-                      );
-                    },
+                // Same grid settings as the Library screen, so the cards are
+                // exactly the same size on both screens.
+                GridView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: AppTheme.spaceSm,
+                    mainAxisSpacing: AppTheme.spaceSm,
+                    childAspectRatio: AppTheme.storyCardAspectRatio,
                   ),
+                  itemCount: continueStories.take(3).length,
+                  itemBuilder: (context, index) {
+                    final story = continueStories[index];
+                    return StoryPosterCard(
+                      story: story,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                StoryDetailsScreen(storyId: story.id),
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
+
                 const SizedBox(height: AppTheme.spaceSectionGap),
                 SectionHeader(
                   title: 'Recent memories',

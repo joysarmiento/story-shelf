@@ -399,7 +399,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                 crossAxisCount: 3,
                                 crossAxisSpacing: AppTheme.spaceSm,
                                 mainAxisSpacing: AppTheme.spaceSm,
-                                childAspectRatio: 2 / 3,
+                                childAspectRatio: AppTheme.storyCardAspectRatio,
                               ),
                           itemCount: stories.length,
                           itemBuilder: (context, index) {

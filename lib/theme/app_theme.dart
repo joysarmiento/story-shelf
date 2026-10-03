@@ -23,6 +23,8 @@ class AppTheme {
   static const double spaceListGap = 12;
   static const double spaceSectionGap = 32;
 
+  static const double storyCardAspectRatio = 7 / 10;
+
   static ThemeData get themeData {
     return ThemeData(
       useMaterial3: true,
