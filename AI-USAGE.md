@@ -21,11 +21,12 @@ At least six entries. One per real use. Every entry needs a commit link.
 
 
 ### 2026-09-23 - Planning and building the authentication screens
+> **Note:** I started this log late. I reconstructed these entries on 2026-10-03 from my commit history and my chat history. Entry dates are the dates of the commits where the work landed, and each entry describes something I really did.
 
 - **Tool:** Claude
 - **What I asked for:** Help planning and implementing the authentication screens for Story Shelf: Start, Log In, Sign Up, and Reset Password.
 - **What it gave back:** Flutter widget structures, navigation between the screens, reusable text fields and buttons, and Supabase authentication logic.
-- **What I kept, what I changed, and why:** I kept some of the suggested structure and the Supabase authentication approach. I changed the wording, styling, spacing, and colors, and reworked parts of the UI so it matches my Story Shelf design. I also adjusted the code where it didn't fit my existing project structure.
+- **What I kept, what I changed, and why:** I kept some of the suggested structure and the overall Supabase authentication approach. I changed the wording, font sizes, content, and mainly the UI of every screen so it matches my Story Shelf design. The suggested styling didn't fit my project, so I wrote `app_theme` myself, with only a little help from online sources, and it became the file I rewrote the most. The font also didn't fit: I added my own chosen font and my own logo instead of the defaults. I haven't changed the Supabase logic itself. I only set up my own Supabase project and added the `.env` file with my own keys.
 - **Commit:** https://github.com/joysarmiento/story-shelf/commit/fe1109360f0a9b980be32491a41daffc23956925
 
 ## 2. Where the AI got it wrong
