@@ -40,7 +40,7 @@ class AppTheme {
       textTheme: TextTheme(
         headlineSmall: GoogleFonts.montserrat(
           fontSize: 26,
-          fontWeight: FontWeight.w700, // bold
+          fontWeight: FontWeight.w700,
           color: primary,
         ),
         titleMedium: GoogleFonts.montserrat(
@@ -50,7 +50,7 @@ class AppTheme {
         ),
         bodyMedium: GoogleFonts.montserrat(
           fontSize: 15,
-          fontWeight: FontWeight.w600, // medium
+          fontWeight: FontWeight.w600,
           color: onSurface,
         ),
         bodySmall: GoogleFonts.montserrat(

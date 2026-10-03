@@ -128,6 +128,10 @@ class _StoryFormState extends State<StoryForm> {
             dateAdded: DateTime.now(),
           );
 
+      final newProgress =
+          double.tryParse(_currentProgressController.text.trim()) ?? 0;
+      final progressChanged = newProgress != base.currentProgress;
+
       final story = base.copyWith(
         title: _titleController.text.trim(),
         creator: _creatorController.text.trim().isEmpty
@@ -138,9 +142,10 @@ class _StoryFormState extends State<StoryForm> {
         status: _status,
         coverPath: _coverPath,
         rating: _rating == 0 ? null : _rating,
-        currentProgress:
-            double.tryParse(_currentProgressController.text.trim()) ?? 0,
+        currentProgress: newProgress,
         totalProgress: double.tryParse(_totalProgressController.text.trim()),
+        // Only moves when progress changes; otherwise copyWith keeps the old value.
+        lastReadAt: progressChanged ? DateTime.now() : null,
       );
 
       await widget.onSubmit(story);

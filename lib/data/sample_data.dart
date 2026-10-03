@@ -14,6 +14,7 @@ final sampleStories = <Story>[
     currentProgress: 120,
     totalProgress: 200,
     dateAdded: DateTime(2025, 3, 1),
+    lastReadAt: DateTime(2026, 9, 28),
   ),
   Story(
     id: '2',
@@ -27,6 +28,7 @@ final sampleStories = <Story>[
     currentProgress: 12,
     totalProgress: 16,
     dateAdded: DateTime(2025, 4, 1),
+    lastReadAt: DateTime(2026, 9, 30),
   ),
   Story(
     id: '3',
@@ -39,6 +41,7 @@ final sampleStories = <Story>[
     currentProgress: 1,
     totalProgress: 2,
     dateAdded: DateTime(2025, 4, 5),
+    lastReadAt: DateTime(2026, 9, 12),
   ),
   Story(
     id: '4',
@@ -52,6 +55,7 @@ final sampleStories = <Story>[
     currentProgress: 1,
     totalProgress: 1,
     dateAdded: DateTime(2024, 1, 20),
+    lastReadAt: DateTime(2024, 1, 23),
   ),
   Story(
     id: '5',
@@ -65,6 +69,7 @@ final sampleStories = <Story>[
     currentProgress: 40,
     totalProgress: 90,
     dateAdded: DateTime(2020, 8, 10),
+    lastReadAt: DateTime(2026, 8, 3),
   ),
   Story(
     id: '6',
@@ -77,6 +82,7 @@ final sampleStories = <Story>[
     currentProgress: 1,
     totalProgress: 1,
     dateAdded: DateTime(2023, 6, 2),
+    lastReadAt: DateTime(2023, 6, 2),
   ),
   Story(
     id: '7',
@@ -89,6 +95,7 @@ final sampleStories = <Story>[
     currentProgress: 200,
     totalProgress: 402,
     dateAdded: DateTime(2024, 11, 1),
+    lastReadAt: DateTime(2026, 9, 1),
   ),
   Story(
     id: '8',
@@ -114,6 +121,7 @@ final sampleStories = <Story>[
     currentProgress: 16,
     totalProgress: 16,
     dateAdded: DateTime(2024, 8, 9),
+    lastReadAt: DateTime(2024, 9, 20),
   ),
   Story(
     id: '10',
@@ -126,6 +134,7 @@ final sampleStories = <Story>[
     currentProgress: 87,
     totalProgress: 87,
     dateAdded: DateTime(2023, 2, 1),
+    lastReadAt: DateTime(2023, 5, 14),
   ),
 ];
 

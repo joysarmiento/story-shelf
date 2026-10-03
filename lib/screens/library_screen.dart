@@ -12,6 +12,8 @@ import '../widgets/story_poster_card.dart';
 import 'add_story_screen.dart';
 import 'story_details_screen.dart';
 
+enum _LibrarySort { alphabetical, latestRead }
+
 class LibraryScreen extends StatefulWidget {
   const LibraryScreen({super.key});
 
@@ -22,6 +24,7 @@ class LibraryScreen extends StatefulWidget {
 class _LibraryScreenState extends State<LibraryScreen> {
   Medium? _selectedMedium;
   StoryStatus? _selectedStatus;
+  _LibrarySort? _selectedSort;
   bool _favoritesOnly = false;
   final _searchController = TextEditingController();
   String _query = '';
@@ -61,8 +64,30 @@ class _LibraryScreenState extends State<LibraryScreen> {
     }).toList();
   }
 
-  Future<void> _openStatusFilter() async {
-    final choice = await showModalBottomSheet<_StatusChoice>(
+  List<Story> _sorted(List<Story> stories) {
+    switch (_selectedSort) {
+      case _LibrarySort.alphabetical:
+        return [...stories]..sort(
+          (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+        );
+      case _LibrarySort.latestRead:
+        return [...stories]..sort((a, b) {
+          final aRead = a.lastReadAt;
+          final bRead = b.lastReadAt;
+          if (aRead == null && bRead == null) {
+            return b.dateAdded.compareTo(a.dateAdded);
+          }
+          if (aRead == null) return 1;
+          if (bRead == null) return -1;
+          return bRead.compareTo(aRead);
+        });
+      case null:
+        return stories;
+    }
+  }
+
+  Future<void> _openFilterSort() async {
+    final choice = await showModalBottomSheet<_FilterSortChoice>(
       context: context,
       backgroundColor: AppTheme.surface,
       shape: const RoundedRectangleBorder(
@@ -71,36 +96,106 @@ class _LibraryScreenState extends State<LibraryScreen> {
       builder: (context) {
         final theme = Theme.of(context);
         return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.spaceMd,
-              vertical: AppTheme.spaceMd,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Filter by status',
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    color: AppTheme.error,
+          child: DefaultTabController(
+            length: 2,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTheme.spaceMd,
+                vertical: AppTheme.spaceMd,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TabBar(
+                    labelColor: AppTheme.error,
+                    unselectedLabelColor: AppTheme.onSurface,
+                    indicatorColor: AppTheme.error,
+                    dividerColor: AppTheme.secondary.withValues(alpha: 0.4),
+                    labelStyle: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    unselectedLabelStyle: theme.textTheme.bodyMedium,
+                    tabs: const [
+                      Tab(text: 'Filter'),
+                      Tab(text: 'Sort'),
+                    ],
                   ),
-                ),
-                const SizedBox(height: AppTheme.spaceMd),
-                _StatusOption(
-                  label: 'All',
-                  selected: _selectedStatus == null,
-                  onTap: () =>
-                      Navigator.of(context).pop(const _StatusChoice(null)),
-                ),
-                for (final status in StoryStatus.values)
-                  _StatusOption(
-                    label: status.label,
-                    selected: _selectedStatus == status,
-                    onTap: () =>
-                        Navigator.of(context).pop(_StatusChoice(status)),
+                  const SizedBox(height: AppTheme.spaceMd),
+                  SizedBox(
+                    height: 300,
+                    child: TabBarView(
+                      children: [
+                        // Filter tab (unchanged from before).
+                        ListView(
+                          padding: EdgeInsets.zero,
+                          children: [
+                            Text(
+                              'Filter by status',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: AppTheme.error,
+                              ),
+                            ),
+                            const SizedBox(height: AppTheme.spaceMd),
+                            _StatusOption(
+                              label: 'All',
+                              selected: _selectedStatus == null,
+                              onTap: () => Navigator.of(
+                                context,
+                              ).pop(_FilterSortChoice(null, _selectedSort)),
+                            ),
+                            for (final status in StoryStatus.values)
+                              _StatusOption(
+                                label: status.label,
+                                selected: _selectedStatus == status,
+                                onTap: () => Navigator.of(
+                                  context,
+                                ).pop(_FilterSortChoice(status, _selectedSort)),
+                              ),
+                          ],
+                        ),
+                        ListView(
+                          padding: EdgeInsets.zero,
+                          children: [
+                            Text(
+                              'Sort by',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: AppTheme.error,
+                              ),
+                            ),
+                            const SizedBox(height: AppTheme.spaceMd),
+                            _StatusOption(
+                              label: 'Alphabetical (A-Z)',
+                              selected:
+                                  _selectedSort == _LibrarySort.alphabetical,
+                              onTap: () => Navigator.of(context).pop(
+                                _FilterSortChoice(
+                                  _selectedStatus,
+                                  _selectedSort == _LibrarySort.alphabetical
+                                      ? null
+                                      : _LibrarySort.alphabetical,
+                                ),
+                              ),
+                            ),
+                            _StatusOption(
+                              label: 'Latest read',
+                              selected:
+                                  _selectedSort == _LibrarySort.latestRead,
+                              onTap: () => Navigator.of(context).pop(
+                                _FilterSortChoice(
+                                  _selectedStatus,
+                                  _selectedSort == _LibrarySort.latestRead
+                                      ? null
+                                      : _LibrarySort.latestRead,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-              ],
+                ],
+              ),
             ),
           ),
         );
@@ -108,13 +203,16 @@ class _LibraryScreenState extends State<LibraryScreen> {
     );
 
     if (choice == null || !mounted) return;
-    setState(() => _selectedStatus = choice.status);
+    setState(() {
+      _selectedStatus = choice.status;
+      _selectedSort = choice.sort;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final stories = _filteredStories;
+    final stories = _sorted(_filteredStories);
 
     return Scaffold(
       backgroundColor: AppTheme.surface,
@@ -224,10 +322,11 @@ class _LibraryScreenState extends State<LibraryScreen> {
                         ),
                       ),
                       IconButton(
-                        onPressed: _openStatusFilter,
+                        onPressed: _openFilterSort,
                         icon: Icon(
                           Icons.filter_list,
-                          color: _selectedStatus != null
+                          color:
+                              (_selectedStatus != null || _selectedSort != null)
                               ? AppTheme.error
                               : AppTheme.secondary,
                         ),
@@ -363,9 +462,10 @@ class _LibraryScreenState extends State<LibraryScreen> {
   }
 }
 
-class _StatusChoice {
-  const _StatusChoice(this.status);
+class _FilterSortChoice {
+  const _FilterSortChoice(this.status, this.sort);
   final StoryStatus? status;
+  final _LibrarySort? sort;
 }
 
 class _StatusOption extends StatelessWidget {

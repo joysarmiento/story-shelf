@@ -59,6 +59,7 @@ class Story {
     this.isFavorite = false,
     this.overview,
     required this.dateAdded,
+    this.lastReadAt,
   });
 
   final String id;
@@ -78,6 +79,7 @@ class Story {
   final bool isFavorite;
   final String? overview;
   final DateTime dateAdded;
+  final DateTime? lastReadAt;
 
   double get progressFraction {
     if (totalProgress == null || totalProgress == 0) return 0;
@@ -96,6 +98,7 @@ class Story {
     double? rating,
     bool? isFavorite,
     String? overview,
+    DateTime? lastReadAt,
   }) {
     return Story(
       id: id,
@@ -112,6 +115,7 @@ class Story {
       isFavorite: isFavorite ?? this.isFavorite,
       overview: overview ?? this.overview,
       dateAdded: dateAdded,
+      lastReadAt: lastReadAt ?? this.lastReadAt,
     );
   }
 
@@ -131,6 +135,9 @@ class Story {
       isFavorite: json['favorite'] as bool? ?? false,
       overview: json['overview'] as String?,
       dateAdded: DateTime.parse(json['date_added'] as String),
+      lastReadAt: json['last_read_at'] != null
+          ? DateTime.parse(json['last_read_at'] as String)
+          : null,
     );
   }
 
