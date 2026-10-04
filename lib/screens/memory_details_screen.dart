@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../data/sample_data.dart';
+import '../services/supabase_service.dart';
 import '../models/memory.dart';
 import '../models/story.dart';
 import '../theme/app_theme.dart';
@@ -19,19 +19,74 @@ class MemoryDetailsScreen extends StatefulWidget {
 }
 
 class _MemoryDetailsScreenState extends State<MemoryDetailsScreen> {
-  Memory? get _memory {
-    // TODO: replace with a SupabaseService memory fetch once it exists.
-    for (final m in sampleMemories) {
-      if (m.id == widget.memoryId) return m;
+  Memory? _memory;
+  int? _releaseYear;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final memory = await SupabaseService.instance.getMemory(widget.memoryId);
+      final story = memory == null
+          ? null
+          : await SupabaseService.instance.getStory(memory.storyId);
+      if (!mounted) return;
+      setState(() {
+        _memory = memory;
+        _releaseYear = story?.releaseYear;
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _loading = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not load memory: $e')));
     }
-    return null;
   }
 
   Future<void> _openEdit(Memory memory) async {
     await Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => EditMemoryScreen(memory: memory)));
-    if (mounted) setState(() {});
+    if (mounted) _load();
+  }
+
+  Future<void> _confirmDelete(Memory memory) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete this memory?'),
+        content: const Text('This memory will be permanently deleted.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text('Delete', style: TextStyle(color: AppTheme.error)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    try {
+      await SupabaseService.instance.deleteMemory(memory.id);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not delete memory: $e')));
+      return;
+    }
+    if (!mounted) return;
+    Navigator.of(context).pop();
   }
 
   @override
@@ -39,6 +94,12 @@ class _MemoryDetailsScreenState extends State<MemoryDetailsScreen> {
     final theme = Theme.of(context);
     final memory = _memory;
 
+    if (_loading) {
+      return const Scaffold(
+        backgroundColor: AppTheme.surface,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     if (memory == null) {
       return Scaffold(
         backgroundColor: AppTheme.surface,
@@ -58,19 +119,34 @@ class _MemoryDetailsScreenState extends State<MemoryDetailsScreen> {
           ListView(
             padding: const EdgeInsets.only(bottom: 96),
             children: [
-              _Banner(memory: memory),
+              _Banner(memory: memory, releaseYear: _releaseYear),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppTheme.spaceMd,
                 ),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: media.size.height * 0.5,
-                  ),
-                  child: _MemoryCard(
-                    memory: memory,
-                    onEdit: () => _openEdit(memory),
-                  ),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 35),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: media.size.height * 0.55,
+                      ),
+                      child: _MemoryCard(
+                        memory: memory,
+                        onEdit: () => _openEdit(memory),
+                      ),
+                    ),
+                    TextButton.icon(
+                      onPressed: () => _confirmDelete(memory),
+                      icon: Icon(Icons.delete_outline, color: AppTheme.error),
+                      label: Text(
+                        'Delete memory',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: AppTheme.error,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -186,124 +262,123 @@ class _MemoryCard extends StatelessWidget {
 }
 
 class _Banner extends StatelessWidget {
-  const _Banner({required this.memory});
+  const _Banner({required this.memory, this.releaseYear});
 
   final Memory memory;
+  final int? releaseYear;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final topInset = MediaQuery.of(context).padding.top;
     final cover = memory.storyCoverPath;
     final meta = [
       if (memory.storyCreator != null) memory.storyCreator!,
-      _releaseYear(),
-    ].whereType<String>().join(' • ');
+      if (releaseYear != null) releaseYear.toString(),
+    ].join(' • ');
 
-    return SizedBox(
-      height: 240,
-      width: double.infinity,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          cover != null
-              ? Image.network(
-                  cover,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) =>
-                      Container(color: AppTheme.secondary),
-                )
-              : Container(color: AppTheme.secondary),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: 150,
-            child: IgnorePointer(
-              child: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color.fromARGB(0, 251, 249, 236),
-                      AppTheme.surface,
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        SizedBox(
+          height: 200,
+          width: double.infinity,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              cover != null
+                  ? Image.network(
+                      cover,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) =>
+                          Container(color: AppTheme.secondary),
+                    )
+                  : Container(color: AppTheme.secondary),
+              Positioned(
+                bottom: -2,
+                left: 0,
+                right: 0,
+                height: 112,
+                child: IgnorePointer(
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color.fromARGB(0, 251, 249, 236),
+                          AppTheme.surface,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: AppTheme.spaceMd + topInset,
+                left: AppTheme.spaceMd,
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.chevron_left, color: AppTheme.onPrimary),
+                      Text('Back', style: TextStyle(color: AppTheme.onPrimary)),
                     ],
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-          SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: const EdgeInsets.all(AppTheme.spaceMd),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.chevron_left, color: AppTheme.onPrimary),
-                        Text(
-                          'Back',
-                          style: TextStyle(color: AppTheme.onPrimary),
-                        ),
-                      ],
+        ),
+        Positioned(
+          left: AppTheme.spaceMd,
+          right: AppTheme.spaceMd,
+          bottom: -10,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (memory.storyMedium != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppTheme.secondary,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppTheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
-                  const Spacer(),
-                  if (memory.storyMedium != null)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppTheme.secondary,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: AppTheme.onSurface.withValues(alpha: 0.5),
-                        ),
-                      ),
-                      child: Text(
-                        memory.storyMedium!.label,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: AppTheme.onPrimary,
-                        ),
-                      ),
-                    ),
-                  const SizedBox(height: AppTheme.spaceXs),
-                  Text(
-                    memory.storyTitle ?? 'Untitled story',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      color: AppTheme.error,
-                      fontSize: 20,
+                  child: Text(
+                    memory.storyMedium!.label,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: AppTheme.onPrimary,
                     ),
                   ),
-                  if (meta.isNotEmpty)
-                    Text(
-                      meta,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.secondary,
-                      ),
-                    ),
-                ],
+                ),
+              const SizedBox(height: AppTheme.spaceXs),
+              Text(
+                memory.storyTitle ?? 'Untitled story',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  color: AppTheme.error,
+                  fontSize: 20,
+                ),
               ),
-            ),
+              if (meta.isNotEmpty)
+                Text(
+                  meta,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppTheme.secondary,
+                  ),
+                ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
-  }
-
-  String? _releaseYear() {
-    for (final Story s in sampleStories) {
-      if (s.id == memory.storyId) return s.releaseYear?.toString();
-    }
-    return null;
   }
 }

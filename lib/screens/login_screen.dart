@@ -142,24 +142,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: _handleLogin,
                 ),
                 const SizedBox(height: AppTheme.spaceLg),
-                Center(
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (_) => const HomeScreen()),
-                      );
-                    },
-                    // added for easier viewing of changes during development, will remove this in production
-                    child: Text(
-                      'Skip login (dev)',
-                      style: TextStyle(
-                        color: AppTheme.error,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AppTheme.spaceLg),
                 Padding(
                   padding: const EdgeInsets.only(bottom: AppTheme.spaceLg),
                   child: GestureDetector(

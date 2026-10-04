@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../data/sample_data.dart';
+import '../services/supabase_service.dart';
 import '../models/memory.dart';
 import '../models/story.dart';
 import '../theme/app_theme.dart';
@@ -44,41 +44,105 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
     }
   }
 
-  Story? get _story {
-    for (final s in sampleStories) {
-      if (s.id == widget.storyId) return s;
-    }
-    return null;
+  Story? _story;
+  List<Memory> _memories = [];
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
   }
 
-  List<Memory> get _memories {
-    // TODO: replace with SupabaseService.instance
-    // .getMemoriesForStory(widget.storyId) once Add Memory exists and the
-    // memories table has real rows to read.
-    return sampleMemories.where((m) => m.storyId == widget.storyId).toList();
+  Future<void> _load() async {
+    try {
+      final story = await SupabaseService.instance.getStory(widget.storyId);
+      final memories = await SupabaseService.instance.getMemoriesForStory(
+        widget.storyId,
+      );
+      if (!mounted) return;
+      setState(() {
+        _story = story;
+        _memories = memories;
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _loading = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not load story: $e')));
+    }
   }
 
   Future<void> _openEdit(Story story) async {
     await Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => EditStoryScreen(story: story)));
-    if (mounted) setState(() {});
+    if (mounted) _load();
   }
 
-  void _toggleFavorite() {
-    final index = sampleStories.indexWhere((s) => s.id == widget.storyId);
-    if (index == -1) return;
-    setState(() {
-      sampleStories[index] = sampleStories[index].copyWith(
-        isFavorite: !sampleStories[index].isFavorite,
-      );
-    });
+  Future<void> _toggleFavorite() async {
+    final story = _story;
+    if (story == null) return;
+    final updated = story.copyWith(isFavorite: !story.isFavorite);
+    setState(() => _story = updated);
+    try {
+      await SupabaseService.instance.updateStory(updated);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _story = story);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not update favorite: $e')));
+    }
+  }
+
+  Future<void> _confirmDelete(Story story) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete this story?'),
+        content: Text(
+          '"${story.title}" and all of its memories will be permanently deleted.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text('Delete', style: TextStyle(color: AppTheme.error)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    try {
+      await SupabaseService.instance.deleteStory(story.id);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not delete story: $e')));
+      return;
+    }
+    if (!mounted) return;
+    Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final story = _story;
+    if (_loading) {
+      return const Scaffold(
+        backgroundColor: AppTheme.surface,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     if (story == null) {
       return Scaffold(
         backgroundColor: AppTheme.surface,
@@ -245,7 +309,7 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
                                 builder: (_) => AddMemoryScreen(story: story),
                               ),
                             );
-                            if (mounted) setState(() {});
+                            if (mounted) _load();
                           },
                           child: Text(
                             '+ add',
@@ -268,7 +332,7 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
                                   MemoryDetailsScreen(memoryId: memory.id),
                             ),
                           );
-                          if (mounted) setState(() {});
+                          if (mounted) _load();
                         },
                         child: _StoryMemoryTile(memory: memory),
                       ),
@@ -289,6 +353,19 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
                           horizontal: AppTheme.spaceMd,
                         ),
                       ),
+                    const SizedBox(height: AppTheme.spaceSectionGap),
+                    Center(
+                      child: TextButton.icon(
+                        onPressed: () => _confirmDelete(story),
+                        icon: Icon(Icons.delete_outline, color: AppTheme.error),
+                        label: Text(
+                          'Delete story',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: AppTheme.error,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

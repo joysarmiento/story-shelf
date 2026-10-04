@@ -187,4 +187,24 @@ class SupabaseService {
   Future<void> deleteMemory(String memoryId) async {
     await _client.from('memories').delete().eq('memory_id', memoryId);
   }
+
+  Future<Story?> getStory(String storyId) async {
+    final row = await _client
+        .from('stories')
+        .select()
+        .eq('story_id', storyId)
+        .maybeSingle();
+    return row == null ? null : Story.fromJson(row);
+  }
+
+  Future<Memory?> getMemory(String memoryId) async {
+    final row = await _client
+        .from('memories')
+        .select(
+          '*, stories(title, cover_image_or_color, creator_author, medium)',
+        )
+        .eq('memory_id', memoryId)
+        .maybeSingle();
+    return row == null ? null : Memory.fromJson(row);
+  }
 }

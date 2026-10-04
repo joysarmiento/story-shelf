@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../data/sample_data.dart';
 import '../models/story.dart';
+import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/memory_form.dart';
 
@@ -19,9 +19,15 @@ class AddMemoryScreen extends StatelessWidget {
         submitLabel: 'Save Memory',
         story: story,
         onSubmit: (memory) async {
-          // TODO: replace with SupabaseService.instance.addMemory(memory)
-          // once the memories table is wired up.
-          sampleMemories.insert(0, memory);
+          try {
+            await SupabaseService.instance.addMemory(memory);
+          } catch (e) {
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Could not save memory: $e')),
+            );
+            return;
+          }
           if (!context.mounted) return;
           Navigator.of(context).pop(memory);
         },

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../data/sample_data.dart';
 import '../models/story.dart';
+import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/story_form.dart';
 
@@ -19,10 +19,15 @@ class EditStoryScreen extends StatelessWidget {
         submitLabel: 'Save Story Edits',
         initialStory: story,
         onSubmit: (updated) async {
-          // TODO: replace with SupabaseService.instance.updateStory(updated)
-          // once the stories table exists.
-          final index = sampleStories.indexWhere((s) => s.id == updated.id);
-          if (index != -1) sampleStories[index] = updated;
+          try {
+            await SupabaseService.instance.updateStory(updated);
+          } catch (e) {
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Could not save changes: $e')),
+            );
+            return;
+          }
           if (!context.mounted) return;
           Navigator.of(context).pop(updated);
         },

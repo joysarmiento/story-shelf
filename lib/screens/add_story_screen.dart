@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../data/sample_data.dart';
+import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/story_form.dart';
 import 'story_details_screen.dart';
@@ -16,9 +16,15 @@ class AddStoryScreen extends StatelessWidget {
         headingText: 'Add Story',
         submitLabel: 'Save Story',
         onSubmit: (story) async {
-          // TODO: replace with SupabaseService.instance.addStory(story)
-          // once the stories table exists.
-          sampleStories.add(story);
+          try {
+            await SupabaseService.instance.addStory(story);
+          } catch (e) {
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('Could not save story: $e')));
+            return;
+          }
           if (!context.mounted) return;
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(

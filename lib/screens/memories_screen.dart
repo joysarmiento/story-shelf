@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import '../data/sample_data.dart';
+import '../services/supabase_service.dart';
 import '../models/memory.dart';
 import '../models/story.dart';
 import '../theme/app_theme.dart';
@@ -58,6 +58,32 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
     Medium.tvSeries,
   ];
 
+  List<Memory> _memories = [];
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final data = await SupabaseService.instance.getAllMemoriesForUser();
+      if (!mounted) return;
+      setState(() {
+        _memories = data;
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _loading = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not load memories: $e')));
+    }
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -65,8 +91,6 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
   }
 
   List<Memory> get _filteredMemories {
-    // TODO: replace sampleMemories with SupabaseService.instance
-    // .getMemoriesForUser() once the memories table has real rows to read.
     final query = _query.trim().toLowerCase();
 
     bool matchesQuery(Memory m) {
@@ -93,7 +117,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
           m.dateCreated.isBefore(end);
     }
 
-    final memories = sampleMemories.where((memory) {
+    final memories = _memories.where((memory) {
       final matchesMedium =
           _selectedMedium == null || memory.storyMedium == _selectedMedium;
       return matchesQuery(memory) && matchesMedium && matchesDate(memory);
@@ -376,7 +400,9 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                 ),
                 const SizedBox(height: AppTheme.spaceMd),
                 Expanded(
-                  child: memories.isEmpty
+                  child: _loading
+                      ? const Center(child: CircularProgressIndicator())
+                      : memories.isEmpty
                       ? Center(
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(
@@ -422,7 +448,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                                     ),
                                   ),
                                 );
-                                if (mounted) setState(() {});
+                                if (mounted) _load();
                               },
                             );
                           },

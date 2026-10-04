@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 
-import '../data/sample_data.dart';
+import '../services/supabase_service.dart';
 import '../models/story.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_navigation.dart';
@@ -30,6 +30,32 @@ class _LibraryScreenState extends State<LibraryScreen> {
   final _searchController = TextEditingController();
   String _query = '';
 
+  List<Story> _stories = [];
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final data = await SupabaseService.instance.getStoriesForUser();
+      if (!mounted) return;
+      setState(() {
+        _stories = data;
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _loading = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not load stories: $e')));
+    }
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -48,10 +74,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
   ];
 
   List<Story> get _filteredStories {
-    // TODO: replace sampleStories with SupabaseService.instance
-    // .getStoriesForUser() once the stories table and CRUD exist.
     final query = _query.trim().toLowerCase();
-    return sampleStories.where((story) {
+    return _stories.where((story) {
       final matchesQuery =
           query.isEmpty ||
           story.title.toLowerCase().contains(query) ||
@@ -336,7 +360,11 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 Expanded(
                   child: Stack(
                     children: [
-                      if (stories.isEmpty)
+                      if (_loading)
+                        const Positioned.fill(
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      else if (stories.isEmpty)
                         Positioned.fill(
                           child: Center(
                             child: Padding(
@@ -391,7 +419,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                         ),
                                       ),
                                     )
-                                    .then((_) => setState(() {}));
+                                    .then((_) => _load());
                               },
                             );
                           },
@@ -408,7 +436,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                     builder: (_) => const AddStoryScreen(),
                                   ),
                                 )
-                                .then((_) => setState(() {}));
+                                .then((_) => _load());
                           },
                           child: const Icon(
                             Icons.add,

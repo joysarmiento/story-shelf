@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../data/sample_data.dart';
-import '../models/story.dart';
 import '../services/supabase_service.dart';
+import '../models/story.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_navigation.dart';
 import '../widgets/bottom_nav_bar.dart';
@@ -17,11 +16,41 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  List<Story> _stories = [];
+  int _memoryCount = 0;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final (stories, memories) = await (
+        SupabaseService.instance.getStoriesForUser(),
+        SupabaseService.instance.getAllMemoriesForUser(),
+      ).wait;
+      if (!mounted) return;
+      setState(() {
+        _stories = stories;
+        _memoryCount = memories.length;
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _loading = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not load stats: $e')));
+    }
+  }
+
   Future<void> _openSettings() async {
     await Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => const SettingsScreen()));
-    // Name / picture may have changed in Edit Profile.
     if (mounted) setState(() {});
   }
 
@@ -29,10 +58,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final service = SupabaseService.instance;
-
-    // TODO: replace with SupabaseService.instance.getStoriesForUser() /
-    // getMemoriesForUser() once those are wired up.
-    final stories = sampleStories;
+    final stories = _stories;
     final completed = stories
         .where((s) => s.status == StoryStatus.completed)
         .length;
@@ -93,13 +119,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 const SizedBox(height: AppTheme.spaceSectionGap),
-                _StatsCard(
-                  stories: stories.length,
-                  completed: completed,
-                  memories: sampleMemories.length,
-                ),
-                const SizedBox(height: AppTheme.spaceLg),
-                _MediumBreakdownCard(rows: rows, total: stories.length),
+                if (_loading)
+                  const Padding(
+                    padding: EdgeInsets.all(AppTheme.spaceLg),
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                else ...[
+                  _StatsCard(
+                    stories: stories.length,
+                    completed: completed,
+                    memories: _memoryCount,
+                  ),
+                  const SizedBox(height: AppTheme.spaceLg),
+                  _MediumBreakdownCard(rows: rows, total: stories.length),
+                ],
               ],
             ),
           ),
