@@ -89,8 +89,6 @@ class MemoryCard extends StatelessWidget {
                       ),
                     )
                   else
-                    // No quote: show a snippet of the note so the card is
-                    // never empty.
                     Text(
                       memory.content,
                       maxLines: 2,

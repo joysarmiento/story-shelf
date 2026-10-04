@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/memory.dart';
@@ -39,13 +41,11 @@ class SupabaseService {
 
   Future<void> signOut() async {
     await _client.auth.signOut();
-    // Preferences belong to the account, so reset them on the way out.
     AppTheme.setHighContrast(false);
     AppTheme.setTextSize(TextSize.medium);
   }
 
   // Preferences
-
   bool get highContrastPref => _meta['high_contrast'] == true;
 
   TextSize get textSizePref => TextSize.values.firstWhere(
@@ -108,19 +108,43 @@ class SupabaseService {
     return emailChanged;
   }
 
-  /// Deleting an auth user can't be done from the client with the publishable
-  /// key, so this calls a database function. Create it once in the Supabase
-  /// SQL editor (and make sure your tables use ON DELETE CASCADE):
-  ///
-  ///   create or replace function public.delete_user()
-  ///   returns void language sql security definer
-  ///   set search_path = public, auth as $$
-  ///     delete from auth.users where id = auth.uid();
-  ///   $$;
-  ///   grant execute on function public.delete_user() to authenticated;
   Future<void> deleteAccount() async {
     await _client.rpc('delete_user');
     await signOut();
+  }
+
+  // Storage
+  static const coverBucket = 'covers';
+
+  Future<String> uploadCoverImage({
+    required Uint8List bytes,
+    required String fileName,
+  }) async {
+    final userId = currentUser?.id;
+    if (userId == null) {
+      throw const AuthException('Sign in to upload a cover.');
+    }
+
+    var ext = fileName.contains('.')
+        ? fileName.split('.').last.toLowerCase()
+        : 'jpg';
+    const mimeTypes = {
+      'jpg': 'image/jpeg',
+      'jpeg': 'image/jpeg',
+      'png': 'image/png',
+      'webp': 'image/webp',
+      'gif': 'image/gif',
+    };
+    if (!mimeTypes.containsKey(ext)) ext = 'jpg';
+
+    final path = '$userId/${DateTime.now().microsecondsSinceEpoch}.$ext';
+    final bucket = _client.storage.from(coverBucket);
+    await bucket.uploadBinary(
+      path,
+      bytes,
+      fileOptions: FileOptions(contentType: mimeTypes[ext]),
+    );
+    return bucket.getPublicUrl(path);
   }
 
   Future<List<Story>> getStoriesForUser() async {

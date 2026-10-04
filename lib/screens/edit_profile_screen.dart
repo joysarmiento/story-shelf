@@ -65,7 +65,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
     );
     controller.dispose();
-    if (url == null) return; // cancelled
+    if (url == null) return;
     setState(() => _avatarUrl = url.isEmpty ? null : url);
   }
 

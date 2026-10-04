@@ -150,7 +150,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     height: 300,
                     child: TabBarView(
                       children: [
-                        // Filter tab (unchanged from before).
                         ListView(
                           padding: EdgeInsets.zero,
                           children: [

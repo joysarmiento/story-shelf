@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../services/supabase_service.dart';
 import '../models/story.dart';
@@ -51,6 +53,8 @@ class _StoryFormState extends State<StoryForm> {
   double _rating = 0;
   String? _coverPath;
   bool _isSubmitting = false;
+  bool _isUploadingCover = false;
+  final _picker = ImagePicker();
 
   @override
   void initState() {
@@ -72,9 +76,74 @@ class _StoryFormState extends State<StoryForm> {
   }
 
   Future<void> _pickCover() async {
-    // TODO: replace with a real image_picker + Supabase Storage upload once
-    // that's wired up. For now this just accepts a pasted image URL, which
-    // slots into Story.coverPath exactly the same way a real upload would.
+    final choice = await showModalBottomSheet<_CoverSource>(
+      context: context,
+      backgroundColor: AppTheme.surface,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Choose from gallery'),
+              onTap: () => Navigator.of(context).pop(_CoverSource.gallery),
+            ),
+            if (!kIsWeb)
+              ListTile(
+                leading: const Icon(Icons.photo_camera_outlined),
+                title: const Text('Take a photo'),
+                onTap: () => Navigator.of(context).pop(_CoverSource.camera),
+              ),
+            ListTile(
+              leading: const Icon(Icons.link),
+              title: const Text('Paste image URL'),
+              onTap: () => Navigator.of(context).pop(_CoverSource.url),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    switch (choice) {
+      case _CoverSource.gallery:
+        await _uploadCover(ImageSource.gallery);
+      case _CoverSource.camera:
+        await _uploadCover(ImageSource.camera);
+      case _CoverSource.url:
+        await _askForCoverUrl();
+      case null:
+        break;
+    }
+  }
+
+  Future<void> _uploadCover(ImageSource source) async {
+    try {
+      final picked = await _picker.pickImage(
+        source: source,
+        maxWidth: 1200,
+        imageQuality: 85,
+      );
+      if (picked == null) return;
+
+      setState(() => _isUploadingCover = true);
+      final url = await SupabaseService.instance.uploadCoverImage(
+        bytes: await picked.readAsBytes(),
+        fileName: picked.name,
+      );
+      if (!mounted) return;
+      setState(() => _coverPath = url);
+    } catch (e) {
+      debugPrint('Cover upload failed: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Couldn't upload that cover. Try again.")),
+      );
+    } finally {
+      if (mounted) setState(() => _isUploadingCover = false);
+    }
+  }
+
+  Future<void> _askForCoverUrl() async {
     final controller = TextEditingController(text: _coverPath);
     final url = await showDialog<String>(
       context: context,
@@ -101,6 +170,7 @@ class _StoryFormState extends State<StoryForm> {
         ],
       ),
     );
+    controller.dispose();
     if (url != null && url.isNotEmpty) {
       setState(() => _coverPath = url);
     }
@@ -144,7 +214,6 @@ class _StoryFormState extends State<StoryForm> {
         rating: _rating == 0 ? null : _rating,
         currentProgress: newProgress,
         totalProgress: double.tryParse(_totalProgressController.text.trim()),
-        // Only moves when progress changes; otherwise copyWith keeps the old value.
         lastReadAt: progressChanged ? DateTime.now() : null,
       );
 
@@ -178,7 +247,7 @@ class _StoryFormState extends State<StoryForm> {
               _FieldLabel('Cover'),
               const SizedBox(height: AppTheme.spaceSm),
               GestureDetector(
-                onTap: _pickCover,
+                onTap: _isUploadingCover ? null : _pickCover,
                 child: Container(
                   height: 140,
                   width: double.infinity,
@@ -193,7 +262,9 @@ class _StoryFormState extends State<StoryForm> {
                           ),
                   ),
                   alignment: Alignment.center,
-                  child: _coverPath != null
+                  child: _isUploadingCover
+                      ? const CircularProgressIndicator()
+                      : _coverPath != null
                       ? null
                       : Column(
                           mainAxisSize: MainAxisSize.min,
@@ -338,6 +409,8 @@ class _StoryFormState extends State<StoryForm> {
     );
   }
 }
+
+enum _CoverSource { gallery, camera, url }
 
 class _FieldLabel extends StatelessWidget {
   const _FieldLabel(this.text);

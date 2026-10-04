@@ -18,7 +18,6 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Future<void> _setContrast(BuildContext context, bool value) async {
-    // Apply immediately, then save to the account in the background.
     AppTheme.setHighContrast(value);
     try {
       await SupabaseService.instance.saveHighContrast(value);
@@ -35,7 +34,6 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Future<void> _setTextSize(BuildContext context, TextSize value) async {
-    // Apply immediately, then save to the account in the background.
     AppTheme.setTextSize(value);
     try {
       await SupabaseService.instance.saveTextSize(value);
@@ -298,7 +296,6 @@ class _SettingsTile extends StatelessWidget {
   }
 }
 
-/// "Text Size" row with three pill options underneath the label.
 class _TextSizeTile extends StatelessWidget {
   const _TextSizeTile({required this.selected, required this.onChanged});
 

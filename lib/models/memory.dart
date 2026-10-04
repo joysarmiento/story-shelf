@@ -51,7 +51,6 @@ class Memory {
   final String? storyCreator;
   final Medium? storyMedium;
 
-  /// The memory's own title, or null when the user left it blank.
   String? get cleanTitle {
     final t = title?.trim();
     return (t == null || t.isEmpty) ? null : t;
