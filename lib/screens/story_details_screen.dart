@@ -80,212 +80,205 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
       backgroundColor: AppTheme.surface,
       body: Stack(
         children: [
-          SafeArea(
-            bottom: false,
-            child: ListView(
-              padding: const EdgeInsets.only(bottom: 96),
-              children: [
-                _Banner(
-                  story: story,
-                  isFavorite: story.isFavorite,
-                  onToggleFavorite: _toggleFavorite,
+          ListView(
+            padding: const EdgeInsets.only(bottom: 96),
+            children: [
+              _Banner(
+                story: story,
+                isFavorite: story.isFavorite,
+                onToggleFavorite: _toggleFavorite,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spaceMd,
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.spaceMd,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 76),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(AppTheme.spaceMd),
-                        decoration: BoxDecoration(
-                          color: AppTheme.surfaceVariant,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: AppTheme.secondary.withValues(alpha: 0.3),
-                            width: 1.5,
-                          ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 76),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(AppTheme.spaceMd),
+                      decoration: BoxDecoration(
+                        color: AppTheme.surfaceVariant,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: AppTheme.secondary.withValues(alpha: 0.3),
+                          width: 1.5,
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'STATUS',
-                                        style: theme.textTheme.bodySmall,
-                                      ),
-                                      Text(
-                                        _statusDisplayLabel(
-                                          story.status,
-                                          story.medium,
-                                        ),
-                                        style: theme.textTheme.bodyMedium
-                                            ?.copyWith(
-                                              color: AppTheme.onSurface,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'RATING',
+                                      'STATUS',
                                       style: theme.textTheme.bodySmall,
                                     ),
-                                    _StaticStars(rating: story.rating ?? 0),
+                                    Text(
+                                      _statusDisplayLabel(
+                                        story.status,
+                                        story.medium,
+                                      ),
+                                      style: theme.textTheme.bodyMedium
+                                          ?.copyWith(color: AppTheme.onSurface),
+                                    ),
                                   ],
+                                ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    'RATING',
+                                    style: theme.textTheme.bodySmall,
+                                  ),
+                                  _StaticStars(rating: story.rating ?? 0),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: AppTheme.spaceMd),
+                          if (story.totalProgress != null) ...[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '$unit ${story.currentProgress.toInt()} of '
+                                  '${story.totalProgress!.toInt()}',
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: AppTheme.onSurface,
+                                  ),
+                                ),
+                                Text(
+                                  '$percent%',
+                                  style: theme.textTheme.bodyMedium,
                                 ),
                               ],
                             ),
+                            const SizedBox(height: AppTheme.spaceXs),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: LinearProgressIndicator(
+                                value: story.progressFraction,
+                                minHeight: 8,
+                                backgroundColor: AppTheme.surface,
+                                valueColor: const AlwaysStoppedAnimation(
+                                  AppTheme.onSurface,
+                                ),
+                              ),
+                            ),
                             const SizedBox(height: AppTheme.spaceMd),
-                            if (story.totalProgress != null) ...[
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    '$unit ${story.currentProgress.toInt()} of '
-                                    '${story.totalProgress!.toInt()}',
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: AppTheme.onSurface,
-                                    ),
-                                  ),
-                                  Text(
-                                    '$percent%',
-                                    style: theme.textTheme.bodyMedium,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: AppTheme.spaceXs),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: LinearProgressIndicator(
-                                  value: story.progressFraction,
-                                  minHeight: 8,
-                                  backgroundColor: AppTheme.surface,
-                                  valueColor: const AlwaysStoppedAnimation(
-                                    AppTheme.onSurface,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: AppTheme.spaceMd),
-                            ],
-                            SizedBox(
-                              width: double.infinity,
-                              height: 48,
-                              child: FilledButton(
-                                onPressed: _openEdit,
-                                style: FilledButton.styleFrom(
-                                  backgroundColor: AppTheme.primary,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
-                                ),
-                                child: Text(
-                                  'Update',
-                                  style: theme.textTheme.titleMedium,
-                                ),
-                              ),
-                            ),
                           ],
-                        ),
-                      ),
-                      const SizedBox(height: AppTheme.spaceSectionGap),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Memories',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: AppTheme.secondary,
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              await Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => AddMemoryScreen(story: story),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 48,
+                            child: FilledButton(
+                              onPressed: _openEdit,
+                              style: FilledButton.styleFrom(
+                                backgroundColor: AppTheme.primary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(24),
                                 ),
-                              );
-                              if (mounted) setState(() {});
-                            },
-                            child: Text(
-                              '+ add',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: AppTheme.error,
-                                fontWeight: FontWeight.w700,
-                                decoration: TextDecoration.underline,
+                              ),
+                              child: Text(
+                                'Update',
+                                style: theme.textTheme.titleMedium,
                               ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: AppTheme.spaceMd),
-                      for (final memory in memories) ...[
+                    ),
+                    const SizedBox(height: AppTheme.spaceSectionGap),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Memories',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: AppTheme.secondary,
+                            ),
+                          ),
+                        ),
                         GestureDetector(
                           onTap: () async {
                             await Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (_) =>
-                                    MemoryDetailsScreen(memoryId: memory.id),
+                                builder: (_) => AddMemoryScreen(story: story),
                               ),
                             );
                             if (mounted) setState(() {});
                           },
-                          child: _StoryMemoryTile(memory: memory),
+                          child: Text(
+                            '+ add',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: AppTheme.error,
+                              fontWeight: FontWeight.w700,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
                         ),
-                        const SizedBox(height: AppTheme.spaceListGap),
                       ],
-                      if (memories.isEmpty)
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: AppTheme.spaceLg,
-                            horizontal: AppTheme.spaceMd,
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                '₍^. .^₎⟆',
-                                style: theme.textTheme.headlineSmall?.copyWith(
-                                  color: AppTheme.secondary,
-                                ),
-                              ),
-                              const SizedBox(height: AppTheme.spaceSm),
-                              Text(
-                                'No memories yet',
-                                textAlign: TextAlign.center,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: AppTheme.spaceXs),
-                              Text(
-                                'Tap + add to save a memory.',
-                                textAlign: TextAlign.center,
-                                style: theme.textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                        ),
+                    ),
+                    const SizedBox(height: AppTheme.spaceMd),
+                    for (final memory in memories) ...[
+                      GestureDetector(
+                        onTap: () async {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  MemoryDetailsScreen(memoryId: memory.id),
+                            ),
+                          );
+                          if (mounted) setState(() {});
+                        },
+                        child: _StoryMemoryTile(memory: memory),
+                      ),
+                      const SizedBox(height: AppTheme.spaceListGap),
                     ],
-                  ),
+                    if (memories.isEmpty)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppTheme.spaceLg,
+                          horizontal: AppTheme.spaceMd,
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              '₍^. .^₎⟆',
+                              style: theme.textTheme.headlineSmall?.copyWith(
+                                color: AppTheme.secondary,
+                              ),
+                            ),
+                            const SizedBox(height: AppTheme.spaceSm),
+                            Text(
+                              'No memories yet',
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: AppTheme.spaceXs),
+                            Text(
+                              'Tap + add to save a memory.',
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           Positioned(
             left: 0,
@@ -316,11 +309,12 @@ class _Banner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final topInset = MediaQuery.of(context).padding.top;
     return Stack(
       clipBehavior: Clip.none,
       children: [
         SizedBox(
-          height: 200,
+          height: 200 + topInset,
           width: double.infinity,
           child: Stack(
             fit: StackFit.expand,
@@ -341,10 +335,10 @@ class _Banner extends StatelessWidget {
                 ),
               ),
               Positioned(
-                bottom: 0,
+                bottom: -2,
                 left: 0,
                 right: 0,
-                height: 110,
+                height: 112,
                 child: IgnorePointer(
                   child: Container(
                     decoration: const BoxDecoration(
@@ -361,7 +355,7 @@ class _Banner extends StatelessWidget {
                 ),
               ),
               Positioned(
-                top: AppTheme.spaceMd,
+                top: AppTheme.spaceMd + topInset,
                 left: AppTheme.spaceMd,
                 child: GestureDetector(
                   onTap: () => Navigator.of(context).pop(),
@@ -374,7 +368,7 @@ class _Banner extends StatelessWidget {
                 ),
               ),
               Positioned(
-                top: AppTheme.spaceMd,
+                top: AppTheme.spaceMd + topInset,
                 right: AppTheme.spaceMd,
                 child: GestureDetector(
                   onTap: onToggleFavorite,

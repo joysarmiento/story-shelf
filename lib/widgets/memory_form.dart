@@ -148,12 +148,7 @@ class _MemoryFormState extends State<MemoryForm> {
             children: [
               const AppBackButton(),
               const SizedBox(height: AppTheme.spaceXxs),
-              Text(
-                widget.headingText,
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  color: AppTheme.secondary,
-                ),
-              ),
+              Text(widget.headingText, style: theme.textTheme.headlineSmall),
               const SizedBox(height: AppTheme.spaceXs),
               Text.rich(
                 TextSpan(
