@@ -198,7 +198,7 @@ class _StoryFormState extends State<StoryForm> {
                       : Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.add,
                               color: AppTheme.onSurface,
                               size: 32,
@@ -384,10 +384,7 @@ class _PillDropdown<T> extends StatelessWidget {
           value: value,
           isExpanded: true,
           hint: Text(hint, style: theme.textTheme.bodyMedium),
-          icon: const Icon(
-            Icons.keyboard_arrow_down,
-            color: AppTheme.onSurface,
-          ),
+          icon: Icon(Icons.keyboard_arrow_down, color: AppTheme.onSurface),
           dropdownColor: AppTheme.surfaceVariant,
           items: items
               .map(

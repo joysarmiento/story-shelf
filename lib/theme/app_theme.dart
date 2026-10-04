@@ -1,18 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+enum TextSize { small, medium, large }
+
+extension TextSizeInfo on TextSize {
+  String get label => switch (this) {
+    TextSize.small => 'Small',
+    TextSize.medium => 'Medium',
+    TextSize.large => 'Large',
+  };
+
+  double get scale => switch (this) {
+    TextSize.small => 0.9,
+    TextSize.medium => 1.0,
+    TextSize.large => 1.2,
+  };
+}
+
 class AppTheme {
   AppTheme._();
+  static bool highContrast = false;
+  static void setHighContrast(bool value) {
+    if (highContrast == value) return;
+    highContrast = value;
+    _rebuildAll();
+  }
+
+  static TextSize textSize = TextSize.medium;
+
+  static void setTextSize(TextSize value) {
+    if (textSize == value) return;
+    textSize = value;
+    _rebuildAll();
+  }
+
+  static void _rebuildAll() {
+    void markDirty(Element element) {
+      element.markNeedsBuild();
+      element.visitChildren(markDirty);
+    }
+
+    WidgetsBinding.instance.rootElement?.visitChildren(markDirty);
+  }
 
   // Color palette
-  static const Color primary = Color(0xFF943B41); // buttons, active states
-  static const Color onPrimary = Color(0xFFFFFFFF); // text/icons on primary
-  static const Color secondary = Color(0xFF9DC3D8); // nav bar, chips, cards
-  static const Color surface = Color(0xFFFBF9EC); // scaffold background
-  static const Color surfaceVariant = Color(0xFFD8E4E4); // cards, fields
-  static const Color onSurface = Color(0xFF66769A); // body text
-  static const Color error = Color(0xFFB02D35); // headings, tags, destructive
+  static const Color primary = Color(0xFF943B41);
+  static const Color onPrimary = Color(0xFFFFFFFF);
+  static Color get secondary =>
+      highContrast ? const Color(0xFF73ADCD) : const Color(0xFF9DC3D8);
+  static const Color surface = Color(0xFFFBF9EC);
+  static const Color surfaceVariant = Color(0xFFD8E4E4);
+  static Color get onSurface =>
+      highContrast ? const Color(0xFF495A82) : const Color(0xFF66769A);
+  static Color get error =>
+      highContrast ? const Color(0xFF8A1620) : const Color(0xFFB02D35);
   static const Color storyTintBeige = Color(0xFFD9BFA0);
+  static Color get navSelected =>
+      highContrast ? const Color(0xFF943B41) : error;
+  static Color get navUnselected =>
+      highContrast ? onPrimary.withValues(alpha: 0.85) : onPrimary;
 
   // Spacing rules
   static const double spaceXxs = 2;
@@ -29,7 +75,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       scaffoldBackgroundColor: surface,
-      colorScheme: const ColorScheme.light(
+      colorScheme: ColorScheme.light(
         primary: primary,
         onPrimary: onPrimary,
         secondary: secondary,
@@ -40,7 +86,7 @@ class AppTheme {
       ),
 
       textTheme: TextTheme(
-        headlineMedium: const TextStyle(
+        headlineMedium: TextStyle(
           fontFamily: 'Railey',
           fontSize: 38,
           color: secondary,

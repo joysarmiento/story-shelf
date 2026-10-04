@@ -489,9 +489,7 @@ class _StatusOption extends StatelessWidget {
           fontWeight: selected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
-      trailing: selected
-          ? const Icon(Icons.check, color: AppTheme.error)
-          : null,
+      trailing: selected ? Icon(Icons.check, color: AppTheme.error) : null,
     );
   }
 }

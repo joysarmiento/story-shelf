@@ -150,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       );
                     },
                     // added for easier viewing of changes during development, will remove this in production
-                    child: const Text(
+                    child: Text(
                       'Skip login (dev)',
                       style: TextStyle(
                         color: AppTheme.error,

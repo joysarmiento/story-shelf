@@ -48,13 +48,13 @@ class AppSearchBar extends StatelessWidget {
           suffixIcon: hasText
               ? IconButton(
                   tooltip: 'Clear search',
-                  icon: const Icon(Icons.close, color: AppTheme.secondary),
+                  icon: Icon(Icons.close, color: AppTheme.secondary),
                   onPressed: () {
                     controller.clear();
                     onChanged('');
                   },
                 )
-              : const Icon(Icons.search, color: AppTheme.secondary),
+              : Icon(Icons.search, color: AppTheme.secondary),
           enabledBorder: border(AppTheme.secondary, 2),
           focusedBorder: border(AppTheme.onSurface, 2),
           border: border(AppTheme.secondary, 2),

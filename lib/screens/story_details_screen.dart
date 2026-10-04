@@ -169,7 +169,7 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
                                 value: story.progressFraction,
                                 minHeight: 8,
                                 backgroundColor: AppTheme.surface,
-                                valueColor: const AlwaysStoppedAnimation(
+                                valueColor: AlwaysStoppedAnimation(
                                   AppTheme.onSurface,
                                 ),
                               ),

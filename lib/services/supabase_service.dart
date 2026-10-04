@@ -2,6 +2,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/memory.dart';
 import '../models/story.dart';
+import '../theme/app_theme.dart';
 
 class SupabaseService {
   SupabaseService._();
@@ -29,13 +30,107 @@ class SupabaseService {
 
   Future<void> signIn({required String email, required String password}) async {
     await _client.auth.signInWithPassword(email: email, password: password);
+    applyPreferences();
   }
 
   Future<void> resetPasswordForEmail(String email) async {
     await _client.auth.resetPasswordForEmail(email);
   }
 
-  Future<void> signOut() => _client.auth.signOut();
+  Future<void> signOut() async {
+    await _client.auth.signOut();
+    // Preferences belong to the account, so reset them on the way out.
+    AppTheme.setHighContrast(false);
+    AppTheme.setTextSize(TextSize.medium);
+  }
+
+  // ---- Preferences --------------------------------------------------------
+
+  bool get highContrastPref => _meta['high_contrast'] == true;
+
+  TextSize get textSizePref => TextSize.values.firstWhere(
+    (t) => t.name == _meta['text_size'],
+    orElse: () => TextSize.medium,
+  );
+
+  /// Applies the signed-in user's saved preferences (call after sign-in and
+  /// on app start).
+  void applyPreferences() {
+    AppTheme.setHighContrast(highContrastPref);
+    AppTheme.setTextSize(textSizePref);
+  }
+
+  /// Saves the text size to the account so it follows the user.
+  Future<void> saveTextSize(TextSize value) async {
+    await _client.auth.updateUser(
+      UserAttributes(data: {'text_size': value.name}),
+    );
+  }
+
+  /// Saves the contrast choice to the account so it follows the user.
+  Future<void> saveHighContrast(bool value) async {
+    await _client.auth.updateUser(
+      UserAttributes(data: {'high_contrast': value}),
+    );
+  }
+
+  // ---- Profile ------------------------------------------------------------
+  // Name, username and avatar live in the auth user's metadata, so no extra
+  // table is needed. (signUp already stores 'name' there.)
+
+  Map<String, dynamic> get _meta => currentUser?.userMetadata ?? const {};
+
+  String? get email => currentUser?.email;
+
+  String get displayName {
+    final name = (_meta['name'] as String?)?.trim();
+    if (name != null && name.isNotEmpty) return name;
+    return email?.split('@').first ?? 'Story Shelf reader';
+  }
+
+  String get username {
+    final u = (_meta['username'] as String?)?.trim();
+    if (u != null && u.isNotEmpty) return u;
+    return email?.split('@').first ?? 'reader';
+  }
+
+  String? get avatarUrl {
+    final a = (_meta['avatar_url'] as String?)?.trim();
+    return (a == null || a.isEmpty) ? null : a;
+  }
+
+  /// Returns true when the email was changed (Supabase then sends a
+  /// confirmation link to the new address).
+  Future<bool> updateProfile({
+    required String name,
+    required String username,
+    required String email,
+    String? avatarUrl,
+  }) async {
+    final emailChanged = email != currentUser?.email;
+    await _client.auth.updateUser(
+      UserAttributes(
+        email: emailChanged ? email : null,
+        data: {'name': name, 'username': username, 'avatar_url': avatarUrl},
+      ),
+    );
+    return emailChanged;
+  }
+
+  /// Deleting an auth user can't be done from the client with the publishable
+  /// key, so this calls a database function. Create it once in the Supabase
+  /// SQL editor (and make sure your tables use ON DELETE CASCADE):
+  ///
+  ///   create or replace function public.delete_user()
+  ///   returns void language sql security definer
+  ///   set search_path = public, auth as $$
+  ///     delete from auth.users where id = auth.uid();
+  ///   $$;
+  ///   grant execute on function public.delete_user() to authenticated;
+  Future<void> deleteAccount() async {
+    await _client.rpc('delete_user');
+    await signOut();
+  }
 
   Future<List<Story>> getStoriesForUser() async {
     final userId = currentUser?.id;

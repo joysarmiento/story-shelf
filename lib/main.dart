@@ -17,6 +17,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'screens/start_screen.dart';
+import 'services/supabase_service.dart';
 import 'theme/app_theme.dart';
 
 Future<void> main() async {
@@ -36,6 +37,9 @@ Future<void> main() async {
     publishableKey: dotenv.env['SUPABASE_PUBLISHABLE_KEY']!,
   );
 
+  // Restore the saved contrast setting if someone is already signed in.
+  SupabaseService.instance.applyPreferences();
+
   runApp(DevicePreview(enabled: true, builder: (context) => const MyApp()));
 }
 
@@ -48,7 +52,19 @@ class MyApp extends StatelessWidget {
       title: 'Story Shelf',
       debugShowCheckedModeBanner: false,
       locale: DevicePreview.locale(context),
-      builder: DevicePreview.appBuilder,
+      builder: (context, child) {
+        // Text size from Settings. Applied inside DevicePreview's own
+        // MediaQuery so it isn't overridden by the preview toolbar.
+        final scaled = Builder(
+          builder: (context) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: TextScaler.linear(AppTheme.textSize.scale)),
+            child: child ?? const SizedBox.shrink(),
+          ),
+        );
+        return DevicePreview.appBuilder(context, scaled);
+      },
       theme: AppTheme.themeData,
       home: const StartScreen(),
     );

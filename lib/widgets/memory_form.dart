@@ -243,7 +243,7 @@ class _MemoryFormState extends State<MemoryForm> {
                 controller: _dateController,
                 readOnly: true,
                 onTap: _pickDate,
-                suffixIcon: const Icon(
+                suffixIcon: Icon(
                   Icons.calendar_today_outlined,
                   size: 18,
                   color: AppTheme.onSurface,

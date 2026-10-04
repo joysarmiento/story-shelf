@@ -32,7 +32,9 @@ class BottomNavBar extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: AppTheme.secondary.withValues(alpha: 0.4),
+              color: AppTheme.secondary.withValues(
+                alpha: AppTheme.highContrast ? 0.9 : 0.6,
+              ),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: AppTheme.onSurface.withValues(alpha: 0.35),
@@ -53,16 +55,16 @@ class BottomNavBar extends StatelessWidget {
                             Icon(
                               _items[i].icon,
                               color: i == currentIndex
-                                  ? AppTheme.error
-                                  : AppTheme.onPrimary,
+                                  ? AppTheme.navSelected
+                                  : AppTheme.navUnselected,
                             ),
                             const SizedBox(height: 2),
                             Text(
                               _items[i].label,
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: i == currentIndex
-                                    ? AppTheme.error
-                                    : AppTheme.onPrimary,
+                                    ? AppTheme.navSelected
+                                    : AppTheme.navUnselected,
                               ),
                             ),
                           ],

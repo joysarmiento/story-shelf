@@ -12,7 +12,7 @@ class AppBackButton extends StatelessWidget {
     final theme = Theme.of(context);
     return TextButton.icon(
       onPressed: onPressed ?? () => Navigator.of(context).pop(),
-      icon: const Icon(Icons.chevron_left, color: AppTheme.error),
+      icon: Icon(Icons.chevron_left, color: AppTheme.error),
       label: Text(
         label,
         style: theme.textTheme.bodySmall?.copyWith(color: AppTheme.error),

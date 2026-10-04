@@ -136,7 +136,7 @@ class _MemoryCard extends StatelessWidget {
                 label: 'Edit memory',
                 child: GestureDetector(
                   onTap: onEdit,
-                  child: const CircleAvatar(
+                  child: CircleAvatar(
                     radius: 22,
                     backgroundColor: AppTheme.secondary,
                     child: Icon(

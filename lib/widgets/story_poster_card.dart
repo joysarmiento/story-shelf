@@ -107,7 +107,7 @@ class StoryPosterCard extends StatelessWidget {
                   value: story.progressFraction,
                   minHeight: 5,
                   backgroundColor: Colors.white24,
-                  valueColor: const AlwaysStoppedAnimation(AppTheme.secondary),
+                  valueColor: AlwaysStoppedAnimation(AppTheme.secondary),
                 ),
               ),
             ],

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../screens/home_screen.dart';
 import '../screens/library_screen.dart';
 import '../screens/memories_screen.dart';
+import '../screens/profile_screen.dart';
 
 class AppTab {
   AppTab._();
@@ -24,12 +25,12 @@ void navigateToTab(
     AppTab.home => const HomeScreen(),
     AppTab.library => const LibraryScreen(),
     AppTab.memories => const MemoriesScreen(),
+    AppTab.profile => const ProfileScreen(),
 
     _ => null,
   };
 
   if (screen == null) {
-    // Profile screen doesn't exist yet.
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Coming soon')));
