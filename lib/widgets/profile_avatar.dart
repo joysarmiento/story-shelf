@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 
-/// Round profile picture. Falls back to a person icon when there is no URL or
-/// the image fails to load.
 class ProfileAvatar extends StatelessWidget {
   const ProfileAvatar({super.key, required this.imageUrl, this.size = 120});
 

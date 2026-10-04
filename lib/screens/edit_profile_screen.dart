@@ -38,8 +38,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _pickPicture() async {
-    // Same approach as the story cover: paste an image URL. Swap for
-    // image_picker + Supabase Storage later; it still ends up as a URL here.
     final controller = TextEditingController(text: _avatarUrl);
     final url = await showDialog<String>(
       context: context,
