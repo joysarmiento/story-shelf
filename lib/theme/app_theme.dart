@@ -40,6 +40,11 @@ class AppTheme {
       ),
 
       textTheme: TextTheme(
+        headlineMedium: const TextStyle(
+          fontFamily: 'Railey',
+          fontSize: 38,
+          color: secondary,
+        ),
         headlineSmall: GoogleFonts.montserrat(
           fontSize: 26,
           fontWeight: FontWeight.w700,

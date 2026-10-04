@@ -11,7 +11,7 @@ import '../widgets/app_search_bar.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/filter_chip_pill.dart';
 import '../widgets/memory_card.dart';
-import 'story_details_screen.dart';
+import 'memory_details_screen.dart';
 
 enum _DatePreset { any, last7, last30, thisYear, custom }
 
@@ -81,7 +81,6 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
 
     final dateRange = _activeDateRange;
 
-    // The range's end day is inclusive.
     bool matchesDate(Memory m) {
       if (dateRange == null) return true;
       final end = DateTime(
@@ -245,7 +244,6 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
         initialDateRange: _customRange,
       );
       if (!mounted) return;
-      // Cancelled picker: keep the old date filter, but still apply the sort.
       setState(() {
         _newestFirst = choice.newestFirst;
         if (picked != null) {
@@ -286,10 +284,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Image.asset(
-                        'docs/assets/images/memories-wordmark.png',
-                        height: 75,
-                      ),
+                      Text('Memories', style: theme.textTheme.headlineMedium),
                       Container(
                         width: 50,
                         height: 50,
@@ -308,7 +303,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: AppTheme.spaceXs),
+                const SizedBox(height: AppTheme.spaceSm),
                 SizedBox(
                   height: 35,
                   child: ScrollConfiguration(
@@ -439,14 +434,15 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                             final memory = memories[index];
                             return MemoryCard(
                               memory: memory,
-                              onTap: () {
-                                Navigator.of(context).push(
+                              onTap: () async {
+                                await Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (_) => StoryDetailsScreen(
-                                      storyId: memory.storyId,
+                                    builder: (_) => MemoryDetailsScreen(
+                                      memoryId: memory.id,
                                     ),
                                   ),
                                 );
+                                if (mounted) setState(() {});
                               },
                             );
                           },

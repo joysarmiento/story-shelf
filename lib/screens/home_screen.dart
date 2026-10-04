@@ -12,13 +12,20 @@ import '../widgets/story_poster_card.dart';
 import '../utils/date_format.dart';
 import 'library_screen.dart';
 import 'memories_screen.dart';
+import 'memory_details_screen.dart';
 import 'story_details_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     // TODO: replace with SupabaseService.instance.getStoriesForUser() /
     // getMemoriesForUser() once the stories/memories tables and CRUD exist.
     final continueStories = sampleStories
@@ -46,10 +53,7 @@ class HomeScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Image.asset(
-                      'docs/assets/images/your-shelf-wordmark.png',
-                      height: 75,
-                    ),
+                    Text('Your Shelf.', style: theme.textTheme.headlineMedium),
                     Container(
                       width: 50,
                       height: 50,
@@ -67,7 +71,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: AppTheme.spaceXs),
+                const SizedBox(height: AppTheme.spaceSm),
                 if (memoryOfTheDay != null)
                   _MemoryOfTheDayBanner(memory: memoryOfTheDay),
                 const SizedBox(height: AppTheme.spaceSectionGap),
@@ -81,8 +85,6 @@ class HomeScreen extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: AppTheme.spaceMd),
-                // Same grid settings as the Library screen, so the cards are
-                // exactly the same size on both screens.
                 GridView.builder(
                   shrinkWrap: true,
                   padding: EdgeInsets.zero,
@@ -124,10 +126,14 @@ class HomeScreen extends StatelessWidget {
                 for (final memory in recentMemories) ...[
                   MemoryCard(
                     memory: memory,
-                    onTap: () {
-                      // Navigator.of(context).push(MaterialPageRoute(
-                      //   builder: (_) => MemoryDetailsScreen(memoryId: memory.id),
-                      // ));
+                    onTap: () async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              MemoryDetailsScreen(memoryId: memory.id),
+                        ),
+                      );
+                      if (mounted) setState(() {});
                     },
                   ),
                   const SizedBox(height: AppTheme.spaceListGap),

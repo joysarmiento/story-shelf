@@ -12,6 +12,10 @@ class AppTextField extends StatelessWidget {
     this.controller,
     this.keyboardType,
     this.validator,
+    this.readOnly = false,
+    this.onTap,
+    this.minLines,
+    this.maxLines = 1,
   });
 
   final String label;
@@ -21,6 +25,10 @@ class AppTextField extends StatelessWidget {
   final TextEditingController? controller;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
+  final bool readOnly;
+  final VoidCallback? onTap;
+  final int? minLines;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +40,10 @@ class AppTextField extends StatelessWidget {
         obscureText: obscureText,
         keyboardType: keyboardType,
         validator: validator,
+        readOnly: readOnly,
+        onTap: onTap,
+        minLines: minLines,
+        maxLines: obscureText ? 1 : maxLines,
         style: theme.textTheme.bodyMedium,
         decoration: InputDecoration(
           hintText: hint ?? label,

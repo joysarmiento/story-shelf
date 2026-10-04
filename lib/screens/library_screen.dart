@@ -232,10 +232,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Image.asset(
-                        'docs/assets/images/library-wordmark.png',
-                        height: 75,
-                      ),
+                      Text('Library', style: theme.textTheme.headlineMedium),
                       Container(
                         width: 50,
                         height: 50,
@@ -254,7 +251,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: AppTheme.spaceXs),
+                const SizedBox(height: AppTheme.spaceMd),
                 SizedBox(
                   height: 35,
                   child: ScrollConfiguration(

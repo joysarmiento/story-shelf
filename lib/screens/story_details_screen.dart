@@ -7,7 +7,9 @@ import '../theme/app_theme.dart';
 import '../utils/app_navigation.dart';
 import '../utils/date_format.dart';
 import '../widgets/bottom_nav_bar.dart';
+import 'add_memory_screen.dart';
 import 'edit_story_screen.dart';
+import 'memory_details_screen.dart';
 
 class StoryDetailsScreen extends StatefulWidget {
   const StoryDetailsScreen({super.key, required this.storyId});
@@ -212,15 +214,13 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {
-                              // Navigator.of(context).push(MaterialPageRoute(
-                              //   builder: (_) => AddMemoryScreen(storyId: story.id),
-                              // ));
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Add Memory coming soon'),
+                            onTap: () async {
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => AddMemoryScreen(story: story),
                                 ),
                               );
+                              if (mounted) setState(() {});
                             },
                             child: Text(
                               '+ add',
@@ -235,7 +235,18 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
                       ),
                       const SizedBox(height: AppTheme.spaceMd),
                       for (final memory in memories) ...[
-                        _StoryMemoryTile(memory: memory),
+                        GestureDetector(
+                          onTap: () async {
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    MemoryDetailsScreen(memoryId: memory.id),
+                              ),
+                            );
+                            if (mounted) setState(() {});
+                          },
+                          child: _StoryMemoryTile(memory: memory),
+                        ),
                         const SizedBox(height: AppTheme.spaceListGap),
                       ],
                       if (memories.isEmpty)
@@ -263,7 +274,7 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
                               ),
                               const SizedBox(height: AppTheme.spaceXs),
                               Text(
-                                'Tap +new to save a memory.',
+                                'Tap + add to save a memory.',
                                 textAlign: TextAlign.center,
                                 style: theme.textTheme.bodySmall,
                               ),
@@ -282,8 +293,6 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
             bottom: 0,
             child: BottomNavBar(
               currentIndex: 1,
-              // -1: this screen sits under Library, so tapping Library should
-              // still navigate back to it.
               onTap: (index) => navigateToTab(context, index, currentIndex: -1),
             ),
           ),
