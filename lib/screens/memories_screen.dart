@@ -322,7 +322,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                         horizontal: AppTheme.spaceMd,
                       ),
                       itemCount: _mediumFilters.length,
-                      separatorBuilder: (_, __) =>
+                      separatorBuilder: (_, _) =>
                           const SizedBox(width: AppTheme.spaceSm),
                       itemBuilder: (context, index) {
                         final medium = _mediumFilters[index];
@@ -408,7 +408,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                             96,
                           ),
                           itemCount: memories.length,
-                          separatorBuilder: (_, __) =>
+                          separatorBuilder: (_, _) =>
                               const SizedBox(height: AppTheme.spaceListGap),
                           itemBuilder: (context, index) {
                             final memory = memories[index];

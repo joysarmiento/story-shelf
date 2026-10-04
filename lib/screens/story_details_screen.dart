@@ -337,7 +337,7 @@ class _Banner extends StatelessWidget {
                   ? Image.network(
                       story.coverPath!,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) =>
+                      errorBuilder: (_, _, _) =>
                           Container(color: AppTheme.secondary),
                     )
                   : Container(color: AppTheme.secondary),
@@ -414,7 +414,7 @@ class _Banner extends StatelessWidget {
                       ? Image.network(
                           story.coverPath!,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) =>
+                          errorBuilder: (_, _, _) =>
                               Container(color: AppTheme.secondary),
                         )
                       : Container(color: AppTheme.secondary),

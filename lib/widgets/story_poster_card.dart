@@ -35,7 +35,7 @@ class StoryPosterCard extends StatelessWidget {
                 Image.network(
                   story.coverPath!,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) =>
+                  errorBuilder: (_, _, _) =>
                       Container(color: _fallbackColor()),
                 )
               else

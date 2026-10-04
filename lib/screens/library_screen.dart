@@ -270,7 +270,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                         horizontal: AppTheme.spaceMd,
                       ),
                       itemCount: _mediumFilters.length,
-                      separatorBuilder: (_, __) =>
+                      separatorBuilder: (_, _) =>
                           const SizedBox(width: AppTheme.spaceSm),
                       itemBuilder: (context, index) {
                         final medium = _mediumFilters[index];

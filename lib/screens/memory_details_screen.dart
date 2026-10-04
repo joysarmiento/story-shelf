@@ -209,7 +209,7 @@ class _Banner extends StatelessWidget {
               ? Image.network(
                   cover,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) =>
+                  errorBuilder: (_, _, _) =>
                       Container(color: AppTheme.secondary),
                 )
               : Container(color: AppTheme.secondary),

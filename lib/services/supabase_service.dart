@@ -163,4 +163,28 @@ class SupabaseService {
         .map((row) => Memory.fromJson(row as Map<String, dynamic>))
         .toList();
   }
+
+  Future<List<Memory>> getAllMemoriesForUser() async {
+    final rows = await _client
+        .from('memories')
+        .select(
+          '*, stories(title, cover_image_or_color, creator_author, medium)',
+        )
+        .order('date_created', ascending: false);
+    return (rows as List)
+        .map((r) => Memory.fromJson(r as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> addMemory(Memory m) async {
+    await _client.from('memories').insert(m.toJson());
+  }
+
+  Future<void> updateMemory(Memory m) async {
+    await _client.from('memories').update(m.toJson()).eq('memory_id', m.id);
+  }
+
+  Future<void> deleteMemory(String memoryId) async {
+    await _client.from('memories').delete().eq('memory_id', memoryId);
+  }
 }

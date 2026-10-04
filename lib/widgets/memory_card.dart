@@ -38,7 +38,7 @@ class MemoryCard extends StatelessWidget {
                     ? Image.network(
                         memory.storyCoverPath!,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
+                        errorBuilder: (_, _, _) => Container(
                           color: AppTheme.primary.withValues(alpha: 0.6),
                         ),
                       )

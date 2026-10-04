@@ -198,7 +198,7 @@ class _MemoryOfTheDayBanner extends StatelessWidget {
                 ? Image.network(
                     memory.storyCoverPath!,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) =>
+                    errorBuilder: (_, _, _) =>
                         Container(color: AppTheme.secondary),
                   )
                 : Container(color: AppTheme.secondary),

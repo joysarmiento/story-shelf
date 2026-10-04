@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../services/supabase_service.dart';
 import '../models/story.dart';
 import '../theme/app_theme.dart';
 import 'app_back_button.dart';
@@ -120,8 +121,7 @@ class _StoryFormState extends State<StoryForm> {
           widget.initialStory ??
           Story(
             id: DateTime.now().microsecondsSinceEpoch.toString(),
-            userId:
-                'demo-user', // TODO: SupabaseService.instance.currentUser?.id
+            userId: SupabaseService.instance.currentUser?.id ?? '',
             title: '',
             medium: _medium!,
             status: _status!,

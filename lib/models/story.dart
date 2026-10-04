@@ -156,5 +156,6 @@ class Story {
     'favorite': isFavorite,
     'overview': overview,
     'date_added': dateAdded.toIso8601String(),
+    'last_read_at': lastReadAt?.toIso8601String(),
   };
 }

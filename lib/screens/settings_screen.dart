@@ -290,7 +290,7 @@ class _SettingsTile extends StatelessWidget {
             Expanded(
               child: Text(label, style: Theme.of(context).textTheme.bodyMedium),
             ),
-            if (trailing != null) trailing!,
+            ?trailing,
           ],
         ),
       ),
