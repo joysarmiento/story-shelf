@@ -17,7 +17,6 @@ class EditMemoryScreen extends StatelessWidget {
       body: MemoryForm(
         headingText: 'Edit Memory',
         submitLabel: 'Save Memory Edits',
-        storyTitle: memory.storyTitle,
         initialMemory: memory,
         onSubmit: (updated) async {
           try {
