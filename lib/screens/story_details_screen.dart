@@ -6,7 +6,9 @@ import '../models/story.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_navigation.dart';
 import '../utils/date_format.dart';
+import '../widgets/app_back_button.dart';
 import '../widgets/bottom_nav_bar.dart';
+import '../widgets/empty_state.dart';
 import 'add_memory_screen.dart';
 import 'edit_story_screen.dart';
 import 'memory_details_screen.dart';
@@ -42,7 +44,12 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
     }
   }
 
-  Story get _story => sampleStories.firstWhere((s) => s.id == widget.storyId);
+  Story? get _story {
+    for (final s in sampleStories) {
+      if (s.id == widget.storyId) return s;
+    }
+    return null;
+  }
 
   List<Memory> get _memories {
     // TODO: replace with SupabaseService.instance
@@ -51,10 +58,10 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
     return sampleMemories.where((m) => m.storyId == widget.storyId).toList();
   }
 
-  Future<void> _openEdit() async {
+  Future<void> _openEdit(Story story) async {
     await Navigator.of(
       context,
-    ).push(MaterialPageRoute(builder: (_) => EditStoryScreen(story: _story)));
+    ).push(MaterialPageRoute(builder: (_) => EditStoryScreen(story: story)));
     if (mounted) setState(() {});
   }
 
@@ -72,6 +79,30 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final story = _story;
+    if (story == null) {
+      return Scaffold(
+        backgroundColor: AppTheme.surface,
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(AppTheme.spaceSm),
+                child: AppBackButton(),
+              ),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    'Story not found',
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     final memories = _memories;
     final unit = story.medium.progressUnitLabel;
     final percent = (story.progressFraction * 100).round();
@@ -180,7 +211,7 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
                             width: double.infinity,
                             height: 48,
                             child: FilledButton(
-                              onPressed: _openEdit,
+                              onPressed: () => _openEdit(story),
                               style: FilledButton.styleFrom(
                                 backgroundColor: AppTheme.primary,
                                 shape: RoundedRectangleBorder(
@@ -244,35 +275,18 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
                       const SizedBox(height: AppTheme.spaceListGap),
                     ],
                     if (memories.isEmpty)
-                      Container(
-                        width: double.infinity,
+                      EmptyState(
+                        leading: Text(
+                          '₍^. .^₎⟆',
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            color: AppTheme.secondary,
+                          ),
+                        ),
+                        title: 'No memories yet',
+                        message: 'Tap + add to save a memory.',
                         padding: const EdgeInsets.symmetric(
                           vertical: AppTheme.spaceLg,
                           horizontal: AppTheme.spaceMd,
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              '₍^. .^₎⟆',
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                color: AppTheme.secondary,
-                              ),
-                            ),
-                            const SizedBox(height: AppTheme.spaceSm),
-                            Text(
-                              'No memories yet',
-                              textAlign: TextAlign.center,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: AppTheme.spaceXs),
-                            Text(
-                              'Tap + add to save a memory.',
-                              textAlign: TextAlign.center,
-                              style: theme.textTheme.bodySmall,
-                            ),
-                          ],
                         ),
                       ),
                   ],

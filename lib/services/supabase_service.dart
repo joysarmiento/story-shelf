@@ -44,7 +44,7 @@ class SupabaseService {
     AppTheme.setTextSize(TextSize.medium);
   }
 
-  // ---- Preferences --------------------------------------------------------
+  // Preferences
 
   bool get highContrastPref => _meta['high_contrast'] == true;
 
@@ -53,31 +53,24 @@ class SupabaseService {
     orElse: () => TextSize.medium,
   );
 
-  /// Applies the signed-in user's saved preferences (call after sign-in and
-  /// on app start).
   void applyPreferences() {
     AppTheme.setHighContrast(highContrastPref);
     AppTheme.setTextSize(textSizePref);
   }
 
-  /// Saves the text size to the account so it follows the user.
   Future<void> saveTextSize(TextSize value) async {
     await _client.auth.updateUser(
       UserAttributes(data: {'text_size': value.name}),
     );
   }
 
-  /// Saves the contrast choice to the account so it follows the user.
   Future<void> saveHighContrast(bool value) async {
     await _client.auth.updateUser(
       UserAttributes(data: {'high_contrast': value}),
     );
   }
 
-  // ---- Profile ------------------------------------------------------------
-  // Name, username and avatar live in the auth user's metadata, so no extra
-  // table is needed. (signUp already stores 'name' there.)
-
+  // Profile
   Map<String, dynamic> get _meta => currentUser?.userMetadata ?? const {};
 
   String? get email => currentUser?.email;
@@ -99,8 +92,6 @@ class SupabaseService {
     return (a == null || a.isEmpty) ? null : a;
   }
 
-  /// Returns true when the email was changed (Supabase then sends a
-  /// confirmation link to the new address).
   Future<bool> updateProfile({
     required String name,
     required String username,

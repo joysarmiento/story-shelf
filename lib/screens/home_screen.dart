@@ -6,6 +6,7 @@ import '../models/story.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_navigation.dart';
 import '../widgets/bottom_nav_bar.dart';
+import '../widgets/empty_state.dart';
 import '../widgets/memory_card.dart';
 import '../widgets/section_header.dart';
 import '../widgets/story_poster_card.dart';
@@ -32,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
         .where((s) => s.status == StoryStatus.inProgress)
         .toList();
     final recentMemories = sampleMemories;
+    final hasNoStories = sampleStories.isEmpty;
     final memoryOfTheDay = sampleMemories.isNotEmpty
         ? sampleMemories.first
         : null;
@@ -85,32 +87,46 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 const SizedBox(height: AppTheme.spaceMd),
-                GridView.builder(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.zero,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: AppTheme.spaceSm,
-                    mainAxisSpacing: AppTheme.spaceSm,
-                    childAspectRatio: AppTheme.storyCardAspectRatio,
+                if (continueStories.isEmpty)
+                  EmptyState(
+                    bordered: true,
+                    iconSize: 40,
+                    icon: Icons.auto_stories_outlined,
+                    title: hasNoStories
+                        ? 'Your shelf is empty'
+                        : 'No stories in progress',
+                    message: hasNoStories
+                        ? 'Add your first story from the Library.'
+                        : 'Start a story from your Library to see it here.',
+                  )
+                else
+                  GridView.builder(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: AppTheme.spaceSm,
+                          mainAxisSpacing: AppTheme.spaceSm,
+                          childAspectRatio: AppTheme.storyCardAspectRatio,
+                        ),
+                    itemCount: continueStories.take(3).length,
+                    itemBuilder: (context, index) {
+                      final story = continueStories[index];
+                      return StoryPosterCard(
+                        story: story,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  StoryDetailsScreen(storyId: story.id),
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
-                  itemCount: continueStories.take(3).length,
-                  itemBuilder: (context, index) {
-                    final story = continueStories[index];
-                    return StoryPosterCard(
-                      story: story,
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                StoryDetailsScreen(storyId: story.id),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
 
                 const SizedBox(height: AppTheme.spaceSectionGap),
                 SectionHeader(
@@ -123,6 +139,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 const SizedBox(height: AppTheme.spaceMd),
+                if (recentMemories.isEmpty)
+                  const EmptyState(
+                    bordered: true,
+                    iconSize: 40,
+                    icon: Icons.sticky_note_2_outlined,
+                    title: 'No memories yet',
+                    message: 'Open a story and tap + add to save a memory.',
+                  ),
                 for (final memory in recentMemories) ...[
                   MemoryCard(
                     memory: memory,

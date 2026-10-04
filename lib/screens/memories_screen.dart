@@ -9,6 +9,7 @@ import '../utils/app_navigation.dart';
 import '../utils/date_format.dart';
 import '../widgets/app_search_bar.dart';
 import '../widgets/bottom_nav_bar.dart';
+import '../widgets/empty_state.dart';
 import '../widgets/filter_chip_pill.dart';
 import '../widgets/memory_card.dart';
 import 'memory_details_screen.dart';
@@ -384,39 +385,18 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                               AppTheme.spaceMd,
                               100,
                             ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.bookmark_border,
-                                  size: 48,
-                                  color: AppTheme.secondary.withValues(
-                                    alpha: 0.6,
-                                  ),
-                                ),
-                                const SizedBox(height: AppTheme.spaceMd),
-                                Text(
-                                  hasQuery
-                                      ? 'No results for "${_query.trim()}"'
-                                      : _datePreset != _DatePreset.any
-                                      ? 'No memories in this date range'
-                                      : _selectedMedium != null
-                                      ? 'No ${_selectedMedium!.label.toLowerCase()} memories yet'
-                                      : 'No memories yet',
-                                  textAlign: TextAlign.center,
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: AppTheme.spaceXs),
-                                Text(
-                                  hasQuery
-                                      ? 'Try a different word or title.'
-                                      : 'Open a story and tap + add to save a memory.',
-                                  textAlign: TextAlign.center,
-                                  style: theme.textTheme.bodySmall,
-                                ),
-                              ],
+                            child: EmptyState(
+                              icon: Icons.sticky_note_2_outlined,
+                              title: hasQuery
+                                  ? 'No results for "${_query.trim()}"'
+                                  : _datePreset != _DatePreset.any
+                                  ? 'No memories in this date range'
+                                  : _selectedMedium != null
+                                  ? 'No ${_selectedMedium!.label.toLowerCase()} memories yet'
+                                  : 'No memories yet',
+                              message: hasQuery
+                                  ? 'Try a different word or title.'
+                                  : 'Open a story and tap + add to save a memory.',
                             ),
                           ),
                         )

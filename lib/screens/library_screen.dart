@@ -7,6 +7,7 @@ import '../theme/app_theme.dart';
 import '../utils/app_navigation.dart';
 import '../widgets/app_search_bar.dart';
 import '../widgets/bottom_nav_bar.dart';
+import '../widgets/empty_state.dart';
 import '../widgets/filter_chip_pill.dart';
 import '../widgets/story_poster_card.dart';
 import 'add_story_screen.dart';
@@ -344,40 +345,18 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: AppTheme.spaceMd,
                                 ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.auto_stories_outlined,
-                                      size: 48,
-                                      color: AppTheme.secondary.withValues(
-                                        alpha: 0.6,
-                                      ),
-                                    ),
-                                    const SizedBox(height: AppTheme.spaceMd),
-                                    Text(
-                                      _query.trim().isNotEmpty
-                                          ? 'No results for "${_query.trim()}"'
-                                          : _favoritesOnly
-                                          ? 'No favorites yet'
-                                          : _selectedMedium != null
-                                          ? 'No ${_selectedMedium!.label.toLowerCase()} stories yet'
-                                          : 'No stories yet',
-                                      textAlign: TextAlign.center,
-                                      style: theme.textTheme.bodyMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                    const SizedBox(height: AppTheme.spaceXs),
-                                    Text(
-                                      _query.trim().isNotEmpty
-                                          ? 'Try a different title or creator.'
-                                          : 'Tap + to add your story.',
-                                      textAlign: TextAlign.center,
-                                      style: theme.textTheme.bodySmall,
-                                    ),
-                                  ],
+                                child: EmptyState(
+                                  icon: Icons.auto_stories_outlined,
+                                  title: _query.trim().isNotEmpty
+                                      ? 'No results for "${_query.trim()}"'
+                                      : _favoritesOnly
+                                      ? 'No favorites yet'
+                                      : _selectedMedium != null
+                                      ? 'No ${_selectedMedium!.label.toLowerCase()} stories yet'
+                                      : 'No stories yet',
+                                  message: _query.trim().isNotEmpty
+                                      ? 'Try a different title or creator.'
+                                      : 'Tap + to add your story.',
                                 ),
                               ),
                             ),
