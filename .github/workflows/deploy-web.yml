@@ -84,6 +84,12 @@ jobs:
         run: flutter test
         continue-on-error: true
 
+      - name: Create .env from secrets
+        if: steps.check.outputs.ready == 'true'
+        run: |
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > .env
+          echo "SUPABASE_PUBLISHABLE_KEY=${{ secrets.SUPABASE_PUBLISHABLE_KEY }}" >> .env
+
       - name: Build web
         if: steps.check.outputs.ready == 'true'
         env:
@@ -94,26 +100,6 @@ jobs:
             --base-href "/${{ github.event.repository.name }}/" \
             --dart-define=SUPABASE_URL="$SUPABASE_URL" \
             --dart-define=SUPABASE_PUBLISHABLE_KEY="$SUPABASE_PUBLISHABLE_KEY"
-
-      - name: Build web
-        if: steps.check.outputs.ready == 'true'
-        env:
-          # Uncomment to match the repository secrets you actually created.
-          # SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          # SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
-          DUMMY: unused
-        # --base-href matters: on a project page the site lives at
-        # username.github.io/<repo>/, and without it every asset 404s and you get
-        # a white screen.
-        run: |
-          flutter build web --release \
-            --base-href "/${{ github.event.repository.name }}/"
-          # add one --dart-define=NAME=$NAME line per secret you uncommented above
-
-      - if: steps.check.outputs.ready == 'true'
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: build/web
 
   deploy:
     needs: build
