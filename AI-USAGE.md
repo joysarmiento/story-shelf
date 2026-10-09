@@ -81,17 +81,30 @@
 - **What I kept, what I changed, and why:** I kept the AI's route and painter, because I could not have written the page-curl drawing myself. I wrote the surrounding logic: the `pageSnapshotKey` `GlobalKey` and the `RepaintBoundary` in `main.dart` that it points to, the `_flipping` flag so a second tap cannot start another animation, the async `_flipToPage` function, and the `_findBoundary` helper (see Section 3). I added a fallback to the normal transition if the screen capture fails.
 - **Commit:** https://github.com/joysarmiento/story-shelf/commit/c34c0081b13a03d20e15b5a169b75cc80e7e19c9
 
+
 ## 2. Where the AI got it wrong
 
-Three cases. Be specific. If you write that the AI was never wrong, this section
-scores zero.
+### Case 1 - Theme didn't carry my fonts or logo
 
-### Case 1 - short title
+- **What it gave me:** The Start, Log In, Sign Up, and Reset Password screens, connected to `SupabaseService` for authentication, along with a first version of `app_theme.dart`. That theme file was not set up properly yet. The colors were not centralized correctly, so the screens did not consistently use the theme, and the text styles did not have my project fonts connected, so the screens displayed the default system font. For the logo, the AI used a temporary circle with a generic Flutter book icon. It also used italicized text as a temporary substitute for the script-style heading font.
+- **What was wrong with it:** The theme did not centralize the colors and text styles, so the design values were not controlled from one place. My design uses Railey for headings and Montserrat for body text, so the default system font did not match my mockups. The italicized text was also noticeably different from Railey. The placeholder logo did not represent the actual Story Shelf branding.
+- **What I did instead:** I connected Montserrat to the body text styles through the `google_fonts` package, and I replaced the placeholder logo with my actual Story Shelf logo asset. In my first few commits I only did the Montserrat part. For the headers on my main screens I used an image wordmark instead of text, so the Railey font was not in the app yet (see the Home and Library entry in Section 1). Later in development I added Railey by registering it as a project font in `pubspec.yaml` and connected it to the heading text styles in `app_theme.dart`. The commit link below is where I added Railey. I also reworked the AI's `app_theme.dart` into my own version, centralizing the colors, spacing and text styles in one file, so the final screens now use my theme (see Section 3).
+- **Commit:** https://github.com/joysarmiento/story-shelf/commit/5ae47d20aa6ab02caec4c2c3a36a5ffdd1919822#diff-8d6c8293389df22934588bb65e314b47fedf8c2c92772313f57313d749f27ff8
 
-- **What it gave me:**
-- **What was wrong with it:**
-- **What I did instead:**
-- **Commit:** https://github.com/YOUR-USERNAME/YOUR-REPO/commit/SHA
+### Case 2 - Home didn't match my mockup's content rules
+
+- **What it gave me:** The Home and Library screens, built with the sample data I had prepared. Home had a "Memory From This Day" banner, a "Continue Your Stories" section, and a "Recent Memories" section, while Library showed the stories in a filterable grid.
+- **What was wrong with it:** "Continue Your Stories" showed every story with `status == inProgress`, and since my sample data had 5, it displayed 5 cards when my mockup showed only 3. The "Memory From This Day" banner used `sampleMemories.first` instead of checking whether a memory matched the current date, and it showed only the memory title and date, even though my mockup also included the creator and medium. Finally, story card sizes differed between Home and Library, so the stories looked inconsistent across the two screens.
+- **What I did instead:** I limited "Continue Your Stories" to 3 cards using `continueStories.take(3)` to match my mockup. I added the creator and medium to the Memory of the Day banner. The date check originally worked from sample data, but when I was finishing the app I removed the sample data and connected the screens to real data from my Supabase account, so the banner now pulls from my actual memories instead of `sampleMemories.first`. To unify the card sizes, I used one shared `StoryPosterCard` widget with a single `AppTheme.storyCardAspectRatio` constant in a fixed 3-column grid, so stories render at the same proportions wherever they appear. Some of these changes were made locally or later in development, so they may not appear in the commit below.
+- **Commit:** https://github.com/joysarmiento/story-shelf/commit/12dd16b32dc7807d679c5c76c5285065bd163211#diff-935e56a557f0ab902a679f47de66345d9f47058bccb96f870e6383d19e2c86dd
+
+### Case 3 - Bottom nav bar gap
+
+- **What it gave me:** The AI suggested wrapping the bottom nav bar and/or screen body in additional `SafeArea` widgets, setting bottom padding to 0, and adjusting `MediaQuery` `viewPadding`/`viewInsets` values to account for the system's bottom inset. These suggestions mainly treated the gap as a padding issue.
+- **What was wrong with it:** None of these fixes worked because the gap was not coming from one place. I already had `SafeArea` applied in several locations, both around the body and separately around the nav bar, so the bottom padding was stacking. Part of the visible gap was also coming from DevicePreview's simulated phone frame, which added its own bottom inset. The `Column` layout was another part of the problem because the nav bar was a normal child that reserved its own row, causing leftover inset or padding to appear as an empty strip underneath it. The AI treated the entire issue as a single padding problem and did not identify these separate causes.
+- **What I did instead:** I changed the screen layout from `Column` to `Stack` and positioned the nav bar using `Positioned`, allowing it to layer over the scrolling content instead of reserving its own row. Since it was now intentionally floating, I gave it rounded corners, a border, and a `dart:ui` `BackdropFilter`/`ImageFilter.blur` effect so the content behind it could still be seen. I also consolidated the `SafeArea` handling to avoid duplicated insets. Finally, I tested the screen without DevicePreview and confirmed that the remaining small gap came from the simulated frame rather than my own layout.
+- **Commit:** https://github.com/joysarmiento/story-shelf/commit/12dd16b32dc7807d679c5c76c5285065bd163211#diff-504ba30b38ec1a02630078d2c08fea433e90aca25e8fa2e5becacd76f75c354d
+
 
 ## 3. Who wrote what
 
