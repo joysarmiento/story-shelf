@@ -97,10 +97,10 @@ jobs:
           SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
         run: |
           flutter build web --release \
-            --base-href "/${{ github.event.repository.name }}/"
+            --base-href "/${{ github.event.repository.name }}/" \
             --dart-define=SUPABASE_URL="$SUPABASE_URL" \
             --dart-define=SUPABASE_PUBLISHABLE_KEY="$SUPABASE_PUBLISHABLE_KEY"
-          
+
       - if: steps.check.outputs.ready == 'true'
         uses: actions/upload-pages-artifact@v5
         with:
@@ -108,7 +108,6 @@ jobs:
 
   deploy:
     needs: build
-    # Skipped, not failed, when there is no app yet or the repo is private.
     if: needs.build.outputs.ready == 'true' && github.event.repository.private == false
     runs-on: ubuntu-latest
     environment:
