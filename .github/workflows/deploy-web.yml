@@ -84,6 +84,12 @@ jobs:
         run: flutter test
         continue-on-error: true
 
+      - name: Create .env from secrets
+        if: steps.check.outputs.ready == 'true'
+        run: |
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > .env
+          echo "SUPABASE_PUBLISHABLE_KEY=${{ secrets.SUPABASE_PUBLISHABLE_KEY }}" >> .env
+
       - name: Build web
         if: steps.check.outputs.ready == 'true'
         env:
