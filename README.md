@@ -3,8 +3,11 @@
 > One personal place to track the books, manga, movies, dramas and anime you love, and to journal how each one made you feel.
 
 **Live demo:** https://joysarmiento.github.io/story-shelf/
+
 **Demo video:** `docs/demo.mp4`  (link it here once it exists)
+
 **Course:** Applications Development and Emerging Technologies (6ADET), Holy Angel University
+
 **Author:** Maria Anne Joy T. Sarmiento
 
 This repository lives in the author's own GitHub account and is public on purpose. There is no `student.json` here and there should not be one: see [`docs/06-security-and-privacy.md`](docs/06-security-and-privacy.md) for what a public repo means for secrets and personal data.
