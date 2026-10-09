@@ -31,11 +31,18 @@ Future<void> main() async {
   // secrets as a build step, or switch these two lines to
   // String.fromEnvironment('SUPABASE_URL') / ...('SUPABASE_PUBLISHABLE_KEY')
   // and pass --dart-define at build time. Either works; pick one.
-  await dotenv.load(fileName: '.env');
+  try {
+    await dotenv.load(fileName: '.env');
+  } catch (_) {}
+
+  const definedUrl = String.fromEnvironment('SUPABASE_URL');
+  const definedKey = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
 
   await Supabase.initialize(
-    url: dotenv.env['SUPABASE_URL']!,
-    publishableKey: dotenv.env['SUPABASE_PUBLISHABLE_KEY']!,
+    url: definedUrl.isNotEmpty ? definedUrl : dotenv.env['SUPABASE_URL']!,
+    publishableKey: definedKey.isNotEmpty
+        ? definedKey
+        : dotenv.env['SUPABASE_PUBLISHABLE_KEY']!,
   );
 
   SupabaseService.instance.applyPreferences();
