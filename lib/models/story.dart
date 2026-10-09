@@ -1,29 +1,37 @@
-enum Medium { book, manhwa, manga, movie, drama, anime, tvSeries }
+enum Medium { book, comic, movie, series }
 
 extension MediumLabel on Medium {
   String get label => switch (this) {
     Medium.book => 'Book',
-    Medium.manhwa => 'Manhwa',
-    Medium.manga => 'Manga',
+    Medium.comic => 'Comic',
     Medium.movie => 'Movie',
-    Medium.drama => 'Drama',
-    Medium.anime => 'Anime',
-    Medium.tvSeries => 'TV Series',
+    Medium.series => 'Series',
   };
 
   String get progressUnitLabel => switch (this) {
     Medium.book => 'Page',
-    Medium.manhwa || Medium.manga => 'Chapter',
+    Medium.comic => 'Page',
     Medium.movie => 'Part',
-    Medium.drama || Medium.tvSeries || Medium.anime => 'Episode',
+    Medium.series => 'Episode',
+  };
+
+  List<String> get searchWords => switch (this) {
+    Medium.book => ['book', 'novel'],
+    Medium.comic => ['comic', 'manga', 'manhwa', 'manhua', 'webtoon'],
+    Medium.movie => ['movie', 'film'],
+    Medium.series => ['series', 'drama', 'anime', 'tv', 'show', 'k-drama'],
   };
 
   String get dbValue => name;
 
-  static Medium fromDb(String value) => Medium.values.firstWhere(
-    (m) => m.name == value,
-    orElse: () => Medium.book,
-  );
+  static Medium fromDb(String value) => switch (value) {
+    'manga' || 'manhwa' => Medium.comic,
+    'drama' || 'anime' || 'tvSeries' => Medium.series,
+    _ => Medium.values.firstWhere(
+      (m) => m.name == value,
+      orElse: () => Medium.book,
+    ),
+  };
 }
 
 enum StoryStatus { notStarted, inProgress, completed }

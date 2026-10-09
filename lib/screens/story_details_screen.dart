@@ -33,13 +33,10 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
       case StoryStatus.inProgress:
         switch (medium) {
           case Medium.book:
-          case Medium.manhwa:
-          case Medium.manga:
+          case Medium.comic:
             return 'Currently Reading';
           case Medium.movie:
-          case Medium.drama:
-          case Medium.anime:
-          case Medium.tvSeries:
+          case Medium.series:
             return 'Currently Watching';
         }
     }

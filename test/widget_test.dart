@@ -68,19 +68,44 @@ void main() {
 
   group('Medium and StoryStatus', () {
     test('fromDb reads a saved value and falls back safely', () {
-      expect(MediumLabel.fromDb('anime'), Medium.anime);
+      expect(MediumLabel.fromDb('comic'), Medium.comic);
+      expect(MediumLabel.fromDb('series'), Medium.series);
       expect(MediumLabel.fromDb('not-a-medium'), Medium.book);
       expect(StoryStatusLabel.fromDb('completed'), StoryStatus.completed);
       expect(StoryStatusLabel.fromDb('???'), StoryStatus.notStarted);
     });
 
+    test('stories saved with the old, specific types still load', () {
+      expect(MediumLabel.fromDb('manga'), Medium.comic);
+      expect(MediumLabel.fromDb('manhwa'), Medium.comic);
+      expect(MediumLabel.fromDb('drama'), Medium.series);
+      expect(MediumLabel.fromDb('anime'), Medium.series);
+      expect(MediumLabel.fromDb('tvSeries'), Medium.series);
+      expect(MediumLabel.fromDb('movie'), Medium.movie);
+      expect(MediumLabel.fromDb('book'), Medium.book);
+    });
+
     test('the progress label matches the medium', () {
       expect(Medium.book.progressUnitLabel, 'Page');
-      expect(Medium.manga.progressUnitLabel, 'Chapter');
-      expect(Medium.manhwa.progressUnitLabel, 'Chapter');
+      expect(Medium.comic.progressUnitLabel, 'Chapter');
       expect(Medium.movie.progressUnitLabel, 'Part');
-      expect(Medium.anime.progressUnitLabel, 'Episode');
-      expect(Medium.tvSeries.progressUnitLabel, 'Episode');
+      expect(Medium.series.progressUnitLabel, 'Episode');
+    });
+
+    test('each medium has a short label', () {
+      expect(Medium.values.map((m) => m.label), [
+        'Book',
+        'Comic',
+        'Movie',
+        'Series',
+      ]);
+    });
+
+    test('search words let "manga" find a Comic and "anime" find a Series', () {
+      expect(Medium.comic.searchWords, contains('manga'));
+      expect(Medium.series.searchWords, contains('anime'));
+      expect(Medium.movie.searchWords, contains('film'));
+      expect(Medium.book.searchWords, contains('novel'));
     });
   });
 
@@ -107,7 +132,7 @@ void main() {
       expect(memory.entryType, EntryType.episode);
       expect(memory.rating, 5.0);
       expect(memory.storyTitle, 'Frieren');
-      expect(memory.storyMedium, Medium.anime);
+      expect(memory.storyMedium, Medium.series);
     });
 
     test('cleanTitle hides blank titles', () {
@@ -261,7 +286,6 @@ void main() {
       expect(find.text('Open My Shelf'), findsOneWidget);
 
       await tester.tap(find.byType(FilledButton));
-      // Let any short press animation finish before the test ends.
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(taps, 1);

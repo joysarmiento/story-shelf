@@ -26,7 +26,7 @@ See all screens in [docs/02-mockup.md](https://github.com/joysarmiento/story-she
 
 People who read and watch many kinds of stories usually keep their progress, ratings and thoughts scattered across different apps, or rely on memory. Story Shelf keeps them together, with a cozy journal at the heart of it. After a chapter or an episode, you can write down what you felt, what surprised you and what you want to remember. Your shelf tracks where you are, and your journal keeps how it felt.
 
-- **Build your library.** Add books, manga, manhwa, movies, dramas, anime and TV series with a cover, creator, release year, status (Not Started, Started, Completed), progress, rating and favorite flag.
+- **Build your library.** Add books, comics (manga, manhwa, webtoons), movies and series (dramas, anime, TV shows) with a cover, creator, release year, status (Not Started, Started, Completed), progress, rating and favorite flag.
 - **Write memories.** Journal entries tied to a story: an overall review, or a note on a specific chapter, episode or volume, with an optional title, rating and favorite quote.
 - **Find things fast.** Search, filter by medium and sort in both the Library and the Memories tabs.
 - **Pick up where you left off.** The Home screen shows the stories you are in the middle of, your recent memories, and "A Memory From This Day", which rotates between two of your stories each day.

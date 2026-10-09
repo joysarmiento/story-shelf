@@ -50,13 +50,10 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
 
   static const _mediumFilters = [
     null,
-    Medium.movie,
-    Medium.manhwa,
-    Medium.anime,
     Medium.book,
-    Medium.drama,
-    Medium.manga,
-    Medium.tvSeries,
+    Medium.comic,
+    Medium.movie,
+    Medium.series,
   ];
 
   List<Memory> _memories = [];

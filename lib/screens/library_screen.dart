@@ -65,13 +65,10 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
   static const _mediumFilters = [
     null,
-    Medium.movie,
-    Medium.manhwa,
-    Medium.anime,
     Medium.book,
-    Medium.drama,
-    Medium.manga,
-    Medium.tvSeries,
+    Medium.comic,
+    Medium.movie,
+    Medium.series,
   ];
 
   List<Story> get _filteredStories {
