@@ -328,7 +328,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: AppTheme.spaceSm),
+                const SizedBox(height: AppTheme.spaceMd),
                 SizedBox(
                   height: 35,
                   child: ScrollConfiguration(

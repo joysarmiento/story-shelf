@@ -19,6 +19,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'screens/start_screen.dart';
 import 'services/supabase_service.dart';
 import 'theme/app_theme.dart';
+import 'utils/app_navigation.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,7 +38,6 @@ Future<void> main() async {
     publishableKey: dotenv.env['SUPABASE_PUBLISHABLE_KEY']!,
   );
 
-  // Restore the saved contrast setting if someone is already signed in.
   SupabaseService.instance.applyPreferences();
 
   runApp(DevicePreview(enabled: true, builder: (context) => const MyApp()));
@@ -53,14 +53,15 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       locale: DevicePreview.locale(context),
       builder: (context, child) {
-        // Text size from Settings. Applied inside DevicePreview's own
-        // MediaQuery so it isn't overridden by the preview toolbar.
         final scaled = Builder(
           builder: (context) => MediaQuery(
             data: MediaQuery.of(
               context,
             ).copyWith(textScaler: TextScaler.linear(AppTheme.textSize.scale)),
-            child: child ?? const SizedBox.shrink(),
+            child: RepaintBoundary(
+              key: pageSnapshotKey,
+              child: child ?? const SizedBox.shrink(),
+            ),
           ),
         );
         return DevicePreview.appBuilder(context, scaled);
