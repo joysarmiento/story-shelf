@@ -6,6 +6,7 @@ import '../models/story.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_navigation.dart';
 import '../utils/date_format.dart';
+import '../utils/error_message.dart';
 import '../widgets/app_back_button.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/empty_state.dart';
@@ -69,9 +70,9 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _loading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Could not load story: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not load story. ${friendlyError(e)}')),
+      );
     }
   }
 
@@ -92,9 +93,11 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _story = story);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Could not update favorite: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Could not update favorite. ${friendlyError(e)}'),
+        ),
+      );
     }
   }
 
@@ -124,9 +127,9 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
       await SupabaseService.instance.deleteStory(story.id);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Could not delete story: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not delete story. ${friendlyError(e)}')),
+      );
       return;
     }
     if (!mounted) return;

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/story.dart';
 import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
+import '../utils/error_message.dart';
 import '../widgets/story_form.dart';
 
 class EditStoryScreen extends StatelessWidget {
@@ -24,7 +25,9 @@ class EditStoryScreen extends StatelessWidget {
           } catch (e) {
             if (!context.mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Could not save changes: $e')),
+              SnackBar(
+                content: Text('Could not save changes. ${friendlyError(e)}'),
+              ),
             );
             return;
           }

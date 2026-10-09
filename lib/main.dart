@@ -17,6 +17,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'screens/start_screen.dart';
+import 'screens/home_screen.dart';
 import 'services/supabase_service.dart';
 import 'theme/app_theme.dart';
 import 'utils/app_navigation.dart';
@@ -74,7 +75,9 @@ class MyApp extends StatelessWidget {
         return DevicePreview.appBuilder(context, scaled);
       },
       theme: AppTheme.themeData,
-      home: const StartScreen(),
+      home: SupabaseService.instance.isSignedIn
+          ? const HomeScreen()
+          : const StartScreen(),
     );
   }
 }

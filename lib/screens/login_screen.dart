@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
+import '../utils/error_message.dart';
 import '../widgets/app_text_field.dart';
 import '../widgets/primary_button.dart';
 import 'home_screen.dart';
@@ -44,9 +45,9 @@ class _LoginScreenState extends State<LoginScreen> {
       ).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Could not log in: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not log in. ${friendlyError(e)}')),
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -81,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: AppTheme.spaceSectionGap),
                 AppTextField(
-                  label: 'Email / Username',
+                  label: 'Email',
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {

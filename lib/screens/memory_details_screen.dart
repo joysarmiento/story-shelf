@@ -8,6 +8,7 @@ import '../models/story.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_navigation.dart';
 import '../utils/date_format.dart';
+import '../utils/error_message.dart';
 import '../widgets/bottom_nav_bar.dart';
 
 enum _SaveState { idle, pending, saving, saved, error, invalid }
@@ -94,9 +95,9 @@ class _MemoryDetailsScreenState extends State<MemoryDetailsScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _loading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Could not load memory: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not load memory. ${friendlyError(e)}')),
+      );
     }
   }
 
@@ -161,9 +162,11 @@ class _MemoryDetailsScreenState extends State<MemoryDetailsScreen> {
       _dirty = true;
       _safeSetState(() => _saveState = _SaveState.error);
       if (!_disposed && mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Could not save changes: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Could not save changes. ${friendlyError(e)}'),
+          ),
+        );
       }
     }
   }
@@ -233,9 +236,9 @@ class _MemoryDetailsScreenState extends State<MemoryDetailsScreen> {
       await SupabaseService.instance.deleteMemory(memory.id);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Could not delete memory: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not delete memory. ${friendlyError(e)}')),
+      );
       return;
     }
     if (!mounted) return;

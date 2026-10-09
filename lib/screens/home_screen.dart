@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 
@@ -8,12 +7,14 @@ import '../models/memory.dart';
 import '../models/story.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_navigation.dart';
+import '../utils/date_format.dart';
+import '../utils/error_message.dart';
+import '../utils/memory_of_the_day.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/memory_card.dart';
 import '../widgets/section_header.dart';
 import '../widgets/story_poster_card.dart';
-import '../utils/date_format.dart';
 import 'library_screen.dart';
 import 'memories_screen.dart';
 import 'memory_details_screen.dart';
@@ -52,9 +53,11 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _loading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Could not load your shelf: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Could not load your shelf. ${friendlyError(e)}'),
+        ),
+      );
     }
   }
 
@@ -70,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
     final recentMemories = _memories.take(3).toList();
     final hasNoStories = _stories.isEmpty;
-    final memoriesOfTheDay = _pickMemoriesOfTheDay(_memories);
+    final memoriesOfTheDay = pickMemoriesOfTheDay(_memories);
 
     return Scaffold(
       backgroundColor: AppTheme.surface,
@@ -235,39 +238,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
-
-List<Memory> _pickMemoriesOfTheDay(List<Memory> all) {
-  if (all.isEmpty) return const [];
-  final now = DateTime.now();
-  final seed = now.year * 10000 + now.month * 100 + now.day;
-
-  final byStory = <String, List<Memory>>{};
-  for (final m in all) {
-    byStory.putIfAbsent(m.storyId, () => []).add(m);
-  }
-  for (final list in byStory.values) {
-    list.sort((a, b) => a.id.compareTo(b.id));
-  }
-
-  final storyIds = byStory.keys.toList()..sort();
-  storyIds.shuffle(Random(seed));
-
-  final picked = <Memory>[];
-  for (var i = 0; i < storyIds.length && i < 2; i++) {
-    final list = byStory[storyIds[i]]!;
-    picked.add(list[Random(seed + i).nextInt(list.length)]);
-  }
-
-  if (picked.length == 1) {
-    final rest = byStory[storyIds.first]!
-        .where((m) => m.id != picked.first.id)
-        .toList();
-    if (rest.isNotEmpty) {
-      picked.add(rest[Random(seed + 7).nextInt(rest.length)]);
-    }
-  }
-  return picked;
 }
 
 class _MemoriesOfTheDay extends StatefulWidget {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
+import '../utils/error_message.dart';
 import '../widgets/app_text_field.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/app_back_button.dart';
@@ -40,9 +41,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       Navigator.of(context).pop();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Could not send reset link: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Could not send reset link. ${friendlyError(e)}'),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

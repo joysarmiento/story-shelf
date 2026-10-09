@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
+import '../utils/error_message.dart';
 import '../widgets/story_form.dart';
 import 'story_details_screen.dart';
 
@@ -20,9 +21,11 @@ class AddStoryScreen extends StatelessWidget {
             await SupabaseService.instance.addStory(story);
           } catch (e) {
             if (!context.mounted) return;
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text('Could not save story: $e')));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Could not save story. ${friendlyError(e)}'),
+              ),
+            );
             return;
           }
           if (!context.mounted) return;

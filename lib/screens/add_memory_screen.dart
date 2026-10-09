@@ -5,6 +5,7 @@ import '../models/story.dart';
 import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
 import '../utils/date_format.dart';
+import '../utils/error_message.dart';
 
 class AddMemoryScreen extends StatefulWidget {
   const AddMemoryScreen({super.key, required this.story});
@@ -98,9 +99,9 @@ class _AddMemoryScreenState extends State<AddMemoryScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _saving = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Could not save memory: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not save memory. ${friendlyError(e)}')),
+      );
       return;
     }
     if (!mounted) return;

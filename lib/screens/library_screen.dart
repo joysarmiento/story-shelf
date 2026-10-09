@@ -5,6 +5,7 @@ import '../services/supabase_service.dart';
 import '../models/story.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_navigation.dart';
+import '../utils/error_message.dart';
 import '../widgets/app_search_bar.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/empty_state.dart';
@@ -50,9 +51,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _loading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Could not load stories: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not load stories. ${friendlyError(e)}')),
+      );
     }
   }
 

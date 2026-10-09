@@ -4,6 +4,7 @@ import '../services/supabase_service.dart';
 import '../models/story.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_navigation.dart';
+import '../utils/error_message.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/profile_avatar.dart';
 import 'settings_screen.dart';
@@ -41,9 +42,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _loading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Could not load stats: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not load stats. ${friendlyError(e)}')),
+      );
     }
   }
 

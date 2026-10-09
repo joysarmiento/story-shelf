@@ -7,6 +7,7 @@ import '../models/story.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_navigation.dart';
 import '../utils/date_format.dart';
+import '../utils/error_message.dart';
 import '../widgets/app_search_bar.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/empty_state.dart';
@@ -78,9 +79,9 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _loading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Could not load memories: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not load memories. ${friendlyError(e)}')),
+      );
     }
   }
 
