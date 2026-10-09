@@ -18,7 +18,7 @@ This repository lives in the author's own GitHub account and is public on purpos
 
 | Home | Library | Story details | Memory details |
 | --- | --- | --- | --- |
-| ![Home](docs/assets/images/final_screens/05_Home.png) | ![Library](docs/assets/images/final_screens/06_Library.png) | ![Story details](docs/assets/images/final_screens/08_Story_Details.png) | ![Memory details](docs/assets/images/final_screens/11_Memory_Details.png) |
+| ![Home](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/final_screens/05_Home.png) | ![Library](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/final_screens/06_Library.png) | ![Story details](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/final_screens/08_Story_Details.png) | ![Memory details](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/final_screens/11_Memory_Details.png) |
 
 ## What it does
 
