@@ -6,8 +6,6 @@ import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
 import '../utils/date_format.dart';
 
-/// Notes-style "Add Memory" screen. Same look as the Memory Detail screen,
-/// but nothing is created until the user taps Save.
 class AddMemoryScreen extends StatefulWidget {
   const AddMemoryScreen({super.key, required this.story});
 
@@ -109,7 +107,6 @@ class _AddMemoryScreenState extends State<AddMemoryScreen> {
     Navigator.of(context).pop(memory);
   }
 
-  /// Back button / gesture: ask before throwing away what was written.
   Future<void> _tryLeave() async {
     FocusScope.of(context).unfocus();
     if (!_hasChanges) {
@@ -211,7 +208,6 @@ class _AddMemoryScreenState extends State<AddMemoryScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Title
                           TextField(
                             controller: _titleController,
                             style: titleStyle,
@@ -222,7 +218,6 @@ class _AddMemoryScreenState extends State<AddMemoryScreen> {
                           ),
                           const SizedBox(height: AppTheme.spaceMd),
 
-                          // Type: all four visible, since it's the first choice
                           Row(
                             children: [
                               for (final type in EntryType.values) ...[
@@ -242,7 +237,6 @@ class _AddMemoryScreenState extends State<AddMemoryScreen> {
                             ],
                           ),
 
-                          // Number (only for chapter / episode / volume)
                           if (showNumber) ...[
                             const SizedBox(height: AppTheme.spaceSm),
                             Row(
@@ -294,7 +288,6 @@ class _AddMemoryScreenState extends State<AddMemoryScreen> {
                           ],
                           const SizedBox(height: AppTheme.spaceSm),
 
-                          // Date
                           InkWell(
                             onTap: _pickDate,
                             borderRadius: BorderRadius.circular(8),
@@ -323,7 +316,6 @@ class _AddMemoryScreenState extends State<AddMemoryScreen> {
                           ),
                           const SizedBox(height: AppTheme.spaceMd),
 
-                          // Quote
                           Container(
                             padding: const EdgeInsets.only(left: 12),
                             decoration: BoxDecoration(
@@ -349,7 +341,6 @@ class _AddMemoryScreenState extends State<AddMemoryScreen> {
                           ),
                           const SizedBox(height: AppTheme.spaceMd),
 
-                          // Content
                           TextField(
                             controller: _contentController,
                             style: body,
@@ -551,7 +542,6 @@ class _Banner extends StatelessWidget {
                           : AppTheme.primary,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    // Same text style as the "Back" button.
                     child: saving
                         ? const SizedBox(
                             width: 18,
