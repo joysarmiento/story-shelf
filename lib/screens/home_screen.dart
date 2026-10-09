@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../services/supabase_service.dart';
@@ -67,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
     final recentMemories = _memories.take(3).toList();
     final hasNoStories = _stories.isEmpty;
-    final memoryOfTheDay = _memories.isNotEmpty ? _memories.first : null;
+    final memoriesOfTheDay = _pickMemoriesOfTheDay(_memories);
 
     return Scaffold(
       backgroundColor: AppTheme.surface,
@@ -110,8 +113,19 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                       const SizedBox(height: AppTheme.spaceSm),
-                      if (memoryOfTheDay != null)
-                        _MemoryOfTheDayBanner(memory: memoryOfTheDay),
+                      if (memoriesOfTheDay.isNotEmpty)
+                        _MemoriesOfTheDay(
+                          memories: memoriesOfTheDay,
+                          onTap: (memory) async {
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    MemoryDetailsScreen(memoryId: memory.id),
+                              ),
+                            );
+                            if (mounted) _load();
+                          },
+                        ),
                       const SizedBox(height: AppTheme.spaceSectionGap),
                       SectionHeader(
                         title: 'Continue your stories',
@@ -223,6 +237,150 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+List<Memory> _pickMemoriesOfTheDay(List<Memory> all) {
+  if (all.isEmpty) return const [];
+  final now = DateTime.now();
+  final seed = now.year * 10000 + now.month * 100 + now.day;
+
+  final byStory = <String, List<Memory>>{};
+  for (final m in all) {
+    byStory.putIfAbsent(m.storyId, () => []).add(m);
+  }
+  for (final list in byStory.values) {
+    list.sort((a, b) => a.id.compareTo(b.id));
+  }
+
+  final storyIds = byStory.keys.toList()..sort();
+  storyIds.shuffle(Random(seed));
+
+  final picked = <Memory>[];
+  for (var i = 0; i < storyIds.length && i < 2; i++) {
+    final list = byStory[storyIds[i]]!;
+    picked.add(list[Random(seed + i).nextInt(list.length)]);
+  }
+
+  if (picked.length == 1) {
+    final rest = byStory[storyIds.first]!
+        .where((m) => m.id != picked.first.id)
+        .toList();
+    if (rest.isNotEmpty) {
+      picked.add(rest[Random(seed + 7).nextInt(rest.length)]);
+    }
+  }
+  return picked;
+}
+
+class _MemoriesOfTheDay extends StatefulWidget {
+  const _MemoriesOfTheDay({required this.memories, required this.onTap});
+
+  final List<Memory> memories;
+  final ValueChanged<Memory> onTap;
+
+  @override
+  State<_MemoriesOfTheDay> createState() => _MemoriesOfTheDayState();
+}
+
+class _MemoriesOfTheDayState extends State<_MemoriesOfTheDay> {
+  static const _interval = Duration(seconds: 6);
+
+  int _index = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  @override
+  void didUpdateWidget(covariant _MemoriesOfTheDay oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_index >= widget.memories.length) _index = 0;
+    _startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    if (widget.memories.length < 2) return;
+    _timer = Timer.periodic(_interval, (_) => _goTo(_index + 1));
+  }
+
+  void _goTo(int i) {
+    final n = widget.memories.length;
+    if (!mounted || n == 0) return;
+    setState(() => _index = ((i % n) + n) % n);
+  }
+
+  void _manualGoTo(int i) {
+    _goTo(i);
+    _startTimer();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final memories = widget.memories;
+    return GestureDetector(
+      onTap: () => widget.onTap(memories[_index]),
+      onHorizontalDragEnd: (details) {
+        final v = details.primaryVelocity ?? 0;
+        if (v < -200) _manualGoTo(_index + 1);
+        if (v > 200) _manualGoTo(_index - 1);
+      },
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              for (var i = 0; i < memories.length; i++)
+                IgnorePointer(
+                  ignoring: i != _index,
+                  child: AnimatedOpacity(
+                    opacity: i == _index ? 1 : 0,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut,
+                    child: _MemoryOfTheDayBanner(memory: memories[i]),
+                  ),
+                ),
+            ],
+          ),
+          if (memories.length > 1) ...[
+            const SizedBox(height: AppTheme.spaceSm),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                for (var i = 0; i < memories.length; i++)
+                  GestureDetector(
+                    onTap: () => _manualGoTo(i),
+                    behavior: HitTestBehavior.opaque,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 3),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        width: i == _index ? 18 : 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: i == _index
+                              ? AppTheme.primary
+                              : AppTheme.secondary,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
 class _MemoryOfTheDayBanner extends StatelessWidget {
   const _MemoryOfTheDayBanner({required this.memory});
 
@@ -297,6 +455,8 @@ class _MemoryOfTheDayBanner extends StatelessWidget {
                   const SizedBox(height: AppTheme.spaceSm),
                   Text(
                     '"${memory.quote}"',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: AppTheme.onPrimary,
                       fontStyle: FontStyle.italic,

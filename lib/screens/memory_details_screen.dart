@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../services/supabase_service.dart';
@@ -7,7 +9,8 @@ import '../theme/app_theme.dart';
 import '../utils/app_navigation.dart';
 import '../utils/date_format.dart';
 import '../widgets/bottom_nav_bar.dart';
-import 'edit_memory_screen.dart';
+
+enum _SaveState { idle, pending, saving, saved, error, invalid }
 
 class MemoryDetailsScreen extends StatefulWidget {
   const MemoryDetailsScreen({super.key, required this.memoryId});
@@ -19,14 +22,53 @@ class MemoryDetailsScreen extends StatefulWidget {
 }
 
 class _MemoryDetailsScreenState extends State<MemoryDetailsScreen> {
+  static const _autosaveDelay = Duration(milliseconds: 800);
+
   Memory? _memory;
   int? _releaseYear;
   bool _loading = true;
+
+  final _titleController = TextEditingController();
+  final _contentController = TextEditingController();
+  final _quoteController = TextEditingController();
+
+  late EntryType _type;
+  late String _number;
+  late DateTime _date;
+
+  Timer? _debounce;
+  Timer? _savedFade;
+  bool _dirty = false;
+  bool _disposed = false;
+  _SaveState _saveState = _SaveState.idle;
 
   @override
   void initState() {
     super.initState();
     _load();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    _debounce?.cancel();
+    _savedFade?.cancel();
+    _save();
+    _titleController.dispose();
+    _contentController.dispose();
+    _quoteController.dispose();
+    super.dispose();
+  }
+
+  void _safeSetState(VoidCallback fn) {
+    if (_disposed || !mounted) return;
+    setState(fn);
+  }
+
+  static String _stripUnit(String? ref) {
+    if (ref == null) return '';
+    final stripped = ref.replaceFirst(RegExp(r'^[A-Za-z\s]+'), '').trim();
+    return stripped.isEmpty ? ref : stripped;
   }
 
   Future<void> _load() async {
@@ -36,6 +78,14 @@ class _MemoryDetailsScreenState extends State<MemoryDetailsScreen> {
           ? null
           : await SupabaseService.instance.getStory(memory.storyId);
       if (!mounted) return;
+      if (memory != null) {
+        _titleController.text = memory.title ?? '';
+        _contentController.text = memory.content;
+        _quoteController.text = memory.quote ?? '';
+        _type = memory.entryType;
+        _number = _stripUnit(memory.progressReference);
+        _date = memory.dateCreated;
+      }
       setState(() {
         _memory = memory;
         _releaseYear = story?.releaseYear;
@@ -50,11 +100,112 @@ class _MemoryDetailsScreenState extends State<MemoryDetailsScreen> {
     }
   }
 
-  Future<void> _openEdit(Memory memory) async {
-    await Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => EditMemoryScreen(memory: memory)));
-    if (mounted) _load();
+  void _markChanged() {
+    if (_memory == null) return;
+    _dirty = true;
+    _savedFade?.cancel();
+    _safeSetState(() => _saveState = _SaveState.pending);
+    _debounce?.cancel();
+    _debounce = Timer(_autosaveDelay, _save);
+  }
+
+  String? _nullIfEmpty(String text) {
+    final t = text.trim();
+    return t.isEmpty ? null : t;
+  }
+
+  Memory _buildMemory(Memory base, String content) {
+    return Memory(
+      id: base.id,
+      storyId: base.storyId,
+      entryType: _type,
+      progressReference: _type == EntryType.overallReview || _number.isEmpty
+          ? null
+          : '${_type.label} $_number',
+      rating: base.rating,
+      title: _nullIfEmpty(_titleController.text),
+      content: content,
+      quote: _nullIfEmpty(_quoteController.text),
+      dateCreated: _date,
+      storyTitle: base.storyTitle,
+      storyCoverPath: base.storyCoverPath,
+      storyCreator: base.storyCreator,
+      storyMedium: base.storyMedium,
+    );
+  }
+
+  Future<void> _save() async {
+    _debounce?.cancel();
+    final base = _memory;
+    if (base == null || !_dirty) return;
+
+    final content = _contentController.text.trim();
+    if (content.isEmpty) {
+      _safeSetState(() => _saveState = _SaveState.invalid);
+      return;
+    }
+
+    _dirty = false;
+    final updated = _buildMemory(base, content);
+    _safeSetState(() => _saveState = _SaveState.saving);
+    try {
+      await SupabaseService.instance.updateMemory(updated);
+      _memory = updated;
+      _safeSetState(() => _saveState = _SaveState.saved);
+      _savedFade = Timer(const Duration(seconds: 2), () {
+        _safeSetState(() {
+          if (_saveState == _SaveState.saved) _saveState = _SaveState.idle;
+        });
+      });
+    } catch (e) {
+      _dirty = true;
+      _safeSetState(() => _saveState = _SaveState.error);
+      if (!_disposed && mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Could not save changes: $e')));
+      }
+    }
+  }
+
+  Future<void> _leave() async {
+    FocusScope.of(context).unfocus();
+    await _save();
+    if (!mounted) return;
+    Navigator.of(context).pop();
+  }
+
+  Future<void> _pickDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _date,
+      firstDate: DateTime(1990),
+      lastDate: DateTime.now().add(const Duration(days: 1)),
+    );
+    if (picked == null) return;
+    setState(() => _date = picked);
+    _markChanged();
+  }
+
+  Future<void> _pickType() async {
+    FocusScope.of(context).unfocus();
+    final result =
+        await showModalBottomSheet<({EntryType type, String number})>(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: AppTheme.surface,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          builder: (_) =>
+              _TypeSheet(initialType: _type, initialNumber: _number),
+        );
+    if (result == null) return;
+    setState(() {
+      _type = result.type;
+      _number = result.number;
+    });
+    _markChanged();
   }
 
   Future<void> _confirmDelete(Memory memory) async {
@@ -77,6 +228,8 @@ class _MemoryDetailsScreenState extends State<MemoryDetailsScreen> {
     );
     if (confirmed != true) return;
     try {
+      _dirty = false;
+      _debounce?.cancel();
       await SupabaseService.instance.deleteMemory(memory.id);
     } catch (e) {
       if (!mounted) return;
@@ -112,65 +265,117 @@ class _MemoryDetailsScreenState extends State<MemoryDetailsScreen> {
     }
 
     final media = MediaQuery.of(context);
-    return Scaffold(
-      backgroundColor: AppTheme.surface,
-      body: Stack(
-        children: [
-          ListView(
-            padding: const EdgeInsets.only(bottom: 96),
-            children: [
-              _Banner(memory: memory, releaseYear: _releaseYear),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppTheme.spaceMd,
+    final keyboardOpen = media.viewInsets.bottom > 0;
+    final reference = _type == EntryType.overallReview || _number.isEmpty
+        ? _type.label
+        : '${_type.label} $_number';
+
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _leave();
+      },
+      child: Scaffold(
+        backgroundColor: AppTheme.surface,
+        body: Stack(
+          children: [
+            ListView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: EdgeInsets.only(bottom: keyboardOpen ? 24 : 96),
+              children: [
+                _Banner(
+                  memory: memory,
+                  releaseYear: _releaseYear,
+                  onBack: _leave,
+                  saveState: _saveState,
+                  onDelete: () => _confirmDelete(memory),
                 ),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 35),
-                    ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: media.size.height * 0.55,
-                      ),
-                      child: _MemoryCard(
-                        memory: memory,
-                        onEdit: () => _openEdit(memory),
-                      ),
-                    ),
-                    TextButton.icon(
-                      onPressed: () => _confirmDelete(memory),
-                      icon: Icon(Icons.delete_outline, color: AppTheme.error),
-                      label: Text(
-                        'Delete memory',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppTheme.error,
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spaceMd,
+                  ),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 35),
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: media.size.height * 0.55,
+                        ),
+                        child: _NoteCard(
+                          titleController: _titleController,
+                          titleHint: _type.label,
+                          contentController: _contentController,
+                          quoteController: _quoteController,
+                          reference: reference,
+                          dateText: formatLongDate(_date),
+                          onChanged: _markChanged,
+                          onTapReference: _pickType,
+                          onTapDate: _pickDate,
+                          contentEmpty: _saveState == _SaveState.invalid,
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if (!keyboardOpen)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: BottomNavBar(
+                  currentIndex: AppTab.library,
+                  onTap: (index) async {
+                    await _save();
+                    if (!context.mounted) return;
+                    navigateToTab(context, index, currentIndex: -1);
+                  },
                 ),
               ),
-            ],
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: BottomNavBar(
-              currentIndex: AppTab.library,
-              onTap: (index) => navigateToTab(context, index, currentIndex: -1),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
-class _MemoryCard extends StatelessWidget {
-  const _MemoryCard({required this.memory, required this.onEdit});
+class _NoteCard extends StatelessWidget {
+  const _NoteCard({
+    required this.titleController,
+    required this.titleHint,
+    required this.contentController,
+    required this.quoteController,
+    required this.reference,
+    required this.dateText,
+    required this.onChanged,
+    required this.onTapReference,
+    required this.onTapDate,
+    required this.contentEmpty,
+  });
 
-  final Memory memory;
-  final VoidCallback onEdit;
+  final TextEditingController titleController;
+  final String titleHint;
+  final TextEditingController contentController;
+  final TextEditingController quoteController;
+  final String reference;
+  final String dateText;
+  final VoidCallback onChanged;
+  final VoidCallback onTapReference;
+  final VoidCallback onTapDate;
+  final bool contentEmpty;
+
+  InputDecoration _bare(String hint, TextStyle? style) => InputDecoration(
+    hintText: hint,
+    hintStyle: style?.copyWith(
+      color: AppTheme.onSurface.withValues(alpha: 0.5),
+    ),
+    border: InputBorder.none,
+    enabledBorder: InputBorder.none,
+    focusedBorder: InputBorder.none,
+    isDense: true,
+    contentPadding: EdgeInsets.zero,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -178,6 +383,10 @@ class _MemoryCard extends StatelessWidget {
     final body = theme.textTheme.bodyMedium?.copyWith(
       fontWeight: FontWeight.w500,
       height: 1.45,
+    );
+    final titleStyle = theme.textTheme.headlineMedium?.copyWith(
+      color: AppTheme.onSurface,
+      fontSize: 32,
     );
 
     return Container(
@@ -194,84 +403,346 @@ class _MemoryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Text(
-                  memory.cleanTitle ?? memory.entryType.label,
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    color: AppTheme.onSurface,
-                    fontSize: 32,
-                  ),
-                ),
-              ),
-              const SizedBox(width: AppTheme.spaceSm),
-              Semantics(
-                button: true,
-                label: 'Edit memory',
-                child: GestureDetector(
-                  onTap: onEdit,
-                  child: CircleAvatar(
-                    radius: 22,
-                    backgroundColor: AppTheme.secondary,
-                    child: Icon(
-                      Icons.edit,
-                      size: 20,
-                      color: AppTheme.onPrimary,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+          TextField(
+            controller: titleController,
+            onChanged: (_) => onChanged(),
+            style: titleStyle,
+            cursorColor: AppTheme.primary,
+            keyboardType: TextInputType.text,
+            textCapitalization: TextCapitalization.sentences,
+            maxLines: null,
+            decoration: _bare(titleHint, titleStyle),
           ),
           const SizedBox(height: AppTheme.spaceSm),
-          Text(
-            memory.progressReference ?? memory.entryType.label,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w800,
+
+          _TapChip(
+            label: reference,
+            icon: Icons.unfold_more,
+            semanticLabel: 'Change entry type',
+            onTap: onTapReference,
+          ),
+          const SizedBox(height: AppTheme.spaceSm),
+
+          _TapChip(
+            label: 'Date: $dateText',
+            icon: Icons.calendar_today_outlined,
+            semanticLabel: 'Change date',
+            onTap: onTapDate,
+            bold: false,
+          ),
+          const SizedBox(height: AppTheme.spaceMd),
+
+          Container(
+            padding: const EdgeInsets.only(left: 12),
+            decoration: BoxDecoration(
+              border: Border(
+                left: BorderSide(color: AppTheme.secondary, width: 3),
+              ),
+            ),
+            child: TextField(
+              controller: quoteController,
+              onChanged: (_) => onChanged(),
+              style: body?.copyWith(fontStyle: FontStyle.italic),
+              cursorColor: AppTheme.primary,
+              keyboardType: TextInputType.multiline,
+              textCapitalization: TextCapitalization.sentences,
+              minLines: 1,
+              maxLines: null,
+              decoration: _bare('Add a favorite quote', body),
             ),
           ),
           const SizedBox(height: AppTheme.spaceMd),
-          Text.rich(
-            TextSpan(
-              children: [
-                const TextSpan(
-                  text: 'Date: ',
-                  style: TextStyle(fontWeight: FontWeight.w800),
-                ),
-                TextSpan(text: formatLongDate(memory.dateCreated)),
-              ],
-            ),
+
+          TextField(
+            controller: contentController,
+            onChanged: (_) => onChanged(),
             style: body,
+            cursorColor: AppTheme.primary,
+            keyboardType: TextInputType.multiline,
+            textCapitalization: TextCapitalization.sentences,
+            minLines: 10,
+            maxLines: null,
+            decoration: _bare('Write something to remember', body),
           ),
-          if (memory.quote != null) ...[
-            const SizedBox(height: AppTheme.spaceMd),
-            Text(
-              '“${memory.quote}”',
-              textAlign: TextAlign.justify,
-              style: body,
+          if (contentEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: AppTheme.spaceSm),
+              child: Text(
+                'Memory can’t be empty. Your last saved version is kept.',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: AppTheme.error,
+                ),
+              ),
             ),
-          ],
-          const SizedBox(height: AppTheme.spaceMd),
-          Text(memory.content, textAlign: TextAlign.justify, style: body),
         ],
       ),
     );
   }
 }
 
+class _TapChip extends StatelessWidget {
+  const _TapChip({
+    required this.label,
+    required this.icon,
+    required this.semanticLabel,
+    required this.onTap,
+    this.bold = true,
+  });
+
+  final String label;
+  final IconData icon;
+  final String semanticLabel;
+  final VoidCallback onTap;
+  final bool bold;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Semantics(
+      button: true,
+      label: semanticLabel,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: Text(
+                  label,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: bold ? FontWeight.w800 : FontWeight.w500,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              Icon(
+                icon,
+                size: 16,
+                color: AppTheme.onSurface.withValues(alpha: 0.7),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TypeSheet extends StatefulWidget {
+  const _TypeSheet({required this.initialType, required this.initialNumber});
+
+  final EntryType initialType;
+  final String initialNumber;
+
+  @override
+  State<_TypeSheet> createState() => _TypeSheetState();
+}
+
+class _TypeSheetState extends State<_TypeSheet> {
+  late EntryType _type = widget.initialType;
+  late final _numberController = TextEditingController(
+    text: widget.initialNumber,
+  );
+  String? _error;
+
+  @override
+  void dispose() {
+    _numberController.dispose();
+    super.dispose();
+  }
+
+  void _done() {
+    final number = _numberController.text.trim();
+    if (_type != EntryType.overallReview && number.isEmpty) {
+      setState(() => _error = 'Enter the ${_type.label.toLowerCase()} number');
+      return;
+    }
+    Navigator.of(context).pop((
+      type: _type,
+      number: _type == EntryType.overallReview ? '' : number,
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final showNumber = _type != EntryType.overallReview;
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        AppTheme.spaceMd,
+        AppTheme.spaceMd,
+        AppTheme.spaceMd,
+        AppTheme.spaceMd + MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppTheme.secondary,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppTheme.spaceMd),
+            Text('Entry type', style: theme.textTheme.headlineSmall),
+            const SizedBox(height: AppTheme.spaceMd),
+            Row(
+              children: [
+                for (final type in EntryType.values) ...[
+                  Expanded(
+                    child: _TypeChip(
+                      label: type.label,
+                      selected: type == _type,
+                      onTap: () => setState(() {
+                        _type = type;
+                        _error = null;
+                      }),
+                    ),
+                  ),
+                  if (type != EntryType.values.last)
+                    const SizedBox(width: AppTheme.spaceSm),
+                ],
+              ],
+            ),
+            if (showNumber) ...[
+              const SizedBox(height: AppTheme.spaceMd),
+              Text(
+                '${_type.label} number',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppTheme.secondary,
+                ),
+              ),
+              const SizedBox(height: AppTheme.spaceSm),
+              TextField(
+                controller: _numberController,
+                keyboardType: TextInputType.number,
+                autofocus: widget.initialType == EntryType.overallReview,
+                style: theme.textTheme.bodyMedium,
+                decoration: InputDecoration(
+                  hintText: 'e.g. 85',
+                  errorText: _error,
+                  filled: true,
+                  fillColor: AppTheme.surfaceVariant,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                onSubmitted: (_) => _done(),
+              ),
+            ],
+            const SizedBox(height: AppTheme.spaceLg),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: _done,
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppTheme.primary,
+                  foregroundColor: AppTheme.onPrimary,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: const Text('Done'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TypeChip extends StatelessWidget {
+  const _TypeChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: label,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          height: 56,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: selected ? AppTheme.primary : AppTheme.surfaceVariant,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: selected ? AppTheme.primary : AppTheme.secondary,
+              width: 1.2,
+            ),
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.bodySmall?.copyWith(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: selected ? AppTheme.onPrimary : AppTheme.onSurface,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _Banner extends StatelessWidget {
-  const _Banner({required this.memory, this.releaseYear});
+  const _Banner({
+    required this.memory,
+    required this.onBack,
+    required this.onDelete,
+    required this.saveState,
+    this.releaseYear,
+  });
 
   final Memory memory;
   final int? releaseYear;
+  final VoidCallback onBack;
+  final VoidCallback onDelete;
+  final _SaveState saveState;
+
+  String? get _statusText => switch (saveState) {
+    _SaveState.pending || _SaveState.saving => 'Saving…',
+    _SaveState.saved => 'Saved',
+    _SaveState.error => 'Not saved',
+    _SaveState.invalid => 'Not saved',
+    _SaveState.idle => null,
+  };
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final topInset = MediaQuery.of(context).padding.top;
     final cover = memory.storyCoverPath;
+    final status = _statusText;
     final meta = [
       if (memory.storyCreator != null) memory.storyCreator!,
       if (releaseYear != null) releaseYear.toString(),
@@ -318,13 +789,67 @@ class _Banner extends StatelessWidget {
                 top: AppTheme.spaceMd + topInset,
                 left: AppTheme.spaceMd,
                 child: GestureDetector(
-                  onTap: () => Navigator.of(context).pop(),
+                  onTap: onBack,
                   child: const Row(
                     children: [
                       Icon(Icons.chevron_left, color: AppTheme.onPrimary),
                       Text('Back', style: TextStyle(color: AppTheme.onPrimary)),
                     ],
                   ),
+                ),
+              ),
+              Positioned(
+                top: AppTheme.spaceSm + topInset,
+                right: AppTheme.spaceSm,
+                child: Row(
+                  children: [
+                    if (status != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color:
+                              (saveState == _SaveState.error ||
+                                  saveState == _SaveState.invalid)
+                              ? AppTheme.error
+                              : Colors.black.withValues(alpha: 0.35),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          status,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: AppTheme.onPrimary,
+                          ),
+                        ),
+                      ),
+                    PopupMenuButton<String>(
+                      tooltip: 'More',
+                      icon: const Icon(
+                        Icons.more_horiz,
+                        color: AppTheme.onPrimary,
+                      ),
+                      onSelected: (value) {
+                        if (value == 'delete') onDelete();
+                      },
+                      itemBuilder: (_) => [
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Row(
+                            children: [
+                              Icon(Icons.delete_outline, color: AppTheme.error),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Delete memory',
+                                style: TextStyle(color: AppTheme.error),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ],

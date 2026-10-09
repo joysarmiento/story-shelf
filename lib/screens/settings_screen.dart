@@ -65,13 +65,22 @@ class SettingsScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
+            style: TextButton.styleFrom(
+              textStyle: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
+              foregroundColor: destructive ? AppTheme.error : AppTheme.primary,
+            ),
             child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: destructive
-                ? TextButton.styleFrom(foregroundColor: AppTheme.error)
-                : null,
+            style: TextButton.styleFrom(
+              textStyle: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
+              foregroundColor: destructive ? AppTheme.error : AppTheme.primary,
+            ),
             child: Text(confirmLabel),
           ),
         ],

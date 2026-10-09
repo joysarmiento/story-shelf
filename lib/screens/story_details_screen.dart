@@ -182,6 +182,7 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
                 story: story,
                 isFavorite: story.isFavorite,
                 onToggleFavorite: _toggleFavorite,
+                onDelete: () => _confirmDelete(story),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(
@@ -354,18 +355,6 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
                         ),
                       ),
                     const SizedBox(height: AppTheme.spaceSectionGap),
-                    Center(
-                      child: TextButton.icon(
-                        onPressed: () => _confirmDelete(story),
-                        icon: Icon(Icons.delete_outline, color: AppTheme.error),
-                        label: Text(
-                          'Delete story',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: AppTheme.error,
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -391,11 +380,13 @@ class _Banner extends StatelessWidget {
     required this.story,
     required this.isFavorite,
     required this.onToggleFavorite,
+    required this.onDelete,
   });
 
   final Story story;
   final bool isFavorite;
   final VoidCallback onToggleFavorite;
+  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -459,17 +450,46 @@ class _Banner extends StatelessWidget {
                 ),
               ),
               Positioned(
-                top: AppTheme.spaceMd + topInset,
-                right: AppTheme.spaceMd,
-                child: GestureDetector(
-                  onTap: onToggleFavorite,
-                  child: CircleAvatar(
-                    backgroundColor: AppTheme.surface,
-                    child: Icon(
-                      isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: AppTheme.error,
+                top: AppTheme.spaceSm + topInset,
+                right: AppTheme.spaceSm,
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: onToggleFavorite,
+                      child: CircleAvatar(
+                        backgroundColor: AppTheme.surface,
+                        child: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: AppTheme.error,
+                        ),
+                      ),
                     ),
-                  ),
+                    PopupMenuButton<String>(
+                      tooltip: 'More',
+                      icon: const Icon(
+                        Icons.more_horiz,
+                        color: AppTheme.onPrimary,
+                      ),
+                      onSelected: (value) {
+                        if (value == 'delete') onDelete();
+                      },
+                      itemBuilder: (_) => [
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Row(
+                            children: [
+                              Icon(Icons.delete_outline, color: AppTheme.error),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Delete story',
+                                style: TextStyle(color: AppTheme.error),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ],
