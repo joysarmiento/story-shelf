@@ -1,88 +1,70 @@
-<!--
-  This is your project's front page. Replace every placeholder below.
-  It is the first thing your instructor and any future employer will read, and
-  the live link in it is how your project gets opened for grading.
+# Story Shelf
 
-  New here? Read START-HERE.md first. Delete this comment when you are done.
--->
+> One personal place to track the books, manga, movies, dramas and anime you love, and to journal how each one made you feel.
 
-# App Name
-
-> One sentence: what this app does, and who it is for.
-
-**Live demo:** https://YOURUSERNAME.github.io/YOUR-REPO/ <!-- GitHub Pages is set up already; replace if you host elsewhere -->
-**Demo video:** `docs/demo.mp4` (link it here once it exists)
+**Live demo:** https://joysarmiento.github.io/story-shelf/
+**Demo video:** `docs/demo.mp4`  (link it here once it exists)
 **Course:** Applications Development and Emerging Technologies (6ADET), Holy Angel University
-**Author:** Your Name
+**Author:** Maria Anne Joy T. Sarmiento
 
-This repository lives in the author's own GitHub account and is public on
-purpose. There is no `student.json` here and there should not be one: see
-`docs/06-security-and-privacy.md` for what a public repo means for secrets and
-personal data.
+This repository lives in the author's own GitHub account and is public on purpose. There is no `student.json` here and there should not be one: see [`docs/06-security-and-privacy.md`](docs/06-security-and-privacy.md) for what a public repo means for secrets and personal data.
 
 ---
 
 ## Screenshots
 
-Put two or three real screenshots at phone size in `docs/assets/`, then replace
-this paragraph with them:
-
-```markdown
-| Home | Detail | Add |
-| --- | --- | --- |
-| ![Home](docs/assets/screen-home.png) | ![Detail](docs/assets/screen-detail.png) | ![Add](docs/assets/screen-add.png) |
-```
-
-A repo without screenshots reads as abandoned, whatever the code says.
+| Home | Library | Story details | Memory details |
+| --- | --- | --- | --- |
+| ![Home](docs/assets/images/final_screens/05_Home.png) | ![Library](docs/assets/images/final_screens/06_Library.png) | ![Story details](docs/assets/images/final_screens/08_Story_Details.png) | ![Memory details](docs/assets/images/final_screens/11_Memory_Details.png) |
 
 ## What it does
 
-Three to five bullets. What can a user actually do?
+People who read and watch many kinds of stories usually keep their progress, ratings and thoughts scattered across different apps, or rely on memory. Story Shelf keeps them together, with a cozy journal at the heart of it. After a chapter or an episode, you can write down what you felt, what surprised you and what you want to remember. Your shelf tracks where you are, and your journal keeps how it felt.
 
-- ...
-- ...
-- ...
+- **Build your library.** Add books, manga, manhwa, movies, dramas, anime and TV series with a cover, creator, release year, status (Not Started, Started, Completed), progress, rating and favorite flag.
+- **Write memories.** Journal entries tied to a story: an overall review, or a note on a specific chapter, episode or volume, with an optional title, rating and favorite quote.
+- **Find things fast.** Search, filter by medium and sort in both the Library and the Memories tabs.
+- **Pick up where you left off.** The Home screen shows the stories you are in the middle of, your recent memories, and "A Memory From This Day", which rotates between two of your stories each day.
+- **Make it readable for you.** Choose a text size and turn on high contrast; both are saved to your account and applied on every sign-in.
+- **Own your account.** Sign up, log in, reset your password, edit your profile and avatar, or delete your account and data.
 
 ## Built with
 
 | | |
 | --- | --- |
 | Framework | Flutter (Dart) |
-| State | `setState` / provider / riverpod (say which) |
-| Storage | shared_preferences / Hive / Drift / Firebase / Supabase / other |
-| Other packages | list the ones that matter, with a word on why |
+| State | `setState` |
+| Backend and storage | Supabase (auth, Postgres database, storage bucket for cover images) |
+| Other packages | `supabase_flutter` (backend client), `flutter_dotenv` (reads `.env` keys), `google_fonts` (typography), `image_picker` (cover and avatar uploads), `device_preview` (phone frame while developing in a browser) |
+| Fonts and assets | Railey (custom display font, personal-use licence), own logo and wordmark |
+| Hosting | GitHub Pages, deployed by `.github/workflows/deploy-web.yml` on every push to `main` |
 
 ## Running it yourself
 
 ```bash
 flutter pub get
-cp .env.example .env      # only if your app needs keys, see below
+cp .env.example .env      # then fill in your own Supabase values, see below
 flutter run -d web-server --web-port 8080
 ```
 
-Then open http://localhost:8080. Requires Flutter (run `flutter --version` and
-put yours here).
+Then open http://localhost:8080. Requires Flutter 3.44 or newer (run `flutter --version` to check).
 
 ### Environment variables
 
-This project reads its configuration from a `.env` file that is **not** in the
-repository. Copy `.env.example`, fill in your own values, and never commit the
-result.
+This project reads its configuration from a `.env` file that is **not** in the repository. Copy `.env.example`, fill in your own values, and never commit the result.
 
 | Variable | What it is | Where to get one |
 | --- | --- | --- |
-| `EXAMPLE_API_KEY` | ... | ... |
+| `SUPABASE_URL` | The URL of your Supabase project | Supabase dashboard > Project Settings > API |
+| `SUPABASE_PUBLISHABLE_KEY` | The publishable (anon) key for that project | Same page, under the project API keys |
+
+Both values are designed to be shipped inside a client app. Your database is protected by Row Level Security policies, not by hiding these two values. The deploy workflow reads the same names from repository secrets (Settings > Secrets and variables > Actions).
 
 ## Privacy and secrets
 
-Required section. Two or three honest sentences:
-
-- What personal data this app stores, if any, and where it goes.
-- Where the secrets live (`.env` locally, repository secrets in the deploy
-  workflow) and what protects the data on the service side (Firestore rules,
-  Supabase RLS, or "nothing leaves the device").
-- Confirm that all sample data, screenshots and the video contain **no real
-  personal information**.
+- **What is stored:** your email, display name, username and optional avatar; the stories and memories you write; cover images you upload; and your text-size and contrast preferences. All of it is stored in the author's Supabase project, tied to your user ID.
+- **Where the secrets live:** locally in `.env` (git-ignored) and in repository secrets for the deploy workflow. Only the Supabase URL and publishable key reach the web build. No secret or service-role key is used anywhere in the app. Access to the data is controlled by Supabase Row Level Security; see [`docs/06-security-and-privacy.md`](docs/06-security-and-privacy.md) for the policies.
+- **Sample data:** the sample data, screenshots and demo video contain no real personal information.
 
 ## Project documentation
 
@@ -93,39 +75,43 @@ Required section. Two or three honest sentences:
 | [Design system](docs/03-design-system.md) | colors, type, spacing, components |
 | [Weekly reports](docs/04-weekly-reports.md) | what happened each week |
 | [Demo video](docs/05-demo-video.md) | the recording and what it shows |
-| [Start here](START-HERE.md) | how this repo works (delete once you have read it) |
 | [Security and privacy](docs/06-security-and-privacy.md) | the checklist, filled in |
+| [Security Checklist](docs/07-security-checklist.md) | the checklist, filled in |
+| [AI usage](AI-USAGE.md) | how AI was used, where it got things wrong, who wrote what |
 
 ## Status and what is next
 
-Be honest. What works, what is half done, what you would build next. An honest
-"known issues" section reads better than a claim the reader disproves in thirty
-seconds.
+**Works today:** sign up, log in and password reset; add, edit and delete stories and memories; cover image upload; search, filter and sort in Library and Memories; the Home dashboard with the daily rotating memory; profile editing; text-size and high-contrast settings; account deletion; page-flip animation between tabs.
+
+**Known limitations**
+
+- The app needs a network connection; there is no offline mode or local cache.
+- Lists load when you open a screen and do not refresh on pull-down yet.
+- The deployed demo is wrapped in a phone frame by `device_preview`.
+- Automated test coverage is small.
+- Story progress uses a current-versus-total format, which may not be suitable for every type of media.
+
+**Ideas for next**
+
+- Pull-to-refresh on Home, Library and Memories
+- Reading stats on the Profile screen (stories finished, memories written, average rating)
+- A one-tap "+1 chapter/episode" button on in-progress stories
+- A Favorites filter in the Library
+- Improve progress tracking for movies by using minutes watched out of the total runtime instead of the current-versus-total format.
 
 ## Credits
 
 - Packages: see `pubspec.yaml`
-- Assets, icons, 3D models, sounds: name the author and the licence for each
-- People who helped, and how
+- Railey font: personal-use licence; check the licence terms before using it commercially
+- Logo, wordmark and screen designs: made by the author
+- Backend: [Supabase](https://supabase.com)
 
 ## AI use
 
-If you used AI while building this, say so here. Honest disclosure is the
-standard in this course and increasingly outside it, and reporting heavy use
-accurately costs you nothing.
-
-This section is the last 10 points of the finals badge, and it wants three
-things:
-
 ![Built with AI assistance](https://img.shields.io/badge/built%20with-AI%20assistance-0b5fff)
 
-- the badge above, or one you like better
-- a line naming which assistant you used and how much of the work it touched
-- a link to [AI-USAGE.md](AI-USAGE.md), where the full account lives
-
-Keep the detail in `AI-USAGE.md` rather than here. This section is the summary a
-visitor reads; that file is the record the badge is graded from.
+I used Claude as a coding assistant throughout the project. It produced first versions of the screens, models, navigation, theme and Supabase wiring, and I then rewrote, restyled and extended them to fit my own design and data. The full, dated account (what I asked, what I kept or changed, where the AI got it wrong, and who wrote what) is in [AI-USAGE.md](AI-USAGE.md).
 
 ## Licence
 
-MIT, see [LICENSE](LICENSE). Change it if you want different terms.
+MIT, see [LICENSE](LICENSE).
