@@ -1,10 +1,4 @@
-# Proposal
-
-Paste in the proposal you submitted, and replace it with the final version when
-the project is done. You do not need to keep it in sync week to week: nobody
-reads this folder until you hand the project in.
-
-Keep these headings so a reader can scan it:
+# Proposal for Story Shelf
 
 ## The problem, in one sentence
 People who read books and manga or watch movies, dramas, anime, and other stories often keep their progress, ratings, and personal thoughts scattered across different apps or rely on memory, making it difficult to remember what they experienced and how they felt about it.

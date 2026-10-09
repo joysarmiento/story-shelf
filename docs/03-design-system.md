@@ -15,7 +15,6 @@
 
 *Note: I used AI to help summarize the information I provided and turn each part into a visual image. The content and information came from my own work, while AI was only used to assist with summarization and visual presentation.*
 
----
 
 ## Type scale
 
@@ -30,7 +29,6 @@
 
 *Note: I used AI to help summarize the information I provided and turn each part into a visual image. The content and information came from my own work, while AI was only used to assist with summarization and visual presentation.*
 
----
 
 ## Spacing
 
@@ -43,7 +41,6 @@
 
 *Note: I used AI to help summarize the information I provided and turn each part into a visual image. The content and information came from my own work, while AI was only used to assist with summarization and visual presentation.*
 
----
 
 ## Components
 
@@ -64,7 +61,6 @@
 
 *Note: I used AI to help summarize the information I provided and turn each part into a visual image. The content and information came from my own work, while AI was only used to assist with summarization and visual presentation.*
 
----
 
 ## Changes since the last version (What changed, and why)
 
@@ -78,4 +74,3 @@
 | Cards | Story and Memory Cards shared a similar white and beige appearance | StoryPosterCard and MemoryCard are separate widgets — one takes a Story, the other a Memory | They display different data shapes (poster + badge vs. quote + date), so they need separate widgets rather than one card styled two ways. |
 | Navigation / Headers | Included Screen Header and Bottom Navigation as reusable components | Still included: BottomNavBar (currentIndex, onTap) and SectionHeader (title, actionLabel, onAction) remain in the 10-widget list | Both appear on multiple screens (nav bar on all 6 main screens; section headers on Home, Library, Search, Profile), so they stayed in as reusable custom widgets rather than being dropped. |
 
----
