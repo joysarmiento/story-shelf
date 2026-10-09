@@ -11,7 +11,7 @@
 | onSurface | #66769a | Body text |
 | error | #b02d35 | Accent headings, tags, and destructive |
 
-![Palette]()
+![Palette](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/images/design-system/01-palette.png)
 
 *Note: I used AI to help summarize the information I provided and turn each part into a visual image. The content and information came from my own work, while AI was only used to assist with summarization and visual presentation.*
 
@@ -26,7 +26,7 @@
 | Body | bodyMedium | 20 sp | Regular | Memory card titles, story names |
 | Caption | labelSmall | 15 sp | Medium | Timestamps (Date), meta, hints, and badges |
 
-![Type Scale]()
+![Type Scale](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/images/design-system/02-type-scale.png)
 
 *Note: I used AI to help summarize the information I provided and turn each part into a visual image. The content and information came from my own work, while AI was only used to assist with summarization and visual presentation.*
 
@@ -39,7 +39,7 @@
 - Gap between list items: 12, between memory cards and grid covers
 - Gap between sections: 32
 
-![Spacing]()
+![Spacing](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/images/design-system/03-spacing.png)
 
 *Note: I used AI to help summarize the information I provided and turn each part into a visual image. The content and information came from my own work, while AI was only used to assist with summarization and visual presentation.*
 
@@ -60,7 +60,7 @@
 | ProgressBarLabeled | lib/widgets/progress_bar_labeled.dart | double progress, String? leadingLabel, String? trailingLabel | Story Details (reading progress), Profile ("Stories by Medium" bars) |
 | SettingsTile | lib/widgets/settings_tile.dart | IconData icon, String label, Widget? trailing, VoidCallback? onTap | Settings (Edit Profile, Dark Mode, Sign Out, Delete Account rows) |
 
-![Components]()
+![Components](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/images/design-system/04-components.png)
 
 *Note: I used AI to help summarize the information I provided and turn each part into a visual image. The content and information came from my own work, while AI was only used to assist with summarization and visual presentation.*
 
