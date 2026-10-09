@@ -16,6 +16,8 @@ This repository lives in the author's own GitHub account and is public on purpos
 
 ## Screenshots
 
+See all screens are in [docs/02-mockup.md](https://github.com/joysarmiento/story-shelf/blob/main/docs/02-mockup.md):
+
 | Home | Library | Story details | Memory details |
 | --- | --- | --- | --- |
 | ![Home](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/final_screens/05_Home.png) | ![Library](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/final_screens/06_Library.png) | ![Story details](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/final_screens/08_Story_Details.png) | ![Memory details](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/final_screens/11_Memory_Details.png) |
