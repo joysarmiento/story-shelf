@@ -6,6 +6,7 @@ import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
 import '../utils/date_format.dart';
 import '../utils/error_message.dart';
+import '../widgets/mood_picker.dart';
 
 class AddMemoryScreen extends StatefulWidget {
   const AddMemoryScreen({super.key, required this.story});
@@ -23,6 +24,7 @@ class _AddMemoryScreenState extends State<AddMemoryScreen> {
   final _contentController = TextEditingController();
 
   EntryType _type = EntryType.overallReview;
+  Mood? _mood;
   DateTime _date = DateTime.now();
 
   bool _saving = false;
@@ -43,7 +45,8 @@ class _AddMemoryScreenState extends State<AddMemoryScreen> {
       _numberController.text.trim().isNotEmpty ||
       _quoteController.text.trim().isNotEmpty ||
       _contentController.text.trim().isNotEmpty ||
-      _type != EntryType.overallReview;
+      _type != EntryType.overallReview ||
+      _mood != null;
 
   String? _nullIfEmpty(String text) {
     final t = text.trim();
@@ -86,6 +89,7 @@ class _AddMemoryScreenState extends State<AddMemoryScreen> {
       title: _nullIfEmpty(_titleController.text),
       content: content,
       quote: _nullIfEmpty(_quoteController.text),
+      mood: _mood,
       dateCreated: _date,
       storyTitle: story.title,
       storyCoverPath: story.coverPath,
@@ -316,7 +320,18 @@ class _AddMemoryScreenState extends State<AddMemoryScreen> {
                             ),
                           ),
                           const SizedBox(height: AppTheme.spaceMd),
-
+                          Text(
+                            'How did it feel?',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          const SizedBox(height: AppTheme.spaceSm),
+                          MoodPicker(
+                            selected: _mood,
+                            onChanged: (mood) => setState(() => _mood = mood),
+                          ),
+                          const SizedBox(height: AppTheme.spaceMd),
                           Container(
                             padding: const EdgeInsets.only(left: 12),
                             decoration: BoxDecoration(

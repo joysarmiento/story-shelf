@@ -135,6 +135,22 @@ void main() {
       expect(memory.storyMedium, Medium.series);
     });
 
+    test('mood round-trips through json and tolerates missing values', () {
+      final memory = Memory(
+        id: 'm',
+        storyId: 's',
+        entryType: EntryType.overallReview,
+        content: 'x',
+        mood: Mood.cried,
+        dateCreated: DateTime(2026, 1, 1),
+      );
+      expect(memory.toJson()['mood'], 'cried');
+      expect(MoodLabel.fromDb('cried'), Mood.cried);
+      expect(MoodLabel.fromDb(null), isNull);
+      expect(MoodLabel.fromDb('not-a-mood'), isNull);
+      expect(_memory('m', 's').toJson()['mood'], isNull);
+    });
+
     test('cleanTitle hides blank titles', () {
       final blank = Memory(
         id: 'm',

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/memory.dart';
 import '../theme/app_theme.dart';
 import '../utils/date_format.dart';
+import 'mood_picker.dart';
 
 class MemoryCard extends StatelessWidget {
   const MemoryCard({super.key, required this.memory, required this.onTap});
@@ -50,14 +51,26 @@ class MemoryCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    memory.storyTitle ?? memory.cleanTitle ?? 'Untitled memory',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.error,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          memory.storyTitle ??
+                              memory.cleanTitle ??
+                              'Untitled memory',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: AppTheme.error,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      if (memory.mood != null) ...[
+                        const SizedBox(width: 8),
+                        MoodBadge(mood: memory.mood!),
+                      ],
+                    ],
                   ),
                   const SizedBox(height: 1),
                   Text(

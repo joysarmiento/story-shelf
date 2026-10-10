@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../services/supabase_service.dart';
 import '../models/story.dart';
+import '../models/memory.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_navigation.dart';
 import '../utils/error_message.dart';
@@ -19,6 +20,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   List<Story> _stories = [];
   int _memoryCount = 0;
+  Mood? _topMood;
+  int _topMoodCount = 0;
   bool _loading = true;
 
   @override
@@ -37,6 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         _stories = stories;
         _memoryCount = memories.length;
+        _setTopMood(memories);
         _loading = false;
       });
     } catch (e) {
@@ -46,6 +50,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
         SnackBar(content: Text('Could not load stats. ${friendlyError(e)}')),
       );
     }
+  }
+
+  void _setTopMood(List<Memory> memories) {
+    final counts = <Mood, int>{};
+    for (final m in memories) {
+      final mood = m.mood;
+      if (mood != null) counts[mood] = (counts[mood] ?? 0) + 1;
+    }
+    if (counts.isEmpty) {
+      _topMood = null;
+      _topMoodCount = 0;
+      return;
+    }
+    final top = counts.entries.reduce((a, b) => b.value > a.value ? b : a);
+    _topMood = top.key;
+    _topMoodCount = top.value;
   }
 
   Future<void> _openSettings() async {
@@ -119,7 +139,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontSize: 17,
                   ),
                 ),
-                const SizedBox(height: AppTheme.spaceSectionGap),
+                const SizedBox(height: AppTheme.spaceLg),
                 if (_loading)
                   const Padding(
                     padding: EdgeInsets.all(AppTheme.spaceLg),
@@ -131,7 +151,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     completed: completed,
                     memories: _memoryCount,
                   ),
-                  const SizedBox(height: AppTheme.spaceLg),
+                  const SizedBox(height: AppTheme.spaceMd),
+                  _MoodCard(mood: _topMood, count: _topMoodCount),
+                  const SizedBox(height: AppTheme.spaceMd),
                   _MediumBreakdownCard(rows: rows, total: stories.length),
                 ],
               ],
@@ -229,6 +251,55 @@ class _Stat extends StatelessWidget {
               ),
             ),
             Text(label, style: theme.textTheme.bodySmall),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MoodCard extends StatelessWidget {
+  const _MoodCard({required this.mood, required this.count});
+
+  final Mood? mood;
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final mood = this.mood;
+    final summary = mood == null
+        ? 'Pick a mood on a memory to see it here.'
+        : '${mood.label} · $count ${count == 1 ? 'memory' : 'memories'}';
+    return Semantics(
+      label: mood == null
+          ? 'Your most common mood: none yet'
+          : 'Your most common mood: ${mood.label}, $count memories',
+      excludeSemantics: true,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppTheme.spaceMd),
+        decoration: _cardDecoration(),
+        child: Row(
+          children: [
+            Text(mood?.emoji ?? '💭', style: const TextStyle(fontSize: 40)),
+            const SizedBox(width: AppTheme.spaceMd),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Your most common mood',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: AppTheme.error,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spaceXs),
+                  Text(summary, style: theme.textTheme.bodySmall),
+                ],
+              ),
+            ),
           ],
         ),
       ),

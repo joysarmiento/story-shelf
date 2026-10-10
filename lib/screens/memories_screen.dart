@@ -28,9 +28,10 @@ extension on _DatePreset {
 }
 
 class _FilterSortChoice {
-  const _FilterSortChoice(this.preset, this.newestFirst);
+  const _FilterSortChoice(this.preset, this.newestFirst, this.mood);
   final _DatePreset preset;
   final bool newestFirst;
+  final Mood? mood;
 }
 
 class MemoriesScreen extends StatefulWidget {
@@ -44,6 +45,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
   final _searchController = TextEditingController();
   String _query = '';
   Medium? _selectedMedium;
+  Mood? _selectedMood;
   bool _newestFirst = true;
   _DatePreset _datePreset = _DatePreset.any;
   DateTimeRange? _customRange;
@@ -118,7 +120,11 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
     final memories = _memories.where((memory) {
       final matchesMedium =
           _selectedMedium == null || memory.storyMedium == _selectedMedium;
-      return matchesQuery(memory) && matchesMedium && matchesDate(memory);
+      final matchesMood = _selectedMood == null || memory.mood == _selectedMood;
+      return matchesQuery(memory) &&
+          matchesMedium &&
+          matchesMood &&
+          matchesDate(memory);
     }).toList();
 
     memories.sort(
@@ -153,7 +159,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
   }
 
   bool get _hasActiveFilterOrSort =>
-      _datePreset != _DatePreset.any || !_newestFirst;
+      _datePreset != _DatePreset.any || !_newestFirst || _selectedMood != null;
 
   Future<void> _openFilterSort() async {
     final choice = await showModalBottomSheet<_FilterSortChoice>(
@@ -166,7 +172,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
         final theme = Theme.of(context);
         return SafeArea(
           child: DefaultTabController(
-            length: 2,
+            length: 3,
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppTheme.spaceMd,
@@ -185,7 +191,8 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                     ),
                     unselectedLabelStyle: theme.textTheme.bodyMedium,
                     tabs: const [
-                      Tab(text: 'Filter'),
+                      Tab(text: 'Date'),
+                      Tab(text: 'Mood'),
                       Tab(text: 'Sort'),
                     ],
                   ),
@@ -214,10 +221,55 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                                           '${formatLongDate(_customRange!.end)}'
                                     : preset.label,
                                 selected: _datePreset == preset,
-                                onTap: () => Navigator.of(
-                                  context,
-                                ).pop(_FilterSortChoice(preset, _newestFirst)),
+                                onTap: () => Navigator.of(context).pop(
+                                  _FilterSortChoice(
+                                    preset,
+                                    _newestFirst,
+                                    _selectedMood,
+                                  ),
+                                ),
                               ),
+                          ],
+                        ),
+                        ListView(
+                          padding: EdgeInsets.zero,
+                          children: [
+                            Text(
+                              'Filter by mood',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: AppTheme.error,
+                              ),
+                            ),
+                            const SizedBox(height: AppTheme.spaceMd),
+                            Wrap(
+                              spacing: AppTheme.spaceSm,
+                              runSpacing: AppTheme.spaceSm,
+                              children: [
+                                FilterChipPill(
+                                  label: 'Any mood',
+                                  selected: _selectedMood == null,
+                                  onTap: () => Navigator.of(context).pop(
+                                    _FilterSortChoice(
+                                      _datePreset,
+                                      _newestFirst,
+                                      null,
+                                    ),
+                                  ),
+                                ),
+                                for (final mood in Mood.values)
+                                  FilterChipPill(
+                                    label: '${mood.emoji} ${mood.label}',
+                                    selected: _selectedMood == mood,
+                                    onTap: () => Navigator.of(context).pop(
+                                      _FilterSortChoice(
+                                        _datePreset,
+                                        _newestFirst,
+                                        mood,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ],
                         ),
                         ListView(
@@ -233,16 +285,24 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                             _OptionTile(
                               label: 'Newest first',
                               selected: _newestFirst,
-                              onTap: () => Navigator.of(
-                                context,
-                              ).pop(_FilterSortChoice(_datePreset, true)),
+                              onTap: () => Navigator.of(context).pop(
+                                _FilterSortChoice(
+                                  _datePreset,
+                                  true,
+                                  _selectedMood,
+                                ),
+                              ),
                             ),
                             _OptionTile(
                               label: 'Oldest first',
                               selected: !_newestFirst,
-                              onTap: () => Navigator.of(
-                                context,
-                              ).pop(_FilterSortChoice(_datePreset, false)),
+                              onTap: () => Navigator.of(context).pop(
+                                _FilterSortChoice(
+                                  _datePreset,
+                                  false,
+                                  _selectedMood,
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -269,6 +329,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
       if (!mounted) return;
       setState(() {
         _newestFirst = choice.newestFirst;
+        _selectedMood = choice.mood;
         if (picked != null) {
           _customRange = picked;
           _datePreset = _DatePreset.custom;
@@ -280,6 +341,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
     setState(() {
       _datePreset = choice.preset;
       _newestFirst = choice.newestFirst;
+      _selectedMood = choice.mood;
     });
   }
 
@@ -415,11 +477,15 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                                   ? 'No results for "${_query.trim()}"'
                                   : _datePreset != _DatePreset.any
                                   ? 'No memories in this date range'
+                                  : _selectedMood != null
+                                  ? 'No ${_selectedMood!.label.toLowerCase()} memories yet'
                                   : _selectedMedium != null
                                   ? 'No ${_selectedMedium!.label.toLowerCase()} memories yet'
                                   : 'No memories yet',
                               message: hasQuery
                                   ? 'Try a different word or title.'
+                                  : _selectedMood != null
+                                  ? 'Pick this mood on a memory and it will show up here.'
                                   : 'Open a story and tap + add to save a memory.',
                             ),
                           ),

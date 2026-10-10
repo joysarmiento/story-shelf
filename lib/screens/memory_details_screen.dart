@@ -10,6 +10,7 @@ import '../utils/app_navigation.dart';
 import '../utils/date_format.dart';
 import '../utils/error_message.dart';
 import '../widgets/bottom_nav_bar.dart';
+import '../widgets/mood_picker.dart';
 
 enum _SaveState { idle, pending, saving, saved, error, invalid }
 
@@ -34,6 +35,7 @@ class _MemoryDetailsScreenState extends State<MemoryDetailsScreen> {
   final _quoteController = TextEditingController();
 
   late EntryType _type;
+  Mood? _mood;
   late String _number;
   late DateTime _date;
 
@@ -84,6 +86,7 @@ class _MemoryDetailsScreenState extends State<MemoryDetailsScreen> {
         _contentController.text = memory.content;
         _quoteController.text = memory.quote ?? '';
         _type = memory.entryType;
+        _mood = memory.mood;
         _number = _stripUnit(memory.progressReference);
         _date = memory.dateCreated;
       }
@@ -127,6 +130,7 @@ class _MemoryDetailsScreenState extends State<MemoryDetailsScreen> {
       title: _nullIfEmpty(_titleController.text),
       content: content,
       quote: _nullIfEmpty(_quoteController.text),
+      mood: _mood,
       dateCreated: _date,
       storyTitle: base.storyTitle,
       storyCoverPath: base.storyCoverPath,
@@ -208,6 +212,21 @@ class _MemoryDetailsScreenState extends State<MemoryDetailsScreen> {
       _type = result.type;
       _number = result.number;
     });
+    _markChanged();
+  }
+
+  Future<void> _pickMood() async {
+    FocusScope.of(context).unfocus();
+    final result = await showModalBottomSheet<({Mood? mood})>(
+      context: context,
+      backgroundColor: AppTheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) => _MoodSheet(selected: _mood),
+    );
+    if (result == null) return;
+    setState(() => _mood = result.mood);
     _markChanged();
   }
 
@@ -311,6 +330,8 @@ class _MemoryDetailsScreenState extends State<MemoryDetailsScreen> {
                           quoteController: _quoteController,
                           reference: reference,
                           dateText: formatLongDate(_date),
+                          mood: _mood,
+                          onTapMood: _pickMood,
                           onChanged: _markChanged,
                           onTapReference: _pickType,
                           onTapDate: _pickDate,
@@ -351,6 +372,8 @@ class _NoteCard extends StatelessWidget {
     required this.quoteController,
     required this.reference,
     required this.dateText,
+    required this.mood,
+    required this.onTapMood,
     required this.onChanged,
     required this.onTapReference,
     required this.onTapDate,
@@ -363,6 +386,8 @@ class _NoteCard extends StatelessWidget {
   final TextEditingController quoteController;
   final String reference;
   final String dateText;
+  final Mood? mood;
+  final VoidCallback onTapMood;
   final VoidCallback onChanged;
   final VoidCallback onTapReference;
   final VoidCallback onTapDate;
@@ -418,16 +443,27 @@ class _NoteCard extends StatelessWidget {
           ),
           const SizedBox(height: AppTheme.spaceSm),
 
-          _TapChip(
-            label: reference,
-            icon: Icons.unfold_more,
-            semanticLabel: 'Change entry type',
-            onTap: onTapReference,
+          Row(
+            children: [
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: _TapChip(
+                    label: reference,
+                    icon: Icons.unfold_more,
+                    semanticLabel: 'Change entry type',
+                    onTap: onTapReference,
+                  ),
+                ),
+              ),
+              _MoodChip(mood: mood, onTap: onTapMood),
+            ],
           ),
           const SizedBox(height: AppTheme.spaceSm),
 
           _TapChip(
-            label: 'Date: $dateText',
+            prefix: 'Date: ',
+            label: dateText,
             icon: Icons.calendar_today_outlined,
             semanticLabel: 'Change date',
             onTap: onTapDate,
@@ -490,6 +526,7 @@ class _TapChip extends StatelessWidget {
     required this.semanticLabel,
     required this.onTap,
     this.bold = true,
+    this.prefix,
   });
 
   final String label;
@@ -497,6 +534,7 @@ class _TapChip extends StatelessWidget {
   final String semanticLabel;
   final VoidCallback onTap;
   final bool bold;
+  final String? prefix;
 
   @override
   Widget build(BuildContext context) {
@@ -513,8 +551,17 @@ class _TapChip extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Flexible(
-                child: Text(
-                  label,
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      if (prefix != null)
+                        TextSpan(
+                          text: prefix,
+                          style: const TextStyle(fontWeight: FontWeight.w800),
+                        ),
+                      TextSpan(text: label),
+                    ],
+                  ),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: bold ? FontWeight.w800 : FontWeight.w500,
                   ),
@@ -907,6 +954,100 @@ class _Banner extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _MoodChip extends StatelessWidget {
+  const _MoodChip({required this.mood, required this.onTap});
+
+  final Mood? mood;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final mood = this.mood;
+    final hasMood = mood != null;
+
+    return Semantics(
+      button: true,
+      label: hasMood ? 'Mood: ${mood.label}. Change mood' : 'Add mood',
+      excludeSemantics: true,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: hasMood ? AppTheme.surface : AppTheme.surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppTheme.secondary, width: 1.2),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (hasMood) ...[
+                Text(mood.emoji, style: const TextStyle(fontSize: 16)),
+                const SizedBox(width: 6),
+              ],
+              Text(
+                hasMood ? mood.label : 'Add mood',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: AppTheme.onSurface,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(Icons.expand_more, size: 18, color: AppTheme.onSurface),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MoodSheet extends StatelessWidget {
+  const _MoodSheet({required this.selected});
+
+  final Mood? selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.all(AppTheme.spaceMd),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppTheme.secondary,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppTheme.spaceMd),
+            Text('How did it feel?', style: theme.textTheme.headlineSmall),
+            const SizedBox(height: AppTheme.spaceXs),
+            Text(
+              'Tap your current mood again to clear it.',
+              style: theme.textTheme.bodySmall,
+            ),
+            const SizedBox(height: AppTheme.spaceMd),
+            MoodPicker(
+              selected: selected,
+              onChanged: (mood) => Navigator.of(context).pop((mood: mood)),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
