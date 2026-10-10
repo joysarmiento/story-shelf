@@ -89,7 +89,8 @@ jobs:
         run: |
           echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > .env
           echo "SUPABASE_PUBLISHABLE_KEY=${{ secrets.SUPABASE_PUBLISHABLE_KEY }}" >> .env
-
+          echo "TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}" >> .env
+          
       - name: Build web
         if: steps.check.outputs.ready == 'true'
         env:

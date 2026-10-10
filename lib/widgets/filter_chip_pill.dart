@@ -20,7 +20,7 @@ class FilterChipPill extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: selected ? AppTheme.primary : AppTheme.secondary,

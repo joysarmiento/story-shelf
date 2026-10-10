@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
 
 import '../services/supabase_service.dart';
 import '../models/story.dart';
@@ -13,6 +12,7 @@ import '../widgets/filter_chip_pill.dart';
 import '../widgets/story_poster_card.dart';
 import 'add_story_screen.dart';
 import 'story_details_screen.dart';
+import 'story_search_screen.dart';
 
 enum _LibrarySort { alphabetical, latestRead }
 
@@ -276,31 +276,21 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 const SizedBox(height: AppTheme.spaceMd),
                 SizedBox(
                   height: 35,
-                  child: ScrollConfiguration(
-                    behavior: ScrollConfiguration.of(context).copyWith(
-                      dragDevices: {
-                        PointerDeviceKind.touch,
-                        PointerDeviceKind.mouse,
-                        PointerDeviceKind.trackpad,
-                      },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spaceMd,
                     ),
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      physics: const BouncingScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppTheme.spaceMd,
-                      ),
-                      itemCount: _mediumFilters.length,
-                      separatorBuilder: (_, _) =>
-                          const SizedBox(width: AppTheme.spaceSm),
-                      itemBuilder: (context, index) {
-                        final medium = _mediumFilters[index];
-                        return FilterChipPill(
-                          label: medium?.label ?? 'All',
-                          selected: _selectedMedium == medium,
-                          onTap: () => setState(() => _selectedMedium = medium),
-                        );
-                      },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        for (final medium in _mediumFilters)
+                          FilterChipPill(
+                            label: medium?.label ?? 'All',
+                            selected: _selectedMedium == medium,
+                            onTap: () =>
+                                setState(() => _selectedMedium = medium),
+                          ),
+                      ],
                     ),
                   ),
                 ),
@@ -422,18 +412,26 @@ class _LibraryScreenState extends State<LibraryScreen> {
                           },
                         ),
                       Positioned(
-                        right: 8,
+                        right: AppTheme.spaceMd,
                         bottom: 96,
                         child: FloatingActionButton(
                           backgroundColor: AppTheme.secondary,
-                          onPressed: () {
-                            Navigator.of(context)
-                                .push(
+                          onPressed: () async {
+                            final navigator = Navigator.of(context);
+                            final outcome = await navigator
+                                .push<StorySearchOutcome>(
                                   MaterialPageRoute(
-                                    builder: (_) => const AddStoryScreen(),
+                                    builder: (_) => const StorySearchScreen(),
                                   ),
-                                )
-                                .then((_) => _load());
+                                );
+                            if (outcome == null || !mounted) return;
+                            await navigator.push(
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    AddStoryScreen(prefill: outcome.result),
+                              ),
+                            );
+                            if (mounted) _load();
                           },
                           child: const Icon(
                             Icons.add,

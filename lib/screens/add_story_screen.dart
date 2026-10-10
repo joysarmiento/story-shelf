@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/story_search_result.dart';
 import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
 import '../utils/error_message.dart';
@@ -7,7 +8,8 @@ import '../widgets/story_form.dart';
 import 'story_details_screen.dart';
 
 class AddStoryScreen extends StatelessWidget {
-  const AddStoryScreen({super.key});
+  const AddStoryScreen({super.key, this.prefill});
+  final StorySearchResult? prefill;
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +18,7 @@ class AddStoryScreen extends StatelessWidget {
       body: StoryForm(
         headingText: 'Add Story',
         submitLabel: 'Save Story',
+        prefill: prefill,
         onSubmit: (story) async {
           try {
             await SupabaseService.instance.addStory(story);

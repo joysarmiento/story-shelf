@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../services/supabase_service.dart';
@@ -391,31 +390,21 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                 const SizedBox(height: AppTheme.spaceMd),
                 SizedBox(
                   height: 35,
-                  child: ScrollConfiguration(
-                    behavior: ScrollConfiguration.of(context).copyWith(
-                      dragDevices: {
-                        PointerDeviceKind.touch,
-                        PointerDeviceKind.mouse,
-                        PointerDeviceKind.trackpad,
-                      },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spaceMd,
                     ),
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      physics: const BouncingScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppTheme.spaceMd,
-                      ),
-                      itemCount: _mediumFilters.length,
-                      separatorBuilder: (_, _) =>
-                          const SizedBox(width: AppTheme.spaceSm),
-                      itemBuilder: (context, index) {
-                        final medium = _mediumFilters[index];
-                        return FilterChipPill(
-                          label: medium?.label ?? 'All',
-                          selected: _selectedMedium == medium,
-                          onTap: () => setState(() => _selectedMedium = medium),
-                        );
-                      },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        for (final medium in _mediumFilters)
+                          FilterChipPill(
+                            label: medium?.label ?? 'All',
+                            selected: _selectedMedium == medium,
+                            onTap: () =>
+                                setState(() => _selectedMedium = medium),
+                          ),
+                      ],
                     ),
                   ),
                 ),

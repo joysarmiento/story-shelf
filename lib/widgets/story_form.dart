@@ -1,11 +1,10 @@
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../models/story.dart';
+import '../models/story_search_result.dart';
 import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
 import 'app_back_button.dart';
@@ -21,11 +20,13 @@ class StoryForm extends StatefulWidget {
     required this.submitLabel,
     required this.onSubmit,
     this.initialStory,
+    this.prefill,
   });
 
   final String headingText;
   final String submitLabel;
   final Story? initialStory;
+  final StorySearchResult? prefill;
 
   final Future<void> Function(Story story) onSubmit;
 
@@ -38,21 +39,22 @@ class _StoryFormState extends State<StoryForm> {
 
   final _formKey = GlobalKey<FormState>();
   late final _titleController = TextEditingController(
-    text: widget.initialStory?.title,
+    text: widget.initialStory?.title ?? widget.prefill?.title,
   );
   late final _creatorController = TextEditingController(
-    text: widget.initialStory?.creator,
+    text: widget.initialStory?.creator ?? widget.prefill?.creator,
   );
   late final _yearController = TextEditingController(
-    text: widget.initialStory?.releaseYear?.toString(),
+    text: (widget.initialStory?.releaseYear ?? widget.prefill?.year)
+        ?.toString(),
   );
   late final _currentProgressController = TextEditingController(
-    text: widget.initialStory == null
-        ? null
-        : widget.initialStory!.currentProgress.toInt().toString(),
+    text: widget.initialStory?.currentProgress.toInt().toString(),
   );
   late final _totalProgressController = TextEditingController(
-    text: widget.initialStory?.totalProgress?.toInt().toString(),
+    text: (widget.initialStory?.totalProgress ?? widget.prefill?.totalProgress)
+        ?.toInt()
+        .toString(),
   );
 
   Medium? _medium;
@@ -70,10 +72,11 @@ class _StoryFormState extends State<StoryForm> {
   @override
   void initState() {
     super.initState();
-    _medium = widget.initialStory?.medium ?? Medium.book;
+    _medium =
+        widget.initialStory?.medium ?? widget.prefill?.medium ?? Medium.book;
     _status = widget.initialStory?.status ?? StoryStatus.notStarted;
     _rating = widget.initialStory?.rating ?? 0;
-    _coverPath = widget.initialStory?.coverPath;
+    _coverPath = widget.initialStory?.coverPath ?? widget.prefill?.coverUrl;
   }
 
   @override
@@ -714,13 +717,11 @@ class _CoverAction extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.onTap,
-    this.color,
   });
 
   final IconData icon;
   final String label;
   final VoidCallback? onTap;
-  final Color? color;
 
   @override
   Widget build(BuildContext context) {
