@@ -24,7 +24,7 @@ extension MoodLabel on Mood {
   String get emoji => switch (this) {
     Mood.moved => '💖',
     Mood.warm => '🧸',
-    Mood.cried => '💔',
+    Mood.cried => '😿',
     Mood.hyped => '🔥',
     Mood.cozy => '🌧️',
     Mood.shocked => '🙀',
