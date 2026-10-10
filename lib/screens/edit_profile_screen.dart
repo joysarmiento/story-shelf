@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../services/supabase_service.dart';
@@ -27,7 +28,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     text: _service.username,
   );
   late String? _avatarUrl = _service.avatarUrl;
+  final _picker = ImagePicker();
   bool _isSubmitting = false;
+  bool _isUploadingPicture = false;
 
   @override
   void dispose() {
@@ -38,35 +41,67 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _pickPicture() async {
-    final controller = TextEditingController(text: _avatarUrl);
-    final url = await showDialog<String>(
+    final choice = await showModalBottomSheet<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppTheme.surface,
-        title: Text(
-          'Profile picture URL',
-          style: Theme.of(context).textTheme.bodyMedium,
+      backgroundColor: AppTheme.surface,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Choose from gallery'),
+              onTap: () => Navigator.of(context).pop('gallery'),
+            ),
+            if (_avatarUrl != null)
+              ListTile(
+                leading: Icon(Icons.delete_outline, color: AppTheme.error),
+                title: Text(
+                  'Remove picture',
+                  style: TextStyle(color: AppTheme.error),
+                ),
+                onTap: () => Navigator.of(context).pop('remove'),
+              ),
+          ],
         ),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          decoration: const InputDecoration(hintText: 'https://...'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
-            child: const Text('Use this'),
-          ),
-        ],
       ),
     );
-    controller.dispose();
-    if (url == null) return;
-    setState(() => _avatarUrl = url.isEmpty ? null : url);
+
+    switch (choice) {
+      case 'gallery':
+        await _uploadPicture();
+      case 'remove':
+        setState(() => _avatarUrl = null);
+    }
+  }
+
+  Future<void> _uploadPicture() async {
+    try {
+      final picked = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 600,
+        imageQuality: 85,
+      );
+      if (picked == null) return;
+
+      setState(() => _isUploadingPicture = true);
+      final url = await _service.uploadCoverImage(
+        bytes: await picked.readAsBytes(),
+        fileName: picked.name,
+      );
+      if (!mounted) return;
+      setState(() => _avatarUrl = url);
+    } catch (e) {
+      debugPrint('Profile picture upload failed: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Couldn't upload that picture. Try again."),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isUploadingPicture = false);
+    }
   }
 
   Future<void> _handleSubmit() async {
@@ -125,10 +160,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 Center(
                   child: Column(
                     children: [
-                      ProfileAvatar(imageUrl: _avatarUrl, size: 120),
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          ProfileAvatar(imageUrl: _avatarUrl, size: 120),
+                          if (_isUploadingPicture)
+                            Container(
+                              width: 120,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.black.withValues(alpha: 0.35),
+                              ),
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  color: AppTheme.onPrimary,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
                       const SizedBox(height: AppTheme.spaceSm),
                       GestureDetector(
-                        onTap: _pickPicture,
+                        onTap: _isUploadingPicture ? null : _pickPicture,
                         child: Text(
                           'Edit picture',
                           style: theme.textTheme.bodyMedium?.copyWith(
@@ -189,7 +243,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 PrimaryButton(
                   label: 'Update profile',
                   isLoading: _isSubmitting,
-                  onPressed: _handleSubmit,
+                  onPressed: _isUploadingPicture ? null : _handleSubmit,
                 ),
               ],
             ),

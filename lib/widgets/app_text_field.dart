@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../theme/app_theme.dart';
 
@@ -16,6 +17,8 @@ class AppTextField extends StatelessWidget {
     this.onTap,
     this.minLines,
     this.maxLines = 1,
+    this.textCapitalization = TextCapitalization.none,
+    this.inputFormatters,
   });
 
   final String label;
@@ -29,6 +32,8 @@ class AppTextField extends StatelessWidget {
   final VoidCallback? onTap;
   final int? minLines;
   final int? maxLines;
+  final TextCapitalization textCapitalization;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +44,8 @@ class AppTextField extends StatelessWidget {
         controller: controller,
         obscureText: obscureText,
         keyboardType: keyboardType,
+        textCapitalization: textCapitalization,
+        inputFormatters: inputFormatters,
         validator: validator,
         readOnly: readOnly,
         onTap: onTap,

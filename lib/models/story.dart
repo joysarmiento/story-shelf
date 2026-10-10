@@ -10,9 +10,37 @@ extension MediumLabel on Medium {
 
   String get progressUnitLabel => switch (this) {
     Medium.book => 'Page',
-    Medium.comic => 'Page',
+    Medium.comic => 'Chapter',
     Medium.movie => 'Part',
     Medium.series => 'Episode',
+  };
+
+  String get creatorLabel => switch (this) {
+    Medium.book => 'Author',
+    Medium.comic => 'Author / Artist',
+    Medium.movie => 'Director',
+    Medium.series => 'Creator / Studio',
+  };
+
+  String get creatorHint => switch (this) {
+    Medium.book => 'e.g. Brandon Sanderson',
+    Medium.comic => 'e.g. Eiichiro Oda',
+    Medium.movie => 'e.g. Bong Joon-ho',
+    Medium.series => 'e.g. Netflix, or Vince Gilligan',
+  };
+
+  String get progressTitle => switch (this) {
+    Medium.book => 'Pages',
+    Medium.comic => 'Chapters',
+    Medium.movie => 'Minutes',
+    Medium.series => 'Episodes',
+  };
+
+  bool get tracksProgress => this != Medium.movie;
+
+  String get activeStatusLabel => switch (this) {
+    Medium.book || Medium.comic => 'Reading',
+    Medium.movie || Medium.series => 'Watching',
   };
 
   List<String> get searchWords => switch (this) {
