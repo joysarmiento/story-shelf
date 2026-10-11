@@ -4,7 +4,7 @@
 
 **Live demo:** https://joysarmiento.github.io/story-shelf/
 
-**Demo video:** `docs/demo.mp4`  (link it here once it exists)
+**Demo video:** [docs/05-demo-video.md](docs/05-demo-video.md)
 
 **Course:** Applications Development and Emerging Technologies (6ADET), Holy Angel University
 
