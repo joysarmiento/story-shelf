@@ -158,7 +158,37 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
     ),
   );
 
+  Widget _inlineAddManually({required bool showSourceNote}) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppTheme.spaceMd),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (showSourceNote) ...[
+            Text(
+              _sourceNote,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodySmall,
+            ),
+            const SizedBox(height: AppTheme.spaceXs),
+          ],
+          TextButton(
+            onPressed: _addManually,
+            child: Text(
+              "Can't find it? Add manually",
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: AppTheme.primary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildBody() {
+    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
     if (_error != null) {
       return _centered(
         Column(
@@ -199,20 +229,29 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
     }
     if (_searched && _results.isEmpty) {
       return _centered(
-        const EmptyState(
-          icon: Icons.search_off,
-          title: 'No results',
-          message: 'Try another spelling, or add it manually.',
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const EmptyState(
+              icon: Icons.search_off,
+              title: 'No results',
+              message: 'Try another spelling, or add it manually.',
+            ),
+            if (keyboardOpen) _inlineAddManually(showSourceNote: false),
+          ],
         ),
       );
     }
     return ListView.separated(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       padding: const EdgeInsets.symmetric(horizontal: AppTheme.spaceMd),
-      itemCount: _results.length,
+      itemCount: _results.length + (keyboardOpen ? 1 : 0),
       separatorBuilder: (_, _) =>
           Divider(height: 1, color: AppTheme.secondary.withValues(alpha: 0.4)),
       itemBuilder: (context, index) {
+        if (index == _results.length) {
+          return _inlineAddManually(showSourceNote: true);
+        }
         final r = _results[index];
         return _ResultTile(
           result: r,
@@ -226,6 +265,7 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
 
     return Scaffold(
       backgroundColor: AppTheme.surface,
@@ -294,45 +334,49 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
                 ),
                 const SizedBox(height: AppTheme.spaceSm),
                 Expanded(child: _buildBody()),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppTheme.spaceMd,
-                    AppTheme.spaceSm,
-                    AppTheme.spaceMd,
-                    AppTheme.spaceMd,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        _sourceNote,
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.bodySmall,
-                      ),
-                      const SizedBox(height: AppTheme.spaceSm),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 56,
-                        child: OutlinedButton(
-                          onPressed: _addManually,
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppTheme.primary,
-                            side: BorderSide(color: AppTheme.primary, width: 2),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(28),
+                if (!keyboardOpen)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppTheme.spaceMd,
+                      AppTheme.spaceSm,
+                      AppTheme.spaceMd,
+                      AppTheme.spaceMd,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _sourceNote,
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodySmall,
+                        ),
+                        const SizedBox(height: AppTheme.spaceSm),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: OutlinedButton(
+                            onPressed: _addManually,
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppTheme.primary,
+                              side: BorderSide(
+                                color: AppTheme.primary,
+                                width: 2,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(28),
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            'Add manually',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: AppTheme.primary,
+                            child: Text(
+                              'Add manually',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: AppTheme.primary,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
               ],
             ),
             if (_picking)
