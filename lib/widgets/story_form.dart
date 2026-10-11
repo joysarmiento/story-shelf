@@ -156,7 +156,7 @@ class _StoryFormState extends State<StoryForm> {
                       'Paste a full link starting with http:// or https://',
                       style: Theme.of(
                         context,
-                      ).textTheme.bodySmall?.copyWith(color: AppTheme.error),
+                      ).textTheme.bodySmall?.copyWith(color: AppTheme.accent),
                     ),
                   if (valid)
                     Center(
@@ -293,7 +293,7 @@ class _StoryFormState extends State<StoryForm> {
                         Icons.delete_outline,
                         'Remove',
                         _CoverSource.remove,
-                        color: AppTheme.error,
+                        color: AppTheme.accent,
                       ),
                   ],
                 ),
@@ -549,7 +549,7 @@ class _StoryFormState extends State<StoryForm> {
                   child: Text(
                     'Pick a book, comic, movie or series',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: AppTheme.error,
+                      color: AppTheme.accent,
                     ),
                   ),
                 ),

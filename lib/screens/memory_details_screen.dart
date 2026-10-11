@@ -243,7 +243,7 @@ class _MemoryDetailsScreenState extends State<MemoryDetailsScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text('Delete', style: TextStyle(color: AppTheme.error)),
+            child: Text('Delete', style: TextStyle(color: AppTheme.accent)),
           ),
         ],
       ),
@@ -509,7 +509,7 @@ class _NoteCard extends StatelessWidget {
               child: Text(
                 'Memory can’t be empty. Your last saved version is kept.',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: AppTheme.error,
+                  color: AppTheme.accent,
                 ),
               ),
             ),
@@ -863,7 +863,7 @@ class _Banner extends StatelessWidget {
                           color:
                               (saveState == _SaveState.error ||
                                   saveState == _SaveState.invalid)
-                              ? AppTheme.error
+                              ? AppTheme.accent
                               : Colors.black.withValues(alpha: 0.35),
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -888,11 +888,14 @@ class _Banner extends StatelessWidget {
                           value: 'delete',
                           child: Row(
                             children: [
-                              Icon(Icons.delete_outline, color: AppTheme.error),
+                              Icon(
+                                Icons.delete_outline,
+                                color: AppTheme.accent,
+                              ),
                               const SizedBox(width: 8),
                               Text(
                                 'Delete memory',
-                                style: TextStyle(color: AppTheme.error),
+                                style: TextStyle(color: AppTheme.accent),
                               ),
                             ],
                           ),
@@ -939,7 +942,7 @@ class _Banner extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.headlineSmall?.copyWith(
-                  color: AppTheme.error,
+                  color: AppTheme.accent,
                   fontSize: 20,
                 ),
               ),

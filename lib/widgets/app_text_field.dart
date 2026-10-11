@@ -78,11 +78,11 @@ class AppTextField extends StatelessWidget {
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(28),
-            borderSide: BorderSide(color: AppTheme.error, width: 1.2),
+            borderSide: BorderSide(color: AppTheme.accent, width: 1.2),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(28),
-            borderSide: BorderSide(color: AppTheme.error, width: 1.5),
+            borderSide: BorderSide(color: AppTheme.accent, width: 1.5),
           ),
         ),
       ),

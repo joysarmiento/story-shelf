@@ -388,7 +388,7 @@ class _MemoryOfTheDayBanner extends StatelessWidget {
                 Text(
                   'A Memory From This Day',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppTheme.error,
+                    color: AppTheme.accent,
                     fontStyle: FontStyle.italic,
                   ),
                 ),

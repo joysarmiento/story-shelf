@@ -151,11 +151,11 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
       'This product uses the TMDB API but is not endorsed or certified by TMDB.',
   };
 
-  Widget _centered(Widget child) => Center(
-    child: SingleChildScrollView(
-      padding: const EdgeInsets.all(AppTheme.spaceLg),
-      child: child,
-    ),
+  Widget _centered(
+    Widget child, {
+    EdgeInsetsGeometry padding = const EdgeInsets.all(AppTheme.spaceLg),
+  }) => Center(
+    child: SingleChildScrollView(padding: padding, child: child),
   );
 
   bool get _noResults =>
@@ -168,7 +168,7 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
   Widget _inlineAddManually() {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppTheme.spaceXs),
+      padding: const EdgeInsets.only(top: AppTheme.spaceXxs, bottom: 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -187,6 +187,7 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
   }
 
   Widget _buildBody() {
+    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
     if (_error != null) {
       return _centered(
         Column(
@@ -227,12 +228,16 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
     }
     if (_searched && _results.isEmpty) {
       return _centered(
-        const EmptyState(
+        EmptyState(
           icon: Icons.search_off,
-          iconGap: 10,
+          iconSize: keyboardOpen ? 32 : 48,
+          iconGap: keyboardOpen ? AppTheme.spaceXs : null,
           title: 'No results',
           message: 'Try another spelling, or add it manually.',
         ),
+        padding: keyboardOpen
+            ? const EdgeInsets.all(AppTheme.spaceSm)
+            : const EdgeInsets.all(AppTheme.spaceLg),
       );
     }
     return ListView.separated(

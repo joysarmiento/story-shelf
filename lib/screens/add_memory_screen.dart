@@ -147,7 +147,7 @@ class _AddMemoryScreenState extends State<AddMemoryScreen> {
               textStyle: Theme.of(
                 ctx,
               ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
-              foregroundColor: AppTheme.error,
+              foregroundColor: AppTheme.accent,
             ),
             child: const Text('Discard'),
           ),
@@ -414,7 +414,7 @@ class _ErrorText extends StatelessWidget {
         text,
         style: Theme.of(
           context,
-        ).textTheme.bodySmall?.copyWith(color: AppTheme.error),
+        ).textTheme.bodySmall?.copyWith(color: AppTheme.accent),
       ),
     );
   }
@@ -610,7 +610,7 @@ class _Banner extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.headlineMedium?.copyWith(
-                  color: AppTheme.error,
+                  color: AppTheme.accent,
                   fontSize: 20,
                 ),
               ),

@@ -69,7 +69,7 @@ class SettingsScreen extends StatelessWidget {
               textStyle: Theme.of(
                 context,
               ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
-              foregroundColor: destructive ? AppTheme.error : AppTheme.primary,
+              foregroundColor: destructive ? AppTheme.accent : AppTheme.primary,
             ),
             child: const Text('Cancel'),
           ),
@@ -79,7 +79,7 @@ class SettingsScreen extends StatelessWidget {
               textStyle: Theme.of(
                 context,
               ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
-              foregroundColor: destructive ? AppTheme.error : AppTheme.primary,
+              foregroundColor: destructive ? AppTheme.accent : AppTheme.primary,
             ),
             child: Text(confirmLabel),
           ),

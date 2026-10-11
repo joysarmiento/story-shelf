@@ -113,7 +113,7 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text('Delete', style: TextStyle(color: AppTheme.error)),
+            child: Text('Delete', style: TextStyle(color: AppTheme.accent)),
           ),
         ],
       ),
@@ -318,7 +318,7 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
                           child: Text(
                             '+ add',
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: AppTheme.error,
+                              color: AppTheme.accent,
                               fontWeight: FontWeight.w700,
                               decoration: TextDecoration.underline,
                             ),
@@ -463,7 +463,7 @@ class _Banner extends StatelessWidget {
                         backgroundColor: AppTheme.surface,
                         child: Icon(
                           isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: AppTheme.error,
+                          color: AppTheme.accent,
                         ),
                       ),
                     ),
@@ -481,11 +481,14 @@ class _Banner extends StatelessWidget {
                           value: 'delete',
                           child: Row(
                             children: [
-                              Icon(Icons.delete_outline, color: AppTheme.error),
+                              Icon(
+                                Icons.delete_outline,
+                                color: AppTheme.accent,
+                              ),
                               const SizedBox(width: 8),
                               Text(
                                 'Delete story',
-                                style: TextStyle(color: AppTheme.error),
+                                style: TextStyle(color: AppTheme.accent),
                               ),
                             ],
                           ),
@@ -553,7 +556,7 @@ class _Banner extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.headlineSmall?.copyWith(
-                          color: AppTheme.error,
+                          color: AppTheme.accent,
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
@@ -625,7 +628,7 @@ class _StoryMemoryTile extends StatelessWidget {
             Text(
               memory.cleanTitle!,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: AppTheme.error,
+                color: AppTheme.accent,
                 fontWeight: FontWeight.bold,
               ),
             ),

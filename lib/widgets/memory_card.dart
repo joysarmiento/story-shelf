@@ -61,7 +61,7 @@ class MemoryCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: AppTheme.error,
+                            color: AppTheme.accent,
                             fontWeight: FontWeight.w700,
                           ),
                         ),

@@ -247,7 +247,7 @@ class _Stat extends StatelessWidget {
             Text(
               '$value',
               style: theme.textTheme.headlineMedium?.copyWith(
-                color: AppTheme.error,
+                color: AppTheme.accent,
               ),
             ),
             Text(label, style: theme.textTheme.bodySmall),
@@ -291,7 +291,7 @@ class _MoodCard extends StatelessWidget {
                   Text(
                     'Your most common mood',
                     style: theme.textTheme.titleMedium?.copyWith(
-                      color: AppTheme.error,
+                      color: AppTheme.accent,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -326,7 +326,7 @@ class _MediumBreakdownCard extends StatelessWidget {
           Text(
             'Stories by Medium',
             style: theme.textTheme.titleMedium?.copyWith(
-              color: AppTheme.error,
+              color: AppTheme.accent,
               fontWeight: FontWeight.w800,
             ),
           ),

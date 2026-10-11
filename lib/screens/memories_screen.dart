@@ -182,9 +182,9 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TabBar(
-                    labelColor: AppTheme.error,
+                    labelColor: AppTheme.accent,
                     unselectedLabelColor: AppTheme.onSurface,
-                    indicatorColor: AppTheme.error,
+                    indicatorColor: AppTheme.accent,
                     dividerColor: AppTheme.secondary.withValues(alpha: 0.4),
                     labelStyle: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -207,7 +207,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                             Text(
                               'Filter by date',
                               style: theme.textTheme.titleMedium?.copyWith(
-                                color: AppTheme.error,
+                                color: AppTheme.accent,
                               ),
                             ),
                             const SizedBox(height: AppTheme.spaceMd),
@@ -237,7 +237,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                             Text(
                               'Filter by mood',
                               style: theme.textTheme.titleMedium?.copyWith(
-                                color: AppTheme.error,
+                                color: AppTheme.accent,
                               ),
                             ),
                             const SizedBox(height: AppTheme.spaceMd),
@@ -278,7 +278,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                             Text(
                               'Sort by date',
                               style: theme.textTheme.titleMedium?.copyWith(
-                                color: AppTheme.error,
+                                color: AppTheme.accent,
                               ),
                             ),
                             const SizedBox(height: AppTheme.spaceMd),
@@ -416,7 +416,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                         child: Text(
                           'All Memories',
                           style: theme.textTheme.headlineSmall?.copyWith(
-                            color: AppTheme.error,
+                            color: AppTheme.accent,
                           ),
                         ),
                       ),
@@ -426,7 +426,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                         icon: Icon(
                           Icons.filter_list,
                           color: _hasActiveFilterOrSort
-                              ? AppTheme.error
+                              ? AppTheme.accent
                               : AppTheme.secondary,
                         ),
                       ),
@@ -532,11 +532,11 @@ class _OptionTile extends StatelessWidget {
       title: Text(
         label,
         style: theme.textTheme.bodyMedium?.copyWith(
-          color: selected ? AppTheme.error : AppTheme.onSurface,
+          color: selected ? AppTheme.accent : AppTheme.onSurface,
           fontWeight: selected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
-      trailing: selected ? Icon(Icons.check, color: AppTheme.error) : null,
+      trailing: selected ? Icon(Icons.check, color: AppTheme.accent) : null,
     );
   }
 }

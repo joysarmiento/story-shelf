@@ -52,8 +52,9 @@ class AppTheme {
   static const Color surfaceVariant = Color(0xFFD8E4E4);
   static Color get onSurface =>
       highContrast ? const Color(0xFF495A82) : const Color(0xFF66769A);
-  static Color get error =>
+  static Color get accent =>
       highContrast ? const Color(0xFF8A1620) : const Color(0xFFB02D35);
+  static Color get error => accent;
   static const Color storyTintBeige = Color(0xFFD9BFA0);
   static Color get navSelected =>
       highContrast ? const Color(0xFF943B41) : error;

@@ -8,7 +8,6 @@ import '../utils/error_message.dart';
 import '../widgets/app_search_bar.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/empty_state.dart';
-import '../widgets/filter_chip_pill.dart';
 import '../widgets/story_poster_card.dart';
 import '../widgets/medium_filter_row.dart';
 import 'add_story_screen.dart';
@@ -131,9 +130,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TabBar(
-                    labelColor: AppTheme.error,
+                    labelColor: AppTheme.accent,
                     unselectedLabelColor: AppTheme.onSurface,
-                    indicatorColor: AppTheme.error,
+                    indicatorColor: AppTheme.accent,
                     dividerColor: AppTheme.secondary.withValues(alpha: 0.4),
                     labelStyle: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -155,7 +154,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                             Text(
                               'Filter by status',
                               style: theme.textTheme.titleMedium?.copyWith(
-                                color: AppTheme.error,
+                                color: AppTheme.accent,
                               ),
                             ),
                             const SizedBox(height: AppTheme.spaceMd),
@@ -182,7 +181,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                             Text(
                               'Sort by',
                               style: theme.textTheme.titleMedium?.copyWith(
-                                color: AppTheme.error,
+                                color: AppTheme.accent,
                               ),
                             ),
                             const SizedBox(height: AppTheme.spaceMd),
@@ -302,7 +301,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                         child: Text(
                           'All Stories',
                           style: theme.textTheme.headlineSmall?.copyWith(
-                            color: AppTheme.error,
+                            color: AppTheme.accent,
                           ),
                         ),
                       ),
@@ -322,7 +321,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                           Icons.filter_list,
                           color:
                               (_selectedStatus != null || _selectedSort != null)
-                              ? AppTheme.error
+                              ? AppTheme.accent
                               : AppTheme.secondary,
                         ),
                       ),
@@ -473,11 +472,11 @@ class _StatusOption extends StatelessWidget {
       title: Text(
         label,
         style: theme.textTheme.bodyMedium?.copyWith(
-          color: selected ? AppTheme.error : AppTheme.onSurface,
+          color: selected ? AppTheme.accent : AppTheme.onSurface,
           fontWeight: selected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
-      trailing: selected ? Icon(Icons.check, color: AppTheme.error) : null,
+      trailing: selected ? Icon(Icons.check, color: AppTheme.accent) : null,
     );
   }
 }
