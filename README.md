@@ -18,7 +18,6 @@ This repository lives in the author's own GitHub account and is public on purpos
 
 - [Screenshots](#screenshots)
 - [What it does](#what-it-does)
-- [Screens](#screens)
 - [Built with](#built-with)
 - [Running it yourself](#running-it-yourself)
   - [Environment variables](#environment-variables)
@@ -31,7 +30,7 @@ This repository lives in the author's own GitHub account and is public on purpos
 
 ## Screenshots
 
-All 17 screens, in app order, are listed under [Screens](#screens) below. Full mockups and flows: [docs/02-mockup.md](docs/02-mockup.md).
+All 17 screens, in app order, are listed in [docs/02-mockup.md](docs/02-mockup.md).
 
 | Home | Library | Add story: search | Add story: from search |
 | --- | --- | --- | --- |
@@ -53,30 +52,6 @@ People who read and watch many kinds of stories usually keep their progress, rat
 - **Pick up where you left off.** The Home screen shows the stories you are in the middle of, your recent memories, and "A Memory From This Day", which rotates between two of your stories each day.
 - **Make it readable for you.** Choose a text size and turn on high contrast; both are saved to your account and applied on every sign-in.
 - **Own your account.** Sign up, log in, reset your password, edit your profile and avatar, or delete your account and data.
-
-## Screens
-
-In app order. The tab bar is Home, Library, Memories, Profile.
-
-| # | Screen | Reached from | Screenshot |
-| --- | --- | --- | --- |
-| 01 | Start | App launch (signed out) | [01-start.png](docs/assets/screenshots/01-start.png) |
-| 02 | Log in | Start | [02-login.png](docs/assets/screenshots/02-login.png) |
-| 03 | Sign up | Log in, "Sign up." | [03-signup.png](docs/assets/screenshots/03-signup.png) |
-| 04 | Reset Password | Log in, "Forgot password?" | [04-reset-password.png](docs/assets/screenshots/04-reset-password.png) |
-| 05 | Home | App launch (signed in), or after log in | [05-home.png](docs/assets/screenshots/05-home.png) |
-| 06 | Library (with filter sheet) | Home tab bar | [06-library.png](docs/assets/screenshots/06-library.png), [06.01-library-filter.png](docs/assets/screenshots/06.01-library-filter.png) |
-| 07 | Story Search | Library, **+** button | [07-add-story-search.png](docs/assets/screenshots/07-add-story-search.png) |
-| 08 | Add Story (from search) | Story Search, tap a result: form is prefilled | [08-add-story-from-search.png](docs/assets/screenshots/08-add-story-from-search.png) |
-| 09 | Add Story (manual) | Story Search, **Add manually**: blank form | [09-add-story-manual.png](docs/assets/screenshots/09-add-story-manual.png) |
-| 10 | Story Details | Home, Library, or a saved story | [10-story-details.png](docs/assets/screenshots/10-story-details.png) |
-| 11 | Edit Story | Story Details | [11-edit-story.png](docs/assets/screenshots/11-edit-story.png) |
-| 12 | Add Memory | Story Details | [12-add-memory.png](docs/assets/screenshots/12-add-memory.png) |
-| 13 | Memory Details (view, edit, mood) | Home, Memories, or Story Details | [13-memory-details.png](docs/assets/screenshots/13-memory-details.png), [13-memory-detailes-edit-mood.png](docs/assets/screenshots/13-memory-detailes-edit-mood.png) |
-| 14 | Memories (with filter sheet) | Tab bar | [14-memories.png](docs/assets/screenshots/14-memories.png), [14.1-memories-filter.png](docs/assets/screenshots/14.1-memories-filter.png) |
-| 15 | Profile | Tab bar | [15-profile.png](docs/assets/screenshots/15-profile.png) |
-| 16 | Settings | Profile | [16-settings.png](docs/assets/screenshots/16-settings.png) |
-| 17 | Edit Profile | Settings | [17-edit-profile.png](docs/assets/screenshots/17-edit-profile.png) |
 
 ## Built with
 
