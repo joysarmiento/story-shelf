@@ -13,7 +13,7 @@ extension TextSizeInfo on TextSize {
   double get scale => switch (this) {
     TextSize.small => 0.9,
     TextSize.medium => 1.0,
-    TextSize.large => 1.2,
+    TextSize.large => 1.1,
   };
 }
 

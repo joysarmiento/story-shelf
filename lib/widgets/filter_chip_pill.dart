@@ -8,11 +8,15 @@ class FilterChipPill extends StatelessWidget {
     required this.label,
     required this.selected,
     required this.onTap,
+    this.horizontalPadding = basePadding,
   });
+
+  static const double basePadding = 12;
 
   final String label;
   final bool selected;
   final VoidCallback onTap;
+  final double horizontalPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +24,10 @@ class FilterChipPill extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+        padding: EdgeInsets.symmetric(
+          horizontal: horizontalPadding,
+          vertical: 5,
+        ),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: selected ? AppTheme.primary : AppTheme.secondary,
