@@ -1,6 +1,3 @@
-import 'dart:math' as math;
-
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../models/story.dart';
@@ -20,6 +17,7 @@ class MediumFilterRow extends StatelessWidget {
   final ValueChanged<Medium?> onSelected;
 
   static const double _gap = 7;
+  static const double _minPadding = 4;
 
   double _textWidth(String text, TextStyle style, TextScaler scaler) {
     final painter = TextPainter(
@@ -35,9 +33,10 @@ class MediumFilterRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final style = DefaultTextStyle.of(
       context,
-    ).style.merge(Theme.of(context).textTheme.bodyMedium);
+    ).style.merge(theme.textTheme.bodyMedium);
     final scaler = MediaQuery.textScalerOf(context);
     final labels = [for (final o in options) o?.label ?? 'All'];
     final textWidths = [
@@ -46,58 +45,41 @@ class MediumFilterRow extends StatelessWidget {
 
     return SizedBox(
       height: 35,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final available = math.max(
-            0.0,
-            constraints.maxWidth - AppTheme.spaceMd * 2,
-          );
-          final gaps = _gap * (options.length - 1);
-          final natural = textWidths.fold<double>(
-            0,
-            (sum, w) => sum + w + FilterChipPill.basePadding * 2,
-          );
-          final extra = available - natural - gaps;
-          final fits = extra >= 0;
-          final padding =
-              FilterChipPill.basePadding +
-              (fits ? extra / options.length / 2 : 0);
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppTheme.spaceMd),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final available = constraints.maxWidth;
+            final count = options.length;
+            final gaps = _gap * (count - 1);
+            final natural = textWidths.fold<double>(
+              0,
+              (sum, w) => sum + w + FilterChipPill.basePadding * 2,
+            );
 
-          return ScrollConfiguration(
-            behavior: ScrollConfiguration.of(context).copyWith(
-              dragDevices: {
-                PointerDeviceKind.touch,
-                PointerDeviceKind.mouse,
-                PointerDeviceKind.trackpad,
-              },
-            ),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: fits
-                  ? const NeverScrollableScrollPhysics()
-                  : const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: AppTheme.spaceMd),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minWidth: available),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    for (var i = 0; i < options.length; i++) ...[
-                      if (i > 0) const SizedBox(width: _gap),
-                      FilterChipPill(
-                        label: labels[i],
-                        selected: selected == options[i],
-                        horizontalPadding: padding,
-                        onTap: () => onSelected(options[i]),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
+            final extra = available - natural - gaps;
+            final padding = (FilterChipPill.basePadding + extra / count / 2)
+                .clamp(_minPadding, double.infinity);
+
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (var i = 0; i < count; i++) ...[
+                  if (i > 0) const SizedBox(width: _gap),
+                  Expanded(
+                    flex: ((textWidths[i] + padding * 2) * 100).round(),
+                    child: FilterChipPill(
+                      label: labels[i],
+                      selected: selected == options[i],
+                      horizontalPadding: padding,
+                      onTap: () => onSelected(options[i]),
+                    ),
+                  ),
+                ],
+              ],
+            );
+          },
+        ),
       ),
     );
   }

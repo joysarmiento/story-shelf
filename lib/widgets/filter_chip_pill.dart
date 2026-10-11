@@ -33,10 +33,14 @@ class FilterChipPill extends StatelessWidget {
           color: selected ? AppTheme.primary : AppTheme.secondary,
           borderRadius: BorderRadius.circular(24),
         ),
-        child: Text(
-          label,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: AppTheme.onPrimary,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            label,
+            maxLines: 1,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: AppTheme.onPrimary,
+            ),
           ),
         ),
       ),
