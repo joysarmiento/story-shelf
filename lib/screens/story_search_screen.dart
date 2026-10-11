@@ -158,21 +158,15 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
     ),
   );
 
-  Widget _inlineAddManually({required bool showSourceNote}) {
+  /// Shown under "No results" only while the keyboard is open (the fixed
+  /// footer is hidden in that state).
+  Widget _inlineAddManually() {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppTheme.spaceMd),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (showSourceNote) ...[
-            Text(
-              _sourceNote,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodySmall,
-            ),
-            const SizedBox(height: AppTheme.spaceXs),
-          ],
           TextButton(
             onPressed: _addManually,
             child: Text(
@@ -237,7 +231,7 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
               title: 'No results',
               message: 'Try another spelling, or add it manually.',
             ),
-            if (keyboardOpen) _inlineAddManually(showSourceNote: false),
+            if (keyboardOpen) _inlineAddManually(),
           ],
         ),
       );
@@ -245,13 +239,10 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
     return ListView.separated(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       padding: const EdgeInsets.symmetric(horizontal: AppTheme.spaceMd),
-      itemCount: _results.length + (keyboardOpen ? 1 : 0),
+      itemCount: _results.length,
       separatorBuilder: (_, _) =>
           Divider(height: 1, color: AppTheme.secondary.withValues(alpha: 0.4)),
       itemBuilder: (context, index) {
-        if (index == _results.length) {
-          return _inlineAddManually(showSourceNote: true);
-        }
         final r = _results[index];
         return _ResultTile(
           result: r,
