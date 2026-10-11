@@ -10,6 +10,7 @@ import '../widgets/bottom_nav_bar.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/filter_chip_pill.dart';
 import '../widgets/story_poster_card.dart';
+import '../widgets/medium_filter_row.dart';
 import 'add_story_screen.dart';
 import 'story_details_screen.dart';
 import 'story_search_screen.dart';
@@ -274,25 +275,10 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   ),
                 ),
                 const SizedBox(height: AppTheme.spaceMd),
-                SizedBox(
-                  height: 35,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppTheme.spaceMd,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        for (final medium in _mediumFilters)
-                          FilterChipPill(
-                            label: medium?.label ?? 'All',
-                            selected: _selectedMedium == medium,
-                            onTap: () =>
-                                setState(() => _selectedMedium = medium),
-                          ),
-                      ],
-                    ),
-                  ),
+                MediumFilterRow(
+                  options: _mediumFilters,
+                  selected: _selectedMedium,
+                  onSelected: (m) => setState(() => _selectedMedium = m),
                 ),
                 const SizedBox(height: AppTheme.spaceMd),
                 Padding(
