@@ -2,7 +2,7 @@
 
 Sources: `lib/theme/app_theme.dart` and `lib/widgets/`. Light mode only with an optional High contrast setting and three text sizes (Settings).
 
-![Design system overview]()
+![Design system overview](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/images/design-system/story-shelf-design-system.png)
 
 ## Palette
 
@@ -39,7 +39,7 @@ Turned on in Settings (`AppTheme.highContrast`). Only these values change:
 | Nav bar fill | secondary at 60% | secondary at 90% |
 | navUnselected | onPrimary | onPrimary at 85% |
 
-![High contrast]()
+![High contrast](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/images/design-system/story-shelf-high-contrast.png)
 
 ### Contrast check (WCAG 2.x)
 
