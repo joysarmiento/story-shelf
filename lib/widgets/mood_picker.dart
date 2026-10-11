@@ -93,7 +93,7 @@ class MoodBadge extends StatelessWidget {
       label: 'Mood: ${mood.label}',
       excludeSemantics: true,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
         decoration: BoxDecoration(
           color: AppTheme.surface.withValues(alpha: 0.85),
           borderRadius: BorderRadius.circular(12),
