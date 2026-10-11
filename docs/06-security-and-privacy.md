@@ -4,6 +4,14 @@ This repository is public. This page is honest about what the app stores, where 
 
 **Last checked:** 2026-10-11
 
+## Contents
+
+1. [What this app stores](#what-this-app-stores)
+2. [Secrets](#secrets)
+3. [What protects the data on the service side](#what-protects-the-data-on-the-service-side)
+4. [Known gaps](#known-gaps)
+5. [Checklist](#checklist)
+
 ## What this app stores
 
 | Data | Where it lives | Who can see it |
