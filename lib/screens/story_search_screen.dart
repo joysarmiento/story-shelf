@@ -30,6 +30,7 @@ class StorySearchScreen extends StatefulWidget {
 
 class _StorySearchScreenState extends State<StorySearchScreen> {
   final _controller = TextEditingController();
+  final _searchFocus = FocusNode();
   Timer? _debounce;
   int _requestId = 0;
 
@@ -43,9 +44,13 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
 
   String get _query => _controller.text.trim();
 
+  bool get _keyboardOpen =>
+      MediaQuery.viewInsetsOf(context).bottom > 0 || _searchFocus.hasFocus;
+
   @override
   void initState() {
     super.initState();
+    _searchFocus.addListener(() => setState(() {}));
     _loadShelf();
   }
 
@@ -53,6 +58,7 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
   void dispose() {
     _debounce?.cancel();
     _controller.dispose();
+    _searchFocus.dispose();
     super.dispose();
   }
 
@@ -158,7 +164,6 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
     child: SingleChildScrollView(padding: padding, child: child),
   );
 
-  /// Shown inside the compact "No results" block while the keyboard is open.
   Widget _inlineAddManually() {
     final theme = Theme.of(context);
     return Padding(
@@ -181,7 +186,7 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
   }
 
   Widget _buildBody() {
-    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
+    final keyboardOpen = _keyboardOpen;
     if (_error != null) {
       return _centered(
         Column(
@@ -222,8 +227,6 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
     }
     if (_searched && _results.isEmpty) {
       if (keyboardOpen) {
-        // Little height is left above the keyboard: icon + link only,
-        // scaled down to fit instead of being clipped.
         return Center(
           child: FittedBox(
             fit: BoxFit.scaleDown,
@@ -269,7 +272,7 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
+    final keyboardOpen = _keyboardOpen;
 
     return Scaffold(
       backgroundColor: AppTheme.surface,
@@ -332,6 +335,7 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
                   ),
                   child: AppSearchBar(
                     controller: _controller,
+                    focusNode: _searchFocus,
                     hint: 'Search for a ${_medium.label.toLowerCase()}',
                     onChanged: _onChanged,
                   ),

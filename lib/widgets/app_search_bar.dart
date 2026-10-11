@@ -8,11 +8,13 @@ class AppSearchBar extends StatelessWidget {
     required this.controller,
     required this.onChanged,
     this.hint = 'Search',
+    this.focusNode,
   });
 
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
   final String hint;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,7 @@ class AppSearchBar extends StatelessWidget {
       textField: true,
       child: TextField(
         controller: controller,
+        focusNode: focusNode,
         onChanged: onChanged,
         textInputAction: TextInputAction.search,
         style: theme.textTheme.bodyMedium,
