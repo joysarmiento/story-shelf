@@ -85,7 +85,8 @@ Profile -> Settings -> Edit Profile
 
 ## Wireframes
 
-Your earlier box-and-label sketches and the screen flow: which screen opens
-first, and how a user moves between them. Photos of paper are fine.
+The plan for the app. Each box is a screen and each label is the tap that leads to the next one. From Home, the user branches into Library (add a story, then write a memory), Memories, and Profile.
 
-_(Embed your flow diagram and sketches here once they are in `assets/`.)_
+<p align="center">
+  <img src="assets/images/wireframe.png" alt="Story Shelf wireframe: Login / Sign Up to Home, then branches to Library, Memories and Profile" width="500">
+</p>
