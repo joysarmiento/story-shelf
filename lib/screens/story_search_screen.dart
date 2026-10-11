@@ -158,17 +158,10 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
     child: SingleChildScrollView(padding: padding, child: child),
   );
 
-  bool get _noResults =>
-      _error == null &&
-      _query.length >= 2 &&
-      !(_loading && _results.isEmpty) &&
-      _searched &&
-      _results.isEmpty;
-
   Widget _inlineAddManually() {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.only(top: AppTheme.spaceXxs, bottom: 8),
+      padding: EdgeInsets.zero,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -227,17 +220,40 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
       );
     }
     if (_searched && _results.isEmpty) {
+      if (keyboardOpen) {
+        final theme = Theme.of(context);
+        return Center(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppTheme.spaceMd),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.search_off,
+                    size: 28,
+                    color: AppTheme.secondary.withValues(alpha: 0.6),
+                  ),
+                  Text(
+                    'No results',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  _inlineAddManually(),
+                ],
+              ),
+            ),
+          ),
+        );
+      }
       return _centered(
-        EmptyState(
+        const EmptyState(
           icon: Icons.search_off,
-          iconSize: keyboardOpen ? 32 : 48,
-          iconGap: keyboardOpen ? AppTheme.spaceXs : null,
           title: 'No results',
           message: 'Try another spelling, or add it manually.',
         ),
-        padding: keyboardOpen
-            ? const EdgeInsets.all(AppTheme.spaceSm)
-            : const EdgeInsets.all(AppTheme.spaceLg),
       );
     }
     return ListView.separated(
@@ -329,8 +345,6 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
                 ),
                 const SizedBox(height: AppTheme.spaceSm),
                 Expanded(child: _buildBody()),
-                if (keyboardOpen && _noResults)
-                  Center(child: _inlineAddManually()),
                 if (!keyboardOpen)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(
