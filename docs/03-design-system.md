@@ -2,6 +2,19 @@
 
 Sources: `lib/theme/app_theme.dart` and `lib/widgets/`. Light mode only with an optional High contrast setting and three text sizes (Settings).
 
+## Contents
+
+- [Palette](#palette)
+  - [Standard](#standard)
+  - [Supporting](#supporting)
+  - [High contrast](#high-contrast)
+  - [Contrast check (WCAG 2.x)](#contrast-check-wcag-2x)
+- [Type scale](#type-scale)
+- [Spacing](#spacing)
+- [Shape and size](#shape-and-size)
+- [Components](#components)
+- [Changes since the last version](#changes-since-the-last-version-what-changed-and-why)
+
 ![Design system overview](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/images/design-system/story-shelf-design-system.png)
 
 ## Palette

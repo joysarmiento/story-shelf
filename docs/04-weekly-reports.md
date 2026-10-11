@@ -4,7 +4,15 @@ One entry per week, newest at the top, written **during** that week. Five minute
 each. They are the record of how the project actually went, and they make your
 final reflection almost write itself.
 
-Copy this block:
+## Contents
+
+| Week | Dates | Hours (estimate) |
+| --- | --- | --- |
+| [Week 1](#week-1-september-22-2026-to-september-26-2026) | September 22, 2026 to September 26, 2026 | 14 |
+| [Week 2](#week-2-september-27-2026-to-october-3-2026) | September 27, 2026 to October 3, 2026 | 22 |
+| [Week 3](#week-3-october-4-2026-to-october-9-2026) | October 4, 2026 to October 9, 2026 | 38 |
+| [Week 4](#week-4-october-10-2026-to-october-11-2026) | October 10, 2026 to October 11, 2026 | 20 |
+| | **Total** | **94** |
 
 ---
 
@@ -32,7 +40,7 @@ Copy this block:
 - Built `SupabaseService` first so the auth screens have real sign-up, sign-in and reset logic to call into rather than being built against nothing.
 - Added `.env` and updated `pubspec.yaml` to set up the environment variables and dependencies the app, and Supabase auth specifically, will need.
 
-**Hours spent, roughly:** ___
+**Hours spent, roughly:** about 14 hours
 
 **Next week I will:**
 - Finish and polish the authorization screens.
@@ -81,7 +89,7 @@ Copy this block:
 - Reordered the Add/Edit Story form into single-column sections as a usability call, since side-by-side pairing read as cluttered once real values replaced placeholders.
 - Filled in the empty states because they were still bare text, and this avoids screens feeling broken the first time someone hits a "no results" case.
 
-**Hours spent, roughly:** ___
+**Hours spent, roughly:** about 22 hours
 
 **Next week I will:**
 - Build the real Add Memory / Edit Memory screens.
@@ -133,7 +141,7 @@ Copy this block:
 - Added the page flip because it fits the book theme and gives tab changes a clear identity.
 - Removed the login-bypass button because it was only meant for development.
 
-**Hours spent, roughly:** ___
+**Hours spent, roughly:** about 38 hours
 
 **Next week I will:**
 - Write the README, with screenshots of each main screen.
@@ -141,5 +149,47 @@ Copy this block:
 - Confirm the GitHub secrets are set and the live Pages deploy loads and logs in.
 - Check that no real personal data appears in screenshots, sample entries or the video.
 - Stretch goals, such as custom collections and notification reminders, were not implemented because they were not required for the MVP.
+
+---
+
+## Week 4 (October 10, 2026 to October 11, 2026)
+
+**Done this week**
+- Added story search. The Library "+" button now opens a new Story Search screen where you pick a type (Book, Comic, Movie or Series) and search by title. I added a `StorySearchResult` model and a `StorySearchService` that uses Open Library for books, AniList for comics and manga, and TMDB for movies and series, plus the `http` package to make the requests.
+- Connected search to the shared story form. Tapping a result opens Add Story with the title, year, creator or author, cover, medium, and total chapters or episodes filled in when the source has them, and I can still review and edit everything before saving. A story that is already on my shelf shows an "On your shelf" badge and opens its Story Details instead of being added twice.
+- Kept manual entry. "Add manually" on Story Search opens the same Add Story form blank, for stories the APIs can't find.
+- Set up TMDB: registered for a key, added `TMDB_API_KEY` to `.env.example`, and added it as a GitHub Actions secret so the deploy workflow writes it into `.env`.
+- Added moods to memories. There are six (Moved, Warm, Cried, Hyped, Cozy, Shocked), built as a reusable `MoodPicker` and `MoodBadge` so moods look the same everywhere. Add Memory uses chips, Memory Details uses a bottom sheet, a chosen mood can be cleared, Memories can filter by mood, and Profile shows my most common mood.
+- Wrote the README: name, description, screenshots, features, a Screens table, a clickable table of contents, environment variables (including `TMDB_API_KEY`), privacy, status and limitations, credits and AI use.
+- Filled in `docs/06-security-and-privacy.md` (what the app stores, where secrets live, Supabase RLS policies, known gaps) and completed `docs/07-security-checklist.md`, both dated 2026-10-11.
+- Updated `docs/02-mockup.md` to match the real app: 17 screens in app order with the new screenshots, a clickable contents list, a main-journey screen flow made of screenshots, and my original wireframe. The old `final_screens` and `mockups` folders were replaced by `docs/assets/screenshots/`.
+- Added the mood and story-search entries to AI-USAGE.md.
+
+**In progress**
+- `docs/05-demo-video.md` and the demo video itself. The recording and the timestamps are still placeholders.
+- Checking the screenshots and sample entries so no real personal information shows.
+- Confirming the live GitHub Pages build loads, logs in, and searches stories end to end.
+
+**Blocked or stuck on**
+- **The first version of the search screen didn't use the space well.** The layout the AI gave me left too much of the screen unused, so I changed it and improved the search option in the story form so stories are easier to find.
+- **External search can't find everything.** Some stories won't be in Open Library, AniList or TMDB, which is why I kept "Add manually" instead of making search the only way to add a story.
+- **The TMDB key ends up in the deployed site.** While working through the security checklist I found that `.env` is bundled into the web build as an asset, so the free TMDB key is readable in the browser's network tab. I decided to keep it, because the worst case is someone using up my rate limit, and I wrote down that I will revoke it and make a new key if I see abuse.
+- **The checklist caught two other problems.** GitHub's Secret Protection and Push Protection were not turned on, so I enabled both. My Gmail address was in the author information of older commits, so new commits use my GitHub noreply address, and I left the old ones alone because rewriting history would break the commit links in AI-USAGE.md.
+- **Memory Details needed a different mood control than Add Memory.** Chips fit the Add Memory form, but on the notes-style Memory Details screen they cluttered the page, so I used a bottom sheet there.
+
+**Decisions made, and why**
+- Search first, then a prefilled form, because typing every detail by hand made adding a story slow. I kept the form editable so I stay in control of what gets saved.
+- Used three sources (Open Library, AniList, TMDB), one for each kind of story: books, comics and manga, and movies and series.
+- Kept the TMDB key in the web build and documented it as a known gap, because it is a free, read-only key and there is no server of my own to hide it behind.
+- Added moods to match what the app is for, which is writing down how a story felt, and made them reusable widgets so they stay consistent.
+- Rewrote the mockup doc around the finished app instead of the original plan, and kept the wireframe as the original plan, so the two show how the design changed.
+
+**Hours spent, roughly:** about 20 hours
+
+**Next week I will:**
+- Record the demo video and fill in `docs/05-demo-video.md`, with timestamps for the main journey: sign in, search and add a story, write a memory with a mood, and look back on it.
+- Check that no real personal data appears in screenshots, sample entries or the video.
+- Confirm the live Pages deploy loads, logs in, and the story search works with the `TMDB_API_KEY` secret.
+- If there's time, work on the ideas in the README: pull-to-refresh on Home, Library and Memories, and tracking movie progress by minutes watched.
 
 ---

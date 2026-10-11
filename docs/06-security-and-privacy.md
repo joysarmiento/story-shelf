@@ -1,4 +1,4 @@
-# Security and privacy
+# Security and Privacy for Story Shelf
 
 This repository is public. This page is honest about what the app stores, where the secrets are, and what is still open.
 

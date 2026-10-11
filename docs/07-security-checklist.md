@@ -1,4 +1,4 @@
-# Security checklist for Story Shelf
+# Security Checklist for Story Shelf
 
 **Last checked:** 2026-10-11
 
