@@ -23,15 +23,14 @@ class StartScreen extends StatelessWidget {
                 width: 170,
                 height: 170,
               ),
-              const SizedBox(height: AppTheme.spaceXxs),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Image.asset(
-                  'docs/assets/images/story-shelf-wordmark.png',
-                  width: 250,
+              Text(
+                'Story Shelf',
+                style: theme.textTheme.headlineLarge?.copyWith(
+                  fontSize: 50,
+                  color: AppTheme.onSurface,
                 ),
               ),
-              const SizedBox(height: AppTheme.spaceXxs),
+              const SizedBox(height: AppTheme.spaceMd),
               Text(
                 'Your stories. Your memories.',
                 style: theme.textTheme.bodyMedium?.copyWith(

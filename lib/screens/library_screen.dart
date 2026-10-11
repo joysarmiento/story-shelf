@@ -254,7 +254,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Library', style: theme.textTheme.headlineMedium),
+                      Text('Library', style: theme.textTheme.headlineLarge),
                       Container(
                         width: 50,
                         height: 50,
@@ -305,7 +305,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     onChanged: (value) => setState(() => _query = value),
                   ),
                 ),
-                const SizedBox(height: AppTheme.spaceMd),
+                const SizedBox(height: AppTheme.spaceSm),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppTheme.spaceMd,
@@ -343,7 +343,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: AppTheme.spaceMd),
+                const SizedBox(height: AppTheme.spaceSm),
                 Expanded(
                   child: Stack(
                     children: [

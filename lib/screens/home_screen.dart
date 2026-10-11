@@ -86,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 : ListView(
                     padding: const EdgeInsets.fromLTRB(
                       AppTheme.spaceMd,
-                      AppTheme.spaceSm,
+                      AppTheme.spaceMd,
                       AppTheme.spaceMd,
                       96,
                     ),
@@ -96,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Text(
                             'Your Shelf.',
-                            style: theme.textTheme.headlineMedium,
+                            style: theme.textTheme.headlineLarge,
                           ),
                           Container(
                             width: 50,
@@ -395,7 +395,7 @@ class _MemoryOfTheDayBanner extends StatelessWidget {
                 const SizedBox(height: 34),
                 Text(
                   memory.storyTitle ?? memory.cleanTitle ?? 'Untitled memory',
-                  style: theme.textTheme.headlineSmall?.copyWith(
+                  style: theme.textTheme.headlineMedium?.copyWith(
                     color: AppTheme.onPrimary,
                   ),
                 ),

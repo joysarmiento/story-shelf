@@ -368,7 +368,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Memories', style: theme.textTheme.headlineMedium),
+                      Text('Memories', style: theme.textTheme.headlineLarge),
                       Container(
                         width: 50,
                         height: 50,
@@ -419,7 +419,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                     onChanged: (value) => setState(() => _query = value),
                   ),
                 ),
-                const SizedBox(height: AppTheme.spaceMd),
+                const SizedBox(height: AppTheme.spaceSm),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppTheme.spaceMd,
@@ -447,7 +447,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: AppTheme.spaceMd),
+                const SizedBox(height: AppTheme.spaceSm),
                 Expanded(
                   child: _loading
                       ? const Center(child: CircularProgressIndicator())

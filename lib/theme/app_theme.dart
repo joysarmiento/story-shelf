@@ -86,13 +86,18 @@ class AppTheme {
       ),
 
       textTheme: TextTheme(
-        headlineMedium: TextStyle(
+        headlineLarge: TextStyle(
           fontFamily: 'Railey',
           fontSize: 38,
           color: secondary,
         ),
-        headlineSmall: GoogleFonts.montserrat(
+        headlineMedium: GoogleFonts.montserrat(
           fontSize: 26,
+          fontWeight: FontWeight.w700,
+          color: primary,
+        ),
+        headlineSmall: GoogleFonts.montserrat(
+          fontSize: 20,
           fontWeight: FontWeight.w700,
           color: primary,
         ),

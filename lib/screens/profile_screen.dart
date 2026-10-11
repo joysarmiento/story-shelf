@@ -100,7 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(
                 AppTheme.spaceMd,
-                AppTheme.spaceSm,
+                AppTheme.spaceMd,
                 AppTheme.spaceMd,
                 96,
               ),
@@ -129,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Text(
                   service.displayName,
                   textAlign: TextAlign.center,
-                  style: theme.textTheme.headlineMedium,
+                  style: theme.textTheme.headlineLarge,
                 ),
                 Text(
                   '@${service.username}',
@@ -246,7 +246,7 @@ class _Stat extends StatelessWidget {
           children: [
             Text(
               '$value',
-              style: theme.textTheme.headlineSmall?.copyWith(
+              style: theme.textTheme.headlineMedium?.copyWith(
                 color: AppTheme.error,
               ),
             ),

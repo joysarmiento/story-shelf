@@ -412,7 +412,7 @@ class _NoteCard extends StatelessWidget {
       fontWeight: FontWeight.w500,
       height: 1.45,
     );
-    final titleStyle = theme.textTheme.headlineMedium?.copyWith(
+    final titleStyle = theme.textTheme.headlineLarge?.copyWith(
       color: AppTheme.onSurface,
       fontSize: 32,
     );

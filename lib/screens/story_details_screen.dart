@@ -285,7 +285,10 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
                               ),
                               child: Text(
                                 'Update',
-                                style: theme.textTheme.titleMedium,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: AppTheme.onPrimary,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),

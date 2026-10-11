@@ -168,7 +168,7 @@ class _AddMemoryScreenState extends State<AddMemoryScreen> {
       fontWeight: FontWeight.w500,
       height: 1.45,
     );
-    final titleStyle = theme.textTheme.headlineMedium?.copyWith(
+    final titleStyle = theme.textTheme.headlineLarge?.copyWith(
       color: AppTheme.onSurface,
       fontSize: 32,
     );
@@ -609,7 +609,7 @@ class _Banner extends StatelessWidget {
                 story.title,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.headlineSmall?.copyWith(
+                style: theme.textTheme.headlineMedium?.copyWith(
                   color: AppTheme.error,
                   fontSize: 20,
                 ),
