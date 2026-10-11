@@ -158,12 +158,17 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
     ),
   );
 
-  /// Shown under "No results" only while the keyboard is open (the fixed
-  /// footer is hidden in that state).
+  bool get _noResults =>
+      _error == null &&
+      _query.length >= 2 &&
+      !(_loading && _results.isEmpty) &&
+      _searched &&
+      _results.isEmpty;
+
   Widget _inlineAddManually() {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppTheme.spaceMd),
+      padding: const EdgeInsets.symmetric(vertical: AppTheme.spaceXs),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -182,7 +187,6 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
   }
 
   Widget _buildBody() {
-    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
     if (_error != null) {
       return _centered(
         Column(
@@ -223,16 +227,11 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
     }
     if (_searched && _results.isEmpty) {
       return _centered(
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const EmptyState(
-              icon: Icons.search_off,
-              title: 'No results',
-              message: 'Try another spelling, or add it manually.',
-            ),
-            if (keyboardOpen) _inlineAddManually(),
-          ],
+        const EmptyState(
+          icon: Icons.search_off,
+          iconGap: 10,
+          title: 'No results',
+          message: 'Try another spelling, or add it manually.',
         ),
       );
     }
@@ -325,6 +324,8 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
                 ),
                 const SizedBox(height: AppTheme.spaceSm),
                 Expanded(child: _buildBody()),
+                if (keyboardOpen && _noResults)
+                  Center(child: _inlineAddManually()),
                 if (!keyboardOpen)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(

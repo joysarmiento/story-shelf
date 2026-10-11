@@ -12,6 +12,7 @@ class EmptyState extends StatelessWidget {
     this.bordered = false,
     this.iconSize = 48,
     this.padding,
+    this.iconGap,
   }) : assert(
          icon != null || leading != null,
          'Provide either icon or leading.',
@@ -25,6 +26,7 @@ class EmptyState extends StatelessWidget {
   final double iconSize;
 
   final EdgeInsetsGeometry? padding;
+  final double? iconGap;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +44,11 @@ class EmptyState extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         visual,
-        SizedBox(height: leading != null ? AppTheme.spaceSm : AppTheme.spaceMd),
+        SizedBox(
+          height:
+              iconGap ??
+              (leading != null ? AppTheme.spaceSm : AppTheme.spaceMd),
+        ),
         Text(
           title,
           textAlign: TextAlign.center,
