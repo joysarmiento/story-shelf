@@ -158,6 +158,7 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
     child: SingleChildScrollView(padding: padding, child: child),
   );
 
+  /// Shown inside the compact "No results" block while the keyboard is open.
   Widget _inlineAddManually() {
     final theme = Theme.of(context);
     return Padding(
@@ -221,29 +222,21 @@ class _StorySearchScreenState extends State<StorySearchScreen> {
     }
     if (_searched && _results.isEmpty) {
       if (keyboardOpen) {
-        final theme = Theme.of(context);
+        // Little height is left above the keyboard: icon + link only,
+        // scaled down to fit instead of being clipped.
         return Center(
           child: FittedBox(
             fit: BoxFit.scaleDown,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppTheme.spaceMd),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.search_off,
-                    size: 28,
-                    color: AppTheme.secondary.withValues(alpha: 0.6),
-                  ),
-                  Text(
-                    'No results',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  _inlineAddManually(),
-                ],
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.search_off,
+                  size: 28,
+                  color: AppTheme.secondary.withValues(alpha: 0.6),
+                ),
+                _inlineAddManually(),
+              ],
             ),
           ),
         );

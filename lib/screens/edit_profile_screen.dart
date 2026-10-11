@@ -55,10 +55,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             if (_avatarUrl != null)
               ListTile(
-                leading: Icon(Icons.delete_outline, color: AppTheme.error),
+                leading: Icon(Icons.delete_outline, color: AppTheme.accent),
                 title: Text(
                   'Remove picture',
-                  style: TextStyle(color: AppTheme.error),
+                  style: TextStyle(color: AppTheme.accent),
                 ),
                 onTap: () => Navigator.of(context).pop('remove'),
               ),
