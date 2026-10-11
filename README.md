@@ -14,24 +14,69 @@ This repository lives in the author's own GitHub account and is public on purpos
 
 ---
 
+## Table of contents
+
+- [Screenshots](#screenshots)
+- [What it does](#what-it-does)
+- [Screens](#screens)
+- [Built with](#built-with)
+- [Running it yourself](#running-it-yourself)
+  - [Environment variables](#environment-variables)
+- [Privacy and secrets](#privacy-and-secrets)
+- [Project documentation](#project-documentation)
+- [Status and what is next](#status-and-what-is-next)
+- [Credits](#credits)
+- [AI Usage](#ai-usage)
+- [Licence](#licence)
+
 ## Screenshots
 
-See all screens in [docs/02-mockup.md](https://github.com/joysarmiento/story-shelf/blob/main/docs/02-mockup.md):
+All 17 screens, in app order, are listed under [Screens](#screens) below. Full mockups and flows: [docs/02-mockup.md](docs/02-mockup.md).
 
-| Home | Library | Story details | Memory details |
+| Home | Library | Add story: search | Add story: from search |
 | --- | --- | --- | --- |
-| ![Home](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/final_screens/05_Home.png) | ![Library](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/final_screens/06_Library.png) | ![Story details](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/final_screens/08_Story_Details.png) | ![Memory details](https://github.com/joysarmiento/story-shelf/blob/main/docs/assets/final_screens/11_Memory_Details.png) |
+| ![Home](docs/assets/screenshots/05-home.png) | ![Library](docs/assets/screenshots/06-library.png) | ![Add story search](docs/assets/screenshots/07-add-story-search.png) | ![Add story from search](docs/assets/screenshots/08-add-story-from-search.png) |
+
+| Story details | Memory details | Memories | Profile |
+| --- | --- | --- | --- |
+| ![Story details](docs/assets/screenshots/10-story-details.png) | ![Memory details](docs/assets/screenshots/13-memory-details.png) | ![Memories](docs/assets/screenshots/14-memories.png) | ![Profile](docs/assets/screenshots/15-profile.png) |
 
 ## What it does
 
 People who read and watch many kinds of stories usually keep their progress, ratings and thoughts scattered across different apps, or rely on memory. Story Shelf keeps them together, with a cozy journal at the heart of it. After a chapter or an episode, you can write down what you felt, what surprised you and what you want to remember. Your shelf tracks where you are, and your journal keeps how it felt.
 
-- **Build your library.** Add books, comics (manga, manhwa, webtoons), movies and series (dramas, anime, TV shows) with a cover, creator, release year, status (Not Started, Started, Completed), progress, rating and favorite flag.
-- **Write memories.** Journal entries tied to a story: an overall review, or a note on a specific chapter, episode or volume, with an optional title, rating and favorite quote.
-- **Find things fast.** Search, filter by medium and sort in both the Library and the Memories tabs.
+- **Build your library.** Add books, comics (manga, manhwa, webtoons), movies and series (dramas, anime, TV shows) with a cover, creator, release year, status (Not Started, Currently Reading/Watching, Completed), progress, rating and favorite flag.
+- **Search to add, or add by hand.** Pick a type, search by title and the form is filled in for you from Open Library (books), AniList (comics) or TMDB (movies and series). Stories already on your shelf are flagged "On your shelf". Can't find one? Use **Add manually** for a blank form.
+- **Write memories.** Journal entries tied to a story: an overall review, or a note on a specific chapter, episode or volume, with an optional title, rating, mood and favorite quote.
+- **Track how it felt.** Tag each memory with a mood (Moved, Warm, Cried, Hyped, Cozy, Shocked); your Profile shows your most common one.
+- **Find things fast.** Search the Library, filter by medium, status or favorites, and sort. The Memories tab filters by mood and sorts too.
 - **Pick up where you left off.** The Home screen shows the stories you are in the middle of, your recent memories, and "A Memory From This Day", which rotates between two of your stories each day.
 - **Make it readable for you.** Choose a text size and turn on high contrast; both are saved to your account and applied on every sign-in.
 - **Own your account.** Sign up, log in, reset your password, edit your profile and avatar, or delete your account and data.
+
+## Screens
+
+In app order. The tab bar is Home, Library, Memories, Profile.
+
+| # | Screen | Reached from | Screenshot |
+| --- | --- | --- | --- |
+| 01 | Start | App launch (signed out) | [01-start.png](docs/assets/screenshots/01-start.png) |
+| 02 | Log in | Start | [02-login.png](docs/assets/screenshots/02-login.png) |
+| 03 | Sign up | Log in, "Sign up." | [03-signup.png](docs/assets/screenshots/03-signup.png) |
+| 04 | Reset Password | Log in, "Forgot password?" | [04-reset-password.png](docs/assets/screenshots/04-reset-password.png) |
+| 05 | Home | App launch (signed in), or after log in | [05-home.png](docs/assets/screenshots/05-home.png) |
+| 06 | Library (with filter sheet) | Home tab bar | [06-library.png](docs/assets/screenshots/06-library.png), [06.01-library-filter.png](docs/assets/screenshots/06.01-library-filter.png) |
+| 07 | Story Search | Library, **+** button | [07-add-story-search.png](docs/assets/screenshots/07-add-story-search.png) |
+| 08 | Add Story (from search) | Story Search, tap a result: form is prefilled | [08-add-story-from-search.png](docs/assets/screenshots/08-add-story-from-search.png) |
+| 09 | Add Story (manual) | Story Search, **Add manually**: blank form | [09-add-story-manual.png](docs/assets/screenshots/09-add-story-manual.png) |
+| 10 | Story Details | Home, Library, or a saved story | [10-story-details.png](docs/assets/screenshots/10-story-details.png) |
+| 11 | Edit Story | Story Details | [11-edit-story.png](docs/assets/screenshots/11-edit-story.png) |
+| 12 | Add Memory | Story Details | [12-add-memory.png](docs/assets/screenshots/12-add-memory.png) |
+| 13 | Memory Details (view, edit, mood) | Home, Memories, or Story Details | [13-memory-details.png](docs/assets/screenshots/13-memory-details.png), [13-memory-detailes-edit-mood.png](docs/assets/screenshots/13-memory-detailes-edit-mood.png) |
+| 14 | Memories (with filter sheet) | Tab bar | [14-memories.png](docs/assets/screenshots/14-memories.png), [14.1-memories-filter.png](docs/assets/screenshots/14.1-memories-filter.png) |
+| 15 | Profile | Tab bar | [15-profile.png](docs/assets/screenshots/15-profile.png) |
+| 16 | Settings | Profile | [16-settings.png](docs/assets/screenshots/16-settings.png) |
+| 17 | Edit Profile | Settings | [17-edit-profile.png](docs/assets/screenshots/17-edit-profile.png) |
 
 ## Built with
 
@@ -40,8 +85,9 @@ People who read and watch many kinds of stories usually keep their progress, rat
 | Framework | Flutter (Dart) |
 | State | `setState` |
 | Backend and storage | Supabase (auth, Postgres database, storage bucket for cover images) |
-| Other packages | `supabase_flutter` (backend client), `flutter_dotenv` (reads `.env` keys), `google_fonts` (typography), `image_picker` (cover and avatar uploads), `device_preview` (phone frame while developing in a browser) |
+| Other packages | `supabase_flutter` (backend client), `flutter_dotenv` (reads `.env` keys), `google_fonts` (typography), `image_picker` (cover and avatar uploads), `http` (story search requests), `device_preview` (phone frame while developing in a browser) |
 | Fonts and assets | Railey (custom display font, personal-use licence), own logo and wordmark |
+| Search data | [Open Library](https://openlibrary.org) (books), [AniList](https://anilist.co) (comics), [TMDB](https://www.themoviedb.org) (movies and series) |
 | Hosting | GitHub Pages, deployed by `.github/workflows/deploy-web.yml` on every push to `main` |
 
 ## Running it yourself
@@ -62,13 +108,15 @@ This project reads its configuration from a `.env` file that is **not** in the r
 | --- | --- | --- |
 | `SUPABASE_URL` | The URL of your Supabase project | Supabase dashboard > Project Settings > API |
 | `SUPABASE_PUBLISHABLE_KEY` | The publishable (anon) key for that project | Same page, under the project API keys |
+| `TMDB_API_KEY` | A free v3 API key, used for movie and series search (book and comic search need no key) | themoviedb.org > Settings > API |
 
-Both values are designed to be shipped inside a client app. Your database is protected by Row Level Security policies, not by hiding these two values. The deploy workflow reads the same names from repository secrets (Settings > Secrets and variables > Actions).
+The Supabase values are designed to be shipped inside a client app. Your database is protected by Row Level Security policies, not by hiding these two values. The deploy workflow reads the same three names from repository secrets (Settings > Secrets and variables > Actions).
 
 ## Privacy and secrets
 
 - **What is stored:** your email, display name, username and optional avatar; the stories and memories you write; cover images you upload; and your text-size and contrast preferences. All of it is stored in the author's Supabase project, tied to your user ID.
 - **Where the secrets live:** locally in `.env` (git-ignored) and in repository secrets for the deploy workflow. Only the Supabase URL and publishable key reach the web build. No secret or service-role key is used anywhere in the app. Access to the data is controlled by Supabase Row Level Security; see [`docs/06-security-and-privacy.md`](docs/06-security-and-privacy.md) for the policies.
+- **Search requests:** when you search for a story to add, the title you type is sent to Open Library, AniList or TMDB, depending on the type you picked. Nothing else about you is sent.
 - **Sample data:** the sample data, screenshots and demo video contain no real personal information.
 
 ## Project documentation
@@ -86,7 +134,7 @@ Both values are designed to be shipped inside a client app. Your database is pro
 
 ## Status and what is next
 
-**Works today:** sign up, log in and password reset; add, edit and delete stories and memories; cover image upload; search, filter and sort in Library and Memories; the Home dashboard with the daily rotating memory; profile editing; text-size and high-contrast settings; account deletion; page-flip animation between tabs.
+**Works today:** sign up, log in and password reset; search for a story and add it with the form prefilled, or add it manually; edit and delete stories and memories; cover image upload; memory moods; search, filter (including favorites) and sort in Library and Memories; the Home dashboard with the daily rotating memory; profile editing; text-size and high-contrast settings; account deletion; page-flip animation between tabs.
 
 **Known limitations**
 
@@ -94,15 +142,15 @@ Both values are designed to be shipped inside a client app. Your database is pro
 - Lists load when you open a screen and do not refresh on pull-down yet.
 - The deployed demo is wrapped in a phone frame by `device_preview`.
 - Automated test coverage is small.
-- Story progress uses a current-versus-total format, which may not be suitable for every type of media.
+- Story progress uses a current-versus-total format for books, comics and series; movies do not track progress yet.
+- Movie and series search needs a TMDB key, so it does not work in a build without `TMDB_API_KEY`.
 
 **Ideas for next**
 
 - Pull-to-refresh on Home, Library and Memories
-- Reading stats on the Profile screen (stories finished, memories written, average rating)
+- More stats on the Profile screen, such as average rating
 - A one-tap "+1 chapter/episode" button on in-progress stories
-- A Favorites filter in the Library
-- Improve progress tracking for movies by using minutes watched out of the total runtime instead of the current-versus-total format.
+- Track movie progress by minutes watched out of the total runtime.
 
 ## Credits
 
@@ -110,8 +158,9 @@ Both values are designed to be shipped inside a client app. Your database is pro
 - Railey font: personal-use licence; check the licence terms before using it commercially
 - Logo, wordmark and screen designs: made by the author
 - Backend: [Supabase](https://supabase.com)
+- Story data: [Open Library](https://openlibrary.org), [AniList](https://anilist.co), and TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB.
 
-## AI use
+## AI Usage
 
 ![Built with AI assistance](https://img.shields.io/badge/built%20with-AI%20assistance-0b5fff)
 
