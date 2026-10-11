@@ -71,21 +71,6 @@ Other protections:
 - [x] Security rules or RLS policies written and tested, not left open (RLS is on for `stories` and `memories`; policies checked in the SQL editor and tested with two accounts on 2026-10-11)
 - [x] No real personal data in sample data, screenshots or the video
 - [x] No course or university credentials anywhere (checked 2026-10-11: the README names the course and university, but no HAU login, password, student number or student email appears in the files, commits, screenshots or video)
-- [ ] Anyone whose data appears in a test was asked first (_tick this if only you and made-up test accounts appear in your tests_)
+- [x] Anyone whose data appears in a test was asked first
 
-**History search (2026-10-11):** I searched the full Git history for `api_key`,
-`secret`, `password`, `token` and `key` followed by a long value, for JWT-style
-strings (`eyJ...`), Supabase key prefixes and 32-character hex strings. All
-matches were variable names, error messages, documentation or placeholders.
-`.env` was never committed (`git log --all -- .env` is empty). No real key was
-found, so nothing needed to be revoked.
-
-If you found and revoked a key while doing this, say so here. Catching it is the
-right outcome, not an embarrassment.
-
-- Found on 2026-10-11: `.env` is bundled into the web build as an asset, so the
-  TMDB key is readable on the deployed site (it is also visible in the network
-  tab, since TMDB takes the key as a URL parameter). Decision: I am keeping it.
-  It is a free, read-only v3 key, and the worst case is someone using up my rate
-  limit. I will revoke it in my TMDB account and create a new key if I see
-  abuse. No Supabase secret or service-role key is in the build.
+**Found on 2026-10-11:** `.env` is bundled into the web build as an asset, so the TMDB key is readable on the deployed site (it is also visible in the network tab, since TMDB takes the key as a URL parameter). Decision: I am keeping it. It is a free, read-only v3 key, and the worst case is someone using up my rate limit. I will revoke it in my TMDB account and create a new key if I see abuse. No Supabase secret or service-role key is in the build.
